@@ -12,6 +12,7 @@ import plotly.graph_objects as go
 import plotly.offline as offline
 from jinja2 import Environment, FileSystemLoader
 from scipy.stats import shapiro
+import time
 
 from mod.general_functions import cv, cv_status, check_threshold, groupname, label_outlier, get_idfree_sample_qc_status, only_outlier_status
 
@@ -446,8 +447,19 @@ def calculate_idfree_metrics(out_dir, reportname, mzml_dir, groupwise_comparison
     #getting list of mzML files
     mzml_list = get_mzml_list(mzml_dir)
 
-    #extracting data from mzml files
-    mzml_df = get_mzml_info_dataframe(mzml_list)
+    if len(mzml_list) > 50:
+        mzml_list_chunks = [mzml_list[x:x+50] for x in range(0, len(mzml_list), 50)]
+    else:
+        mzml_list_chunks = [mzml_list]
+
+    mzml_df = pd.DataFrame()
+
+    for lt in mzml_list_chunks:
+        #extracting data from mzml files
+        extracted_df = get_mzml_info_dataframe(lt)
+        mzml_df = pd.concat([mzml_df, extracted_df], ignore_index=True)
+        time.sleep(100)
+
 
     #applying thresholds + outlier detection
     mzml_df = apply_idfree_thresholds(mzml_df, mzml_threshold_dict)
