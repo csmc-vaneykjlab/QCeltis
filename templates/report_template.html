@@ -37,8 +37,6 @@
         #sidebar .nav-pills {
             justify-content: center;
             background-color: rgb(42, 48, 99);
-
-
         }
         #sidebar .nav-item {
             margin: 5px;
@@ -52,15 +50,15 @@
         }
         #sidebar {
             position: fixed;
-            top: 250px;
-            left: 100px;
+            top: 150px;
+            left: 50px;
             width: 250px;
-            height: 75%;
+            height: 500px;
             background-color: white;
             overflow-x: hidden;
             padding: 20px;
         }
-        .col-sm-4 {
+        .col-sm-3 {
             color: white
         }
     </style>
@@ -81,27 +79,33 @@
         <div class="tab-pane fade show active content" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
             <!-- Content for Tab 1 -->
                 <div class="row full-width-row">
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <nav id="sidebar">
                             <nav class="nav nav-pills flex-column">
-                              <a class="nav-link" href="#section1">section 1</a>
+                                <a class="nav-link" href="#introduction">Introduction</a>
+                            {% if total_ion_current %}
                               <nav class="nav nav-pills flex-column">
-                                <a class="nav-link ml-3 my-1" href="#section1.1">section1.1</a>
+                                <a class="nav-link" href="#total_ion_current">Total Ion Current</a>
                               </nav>
-                              <a class="nav-link" href="#section2">section 2</a>
-                              <a class="nav-link" href="#section3">section 3</a>
+                            {% endif %}
+                            {% if ms2_ms1_spectral_ratio %}
                               <nav class="nav nav-pills flex-column">
-                                <a class="nav-link ml-3 my-1" href="#item-3-1">Item 3-1</a>
-                                <a class="nav-link ml-3 my-1" href="#item-3-2">Item 3-2</a>
+                                <a class="nav-link" href="#ms2_ms1_spectral_ratio">Spectral Ratio</a>
                               </nav>
+                            {% endif %}
+                            {% if max_basepeak_intensity %}
+                              <nav class="nav nav-pills flex-column">
+                                <a class="nav-link" href="#max_basepeak_intensity">Max Base Peak Intensity</a>
+                              </nav>
+                            {% endif %}
                             </nav>
                           </nav>
                     </div>
-                    <div class="col-sm-8">
+                    <div class="col-sm-9">
                         <div data-bs-spy="scroll" data-bs-target="#list-example" data-bs-offset="0" class="scrollspy-example">
 
                             <div id="introduction" name="introduction">
-                                <h4>Introduction</h4>
+                                <h3>Introduction</h3>
 
                                 <p>Some Blah Blah Blah goes in here, for Id Free - this will be filled in later</p>
 
@@ -201,26 +205,103 @@
         <div class="tab-pane fade content" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
             <!-- Content for Tab 2 -->
             <div class="row full-width-row">
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                     <nav id="sidebar">
                         <nav class="nav nav-pills flex-column">
-                          <a class="nav-link" href="#section1">section 1</a>
+                            <a class="nav-link" href="#id_based_introduction">Introduction</a>
+                        {% if protein_file %}
                           <nav class="nav nav-pills flex-column">
-                            <a class="nav-link ml-3 my-1" href="#section1.1">section1.1</a>
+                            <a class="nav-link" href="#protein_quant">Protein Quantification</a>
                           </nav>
-                          <a class="nav-link" href="#section2">section 2</a>
-                          <a class="nav-link" href="#section3">section 3</a>
+                        {% endif %}
+                        {% if peptide_file %}
                           <nav class="nav nav-pills flex-column">
-                            <a class="nav-link ml-3 my-1" href="#item-3-1">Item 3-1</a>
-                            <a class="nav-link ml-3 my-1" href="#item-3-2">Item 3-2</a>
+                            <a class="nav-link" href="#peptide_quant">Peptide Quantification</a>
                           </nav>
+                        {% endif %}
+                        {% if precursor_file %}
+                          <nav class="nav nav-pills flex-column">
+                            <a class="nav-link" href="#precursor_quant">Precursor Quantification</a>
+                          </nav>
+                        {% endif %}
+                        {% if protein_file or peptide_file or precursor_file %}
+                          <nav class="nav nav-pills flex-column">
+                            <a class="nav-link" href="#cumulative_frequency">Intensity CV% Cumulative Frequency</a>
+                          </nav>
+                        {% endif %}
+                        
+                        {% if protein_file and groupwise_comparison %}
+                          <nav class="nav nav-pills flex-column">
+                            <a class="nav-link" href="#percentage_proteins_undercv">Percentage of Proteins Under CV%</a>
+                          </nav>
+                        {% endif %}
+                        
+                        {% if peptide_file and groupwise_comparison %}
+                          <nav class="nav nav-pills flex-column">
+                            <a class="nav-link" href="#percentage_peptide_undercv">Percentage of Peptides Under CV%</a>
+                          </nav>
+                        {% endif %}
+                        
+                        {% if precursor_file and groupwise_comparison %}
+                          <nav class="nav nav-pills flex-column">
+                            <a class="nav-link" href="#percentage_precursor_undercv">Percentage of Precursors Under CV%</a>
+                          </nav>
+                        {% endif %}
+                        
+                        {% if protein_file and groupwise_comparison %}
+                          <nav class="nav nav-pills flex-column">
+                            <a class="nav-link" href="#protein_pca">Protein PCA</a>
+                          </nav>
+                        {% endif %}
+                        
+                        {% if peptide_file and groupwise_comparison %}
+                          <nav class="nav nav-pills flex-column">
+                            <a class="nav-link" href="#peptide_pca">Peptide PCA</a>
+                          </nav>
+                        {% endif %}
+                        
+                        {% if precursor_file and groupwise_comparison %}
+                          <nav class="nav nav-pills flex-column">
+                            <a class="nav-link" href="#precursor_pca">Precursor PCA</a>
+                          </nav>
+                        {% endif %}
+                        
+                        {% if peptide_file %}
+                          <nav class="nav nav-pills flex-column">
+                            <a class="nav-link" href="#common_peptide_tic">Common Peptide TIC</a>
+                          </nav>
+                        {% endif %}
+
+                        {% if precursor_file  %}
+                          <nav class="nav nav-pills flex-column">
+                            <a class="nav-link" href="#common_precursor_tic">Common Precursor TIC</a>
+                          </nav>
+                        {% endif %}
+
+                        {% if peptide_file or precursor_file %}
+                          <nav class="nav nav-pills flex-column">
+                            <a class="nav-link" href="#percent_miscleavage">Percent Miscleavage</a>
+                          </nav>
+                        {% endif %}
+
+                        {% if irt_plots  %}
+                          <nav class="nav nav-pills flex-column">
+                            <a class="nav-link" href="#irt_intensity">iRT Intensity Distribution</a>
+                          </nav>
+                        {% endif %}
+
+                        {% if peptide_list  %}
+                          <nav class="nav nav-pills flex-column">
+                            <a class="nav-link" href="#selected_peptide_intensity">Selected Peptide Distribution</a>
+                          </nav>
+                        {% endif %}
                         </nav>
                       </nav>
                 </div>
-                <div class="col-sm-8">
+                <div class="col-sm-9">
                     <div data-bs-spy="scroll" data-bs-target="#list-example" data-bs-offset="0" class="scrollspy-example">
 
-                        <div id="introduction" name="introduction">
+                        <div id="id_based_introduction" name="id_based_introduction">
                             <h4>ID Based Introduction </h4>
 
                             <p>Some Blah Blah Blah goes in here, for Id Free - this will be filled in later</p>
