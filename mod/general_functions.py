@@ -254,7 +254,8 @@ def only_outlier_status(outlier_value):
 #adding a function to help check the range of the input values
 def int_range(min_value, max_value):
     def _type_checker(value):
-        if value < min_value or value > max_value:
+        ivalue = int(value)
+        if ivalue < min_value or ivalue > max_value:
             raise argparse.ArgumentTypeError("Value must be between {} and {}".format(min_value, max_value))
-        return int(value)
+        return ivalue
     return _type_checker
