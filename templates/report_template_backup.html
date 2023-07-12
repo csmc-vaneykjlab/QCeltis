@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QC APP</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Cerulean Bootstrap Theme -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.0.0/dist/cerulean/bootstrap.min.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            background: white;
+            position: relative;
+        }
+        .title-block {
+            background-color: lightblue;
+            padding: 10px;
+            color: white;
+            margin-bottom: 0;
+        }
+        #id-navigation .nav-pills {
+            justify-content: center;
+            background-color: black;
+        }
+        #id-navigation .nav-item {
+            margin: 5px;
+        }
+        #id-navigation .nav-link {
+            color: white;
+        }
+        .content {
+            height: 50vh;
+
+        }
+        #sidebar .nav-pills {
+            justify-content: center;
+            background-color: rgb(42, 48, 99);
+
+
+        }
+        #sidebar .nav-item {
+            margin: 5px;
+        }
+        #sidebar .nav-link {
+            color: white;
+        }
+        .full-width-row {
+            margin-left: -15px;
+            margin-right: -15px;
+        }
+        #sidebar {
+            position: fixed;
+            top: 250px;
+            left: 100px;
+            width: 250px;
+            height: 75%;
+            background-color: white;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+        .col-sm-4 {
+            color: white
+        }
+    </style>
+</head>
+<body  data-bs-target="#list-example" data-bs-offset="50">
+    <h1 class="title-block text-center">QC APP</h1>
+    <div id="id-navigation">
+    <ul class="nav nav-pills" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab" aria-controls="tab1" aria-selected="true">ID-Free</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab" aria-controls="tab2" aria-selected="false">ID-Based</button>
+        </li>
+    </ul>
+    </div>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active content" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
+            <!-- Content for Tab 1 -->
+                <div class="row full-width-row">
+                    <div class="col-sm-4">
+                        <nav id="sidebar">
+                            <nav class="nav nav-pills flex-column">
+                              <a class="nav-link" href="#section1">section 1</a>
+                              <nav class="nav nav-pills flex-column">
+                                <a class="nav-link ml-3 my-1" href="#section1.1">section1.1</a>
+                              </nav>
+                              <a class="nav-link" href="#section2">section 2</a>
+                              <a class="nav-link" href="#section3">section 3</a>
+                              <nav class="nav nav-pills flex-column">
+                                <a class="nav-link ml-3 my-1" href="#item-3-1">Item 3-1</a>
+                                <a class="nav-link ml-3 my-1" href="#item-3-2">Item 3-2</a>
+                              </nav>
+                            </nav>
+                          </nav>
+                    </div>
+                    <div class="col-sm-8">
+                        <div data-bs-spy="scroll" data-bs-target="#list-example" data-bs-offset="0" class="scrollspy-example">
+
+                            <div id="introduction" name="introduction">
+                                <h4>Introduction</h4>
+
+                                <p>Some Blah Blah Blah goes in here, for Id Free - this will be filled in later</p>
+
+                            </div>
+
+                            {% if total_ion_current %}
+                            <div id="total_ion_current" name="total_ion_current">
+                                <h4> Total Ion Current </h4>
+
+                                    {{ tic_plot | safe }}
+
+                                    <p> {{ tic_ms_plot_description }} </p>
+
+                                    {% if tic_ms1_outlier_plot %}
+                                        {{ tic_ms1_outlier_plot | safe }}
+
+                                        <p> {{ tic_ms1_outlier_description }} </p>
+
+                                    {% endif %}
+
+
+                                    {% if tic_ms2_outlier_plot %}
+                                        {{ tic_ms2_outlier_plot | safe }}
+
+                                        <p> {{ tic_ms2_outlier_description }} </p>
+                                    {% endif %}
+
+                                    {% if groupwise_comparison %}
+
+                                    <p> {{ tic_ms_cv_description }}</p>
+
+                                    {% if tic_ms1_cv_plot %}
+                                        {{ tic_ms1_cv_plot | safe }}
+
+                                        <p> tic_ms1_cv_description </p>
+                                    {% endif %}
+
+                                    {% if tic_ms2_cv_plot %}
+                                        {{ tic_ms2_cv_plot | safe }}
+
+                                        <p> tic_ms2_cv_description </p>
+
+                                    {% endif %}
+
+                                    {% endif %}
+
+                            </div>
+                            {% endif %}
+
+                            {% if ms2_ms1_spectral_ratio %}
+                            <div id="ms2_ms1_spectral_ratio" name="ms2_ms1_spectral_ratio">
+                                <h4> Spectral Ratio </h4>
+                                <p>description optional </p>
+
+                                {% if ms2_ms1_spectral_ratio_plot %}
+                                    {{ ms2_ms1_spectral_ratio_plot | safe }}
+                                {% endif %}
+
+
+                                <p> {{ ms2_ms1_spectral_ratio_description }}</p>
+
+
+                                {% if ms2_ms1_spectral_ratio_outlier_plot %}
+                                    {{ ms2_ms1_spectral_ratio_outlier_plot | safe }}
+
+                                    <p> {{ ms2_ms1_spectral_ratio_outlier_description }}</p>
+                                {% endif %}
+
+
+
+
+                            </div>
+                            {% endif %}
+
+                            {% if max_basepeak_intensity %}
+                            <div id="max_basepeak_intensity" name="max_basepeak_intensity">
+                                <h4>Max Base Peak Intensity </h4>
+
+                                {% if max_basepeak_intensity_plot %}
+                                    {{ max_basepeak_intensity_plot | safe }}
+                                {% endif %}
+
+                                <p> {{ max_basepeak_intensity_description }} </p>
+
+                                {% if max_basepeak_intensity_outlier_plot %}
+                                    {{ max_basepeak_intensity_outlier_plot | safe }}
+
+                                    <p> {{ max_basepeak_intensity_outlier_description }} </p>
+                                {% endif %}
+
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+        </div>
+        <div class="tab-pane fade content" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
+            <!-- Content for Tab 2 -->
+            <div class="row full-width-row">
+                <div class="col-sm-4">
+                    <nav id="sidebar">
+                        <nav class="nav nav-pills flex-column">
+                          <a class="nav-link" href="#section1">section 1</a>
+                          <nav class="nav nav-pills flex-column">
+                            <a class="nav-link ml-3 my-1" href="#section1.1">section1.1</a>
+                          </nav>
+                          <a class="nav-link" href="#section2">section 2</a>
+                          <a class="nav-link" href="#section3">section 3</a>
+                          <nav class="nav nav-pills flex-column">
+                            <a class="nav-link ml-3 my-1" href="#item-3-1">Item 3-1</a>
+                            <a class="nav-link ml-3 my-1" href="#item-3-2">Item 3-2</a>
+                          </nav>
+                        </nav>
+                      </nav>
+                </div>
+                <div class="col-sm-8">
+                    <div data-bs-spy="scroll" data-bs-target="#list-example" data-bs-offset="0" class="scrollspy-example">
+
+                        <div id="introduction" name="introduction">
+                            <h4>ID Based Introduction </h4>
+
+                            <p>Some Blah Blah Blah goes in here, for Id Free - this will be filled in later</p>
+
+                        </div>
+
+                        <div id="quant" name="quant">
+
+                        {% if protein_file %}
+                        <div id="protein_quant" name="protein_quant">
+
+                            <h4> Total Number of Proteins </h4>
+
+                                {% if protein_quant_plot %}
+                                    {{ protein_quant_plot | safe }}
+                                {% endif %}
+
+                                <p> {{ protein_quant_description }} </p>
+
+                        </div>
+                        {% endif %}
+
+                        {% if peptide_file %}
+                        <div id="peptide_quant" name="peptide_quant">
+
+                            <h4> Total Number of Peptides </h4>
+
+                                {% if peptide_quant_plot %}
+                                    {{ peptide_quant_plot | safe }}
+                                {% endif %}
+
+                                <p> {{ peptide_quant_description }} </p>
+
+                        </div>
+                        {% endif %}
+
+                        {% if precursor_file %}
+                        <div id="precursor_quant" name="precursor_quant">
+
+                            <h4> Total Number of Precursor </h4>
+
+                                {% if precursor_quant_plot %}
+                                    {{ precursor_quant_plot | safe }}
+                                {% endif %}
+
+                                <p> {{ precursor_quant_description }} </p>
+
+                        </div>
+                        {% endif %}
+
+                        {% if protein_file or peptide_file or precursor_file %}
+                        <div id="cumulative_frequency" name="cumulative_frequency">
+
+                            <h4> Intensity CV% Cumulative Frequency </h4>
+                            <p> {{ cumulative_frequency_description }} </p>
+
+                                {% if cumulative_frequency_plot %}
+                                    {{ cumulative_frequency_plot | safe }}
+                                {% endif %}
+
+                        </div>
+                        {% endif %}
+
+                        {% if protein_file and groupwise_comparison %}
+                        <div id="percentage_proteins_undercv" name="percentage_proteins_undercv">
+
+                            <h4> Percentage of Proteins Under CV% </h4>
+
+                                {% if percentage_proteins_undercv_plot %}
+                                    {{ percentage_proteins_undercv_plot | safe }}
+                                {% endif %}
+
+                                <p> {{ percentage_proteins_undercv_description }} </p>
+
+                        </div>
+                        {% endif %}
+
+                        {% if peptide_file and groupwise_comparison %}
+                        <div id="percentage_peptide_undercv" name="percentage_peptide_undercv">
+
+                            <h4> Percentage of Peptides Under CV% </h4>
+
+                                {% if percentage_peptides_undercv_plot %}
+                                    {{ percentage_peptides_undercv_plot | safe }}
+                                {% endif %}
+
+                                <p> {{ percentage_peptides_undercv_description }} </p>
+
+                        </div>
+                        {% endif %}
+
+                        {% if precursor_file and groupwise_comparison %}
+                        <div id="percentage_precursor_undercv" name="percentage_precursor_undercv">
+
+                            <h4> Percentage of Precursors Under CV% </h4>
+
+                                {% if percentage_precursors_undercv_plot %}
+                                    {{ percentage_precursors_undercv_plot | safe }}
+                                {% endif %}
+
+                                <p> {{ percentage_precursors_undercv_description }} </p>
+
+                        </div>
+                        {% endif %}
+
+                        {% if protein_file and groupwise_comparison %}
+                        <div id="protein_pca" name="protein_pca">
+
+                            <h4> Protein PCA </h4>
+                            <p> {{ protein_pca_description }} </p>
+
+                                {% if protein_pca_plot %}
+                                    {{ protein_pca_plot | safe }}
+                                {% endif %}
+
+                        </div>
+                        {% endif %}
+
+                        {% if peptide_file and groupwise_comparison %}
+                        <div id="peptide_pca" name="peptide_pca">
+
+                            <h4> Peptide PCA </h4>
+                            <p> {{ peptide_pca_description }} </p>
+
+                                {% if peptide_pca_plot %}
+                                    {{ peptide_pca_plot | safe }}
+                                {% endif %}
+
+                        </div>
+                        {% endif %}
+
+                        {% if precursor_file and groupwise_comparison %}
+                        <div id="precursor_pca" name="precursor_pca">
+
+                            <h4> Precursor PCA </h4>
+                            <p> {{ precursor_pca_description }} </p>
+
+                                {% if precursor_pca_plot %}
+                                    {{ precursor_pca_plot | safe }}
+                                {% endif %}
+
+                        </div>
+                        {% endif %}
+
+                        {% if peptide_file %}
+                        <div id="common_peptide_tic" name="common_peptide_tic">
+
+                            <h4> Common Peptide TIC </h4>
+                            <p> {{ common_peptide_tic_description }} </p>
+
+                                {% if common_peptide_tic_plot %}
+                                    {{ common_peptide_tic_plot | safe }}
+                                {% endif %}
+
+                            {% if groupwise_comparison %}
+                                <h4> Common Peptide TIC Group CV% </h4>
+
+                                {{ common_peptide_tic_group_cv | safe }}
+
+                                <p> {{ common_peptide_tic_group_cv_description }} </p>
+                            {% endif %}
+
+                        </div>
+                        {% endif %}
+
+                        {% if precursor_file %}
+                        <div id="common_precursor_tic" name="common_precursor_tic">
+
+                            <h4> Common Precursor TIC </h4>
+                            <p> {{ common_precursor_tic_description }} </p>
+
+                                {% if common_precursor_tic_plot %}
+                                    {{ common_precursor_tic_plot | safe }}
+                                {% endif %}
+
+                            {% if groupwise_comparison %}
+                                <h4> Common Precursor TIC Group CV% </h4>
+
+                                {{ common_precursor_tic_group_cv | safe }}
+
+                                <p> {{ common_precursor_tic_group_cv_description }} </p>
+                            {% endif %}
+
+                        </div>
+                        {% endif %}
+
+                        {% if peptide_file or precursor_file %}
+                        <div id="percent_miscleavage" name="percent_miscleavage">
+
+                            <h4> Percent Miscleavage </h4>
+                            <p> {{ percent_miscleavage_description }} </p>
+
+                                {% if percent_miscleavage_plot %}
+                                    {{ percent_miscleavage_plot | safe }}
+                                {% endif %}
+
+                        </div>
+                        {% endif %}
+
+                        {% if irt_plots %}
+                        <div id="irt_intensity" name="irt_intensity">
+
+                            <h4> iRT Intensity Distribution </h4>
+
+                                {% if irt_intensity_plot %}
+                                    {{ irt_intensity_plot | safe }}
+                                {% endif %}
+
+                                {% if irt_intensity_coverage_plot %}
+                                    {{ irt_intensity_coverage_plot | safe }}
+                                {% endif %}
+
+                                <p> {{ irt_intensity_description }} </p>
+
+                        </div>
+                        {% endif %}
+
+                        {% if peptide_list %}
+                        <div id="selected_peptide_intensity" name="selected_peptide_intensity">
+
+                            <h4> Selected Peptide Distribution </h4>
+
+                                {% if selected_peptide_intensity_plot %}
+                                    {{ selected_peptide_intensity_plot | safe }}
+                                {% endif %}
+
+                                {% if selected_peptide_intensity_coverage_plot %}
+                                    {{ selected_peptide_intensity_coverage_plot | safe }}
+                                {% endif %}
+
+                                <p> {{ selected_peptide_intensity_description }} </p>
+
+                        </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+</body>
+</html>
