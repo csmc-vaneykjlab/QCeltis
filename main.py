@@ -7,7 +7,7 @@ import logging
 from jinja2 import Environment, FileSystemLoader
 from mod.mzml_extract import calculate_idfree_metrics
 from mod.idbased_metrics import calculate_idbased_metrics
-from mod.general_functions import check_path, check_file, check_grouping_file, get_grouping_dict, check_samples
+from mod.general_functions import check_path, check_file, check_grouping_file, get_grouping_dict, check_samples, int_range
 
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -19,32 +19,32 @@ def main():
     parser = argparse.ArgumentParser(formatter_class=RawTextHelpFormatter)
 
     #output parameters
-    parser.add_argument('-o', '--outdirectory', required=True, help='[Required] Output Directory Path')
-    parser.add_argument('-r', '--reportname', required=True, help='[Required] Report Name for HTML and Excel Reports')
+    parser.add_argument('-o', '--outdirectory', type=str, required=True, help='[Required] Output Directory Path')
+    parser.add_argument('-r', '--reportname', type=str, required=True, help='[Required] Report Name for HTML and Excel Reports')
 
     #id-free metrics - mzml extraction
     #ADD - checks for thresholds (like range check, type check etc)
-    parser.add_argument('-m', '--mzml_directory', default=False, help='[Optional] Path to directory where mzML files are present')
-    parser.add_argument('-t1', '--ms1_tic_threshold', default=False, help='[Optional] MS1 TIC Threshold')
-    parser.add_argument('-t2', '--ms2_tic_threshold', default=False, help='[Optional] MS2 TIC Threshold')
-    parser.add_argument('-s1', '--ms1_spectra_threshold', default=False, help='[Optional] MS2 Spectra Threshold')
-    parser.add_argument('-s2', '--ms2_spectra_threshold', default=False, help='[Optional] MS2 Spectra Threshold')
-    parser.add_argument('-bp', '--max_basepeak_intensity', default=False, help='[Optional] Maximum Basepeak Intensity Threshold')
+    parser.add_argument('-m', '--mzml_directory', type=str, default=False, help='[Optional] Path to directory where mzML files are present')
+    parser.add_argument('-t1', '--ms1_tic_threshold', type=float, default=False, help='[Optional] MS1 TIC Threshold')
+    parser.add_argument('-t2', '--ms2_tic_threshold', type=float, default=False, help='[Optional] MS2 TIC Threshold')
+    parser.add_argument('-s1', '--ms1_spectra_threshold', type=float, default=False, help='[Optional] MS2 Spectra Threshold')
+    parser.add_argument('-s2', '--ms2_spectra_threshold', type=float, default=False, help='[Optional] MS2 Spectra Threshold')
+    parser.add_argument('-bp', '--max_basepeak_intensity', type=float, default=False, help='[Optional] Maximum Basepeak Intensity Threshold')
 
     #id-based inputs
-    parser.add_argument('-pt', '--protein_level', default=False, help='[Optional] Path to Protein Intensity File')
-    parser.add_argument('-pep', '--peptide_level', default=False, help='[Optional] Path to Peptide Intensity File')
-    parser.add_argument('-pre', '--precursor_level', default=False, help='[Optional] Path to Precursor Intensity File')
-    parser.add_argument('-peprt', '--peptide_rt', default=False, help='[Optional] Path to Peptide Retention Time File')
-    parser.add_argument('-prert', '--precursor_rt', default=False, help='[Optional] Path to Precursor Retention Time File')
-    parser.add_argument('-g', '--grouping_file', default=False, help='[Optional] Path to Grouping File')
-    parser.add_argument('-peplt', '--peptide_list', default=False, help='[Optional] Path to file containing list of peptides to monitor intensity and RT distribution across samples')
+    parser.add_argument('-pt', '--protein_level', type=str, default=False, help='[Optional] Path to Protein Intensity File')
+    parser.add_argument('-pep', '--peptide_level', type=str, default=False, help='[Optional] Path to Peptide Intensity File')
+    parser.add_argument('-pre', '--precursor_level', type=str, default=False, help='[Optional] Path to Precursor Intensity File')
+    parser.add_argument('-peprt', '--peptide_rt',  type=str, default=False, help='[Optional] Path to Peptide Retention Time File')
+    parser.add_argument('-prert', '--precursor_rt',type=str,  default=False, help='[Optional] Path to Precursor Retention Time File')
+    parser.add_argument('-g', '--grouping_file', type=str, default=False, help='[Optional] Path to Grouping File')
+    parser.add_argument('-peplt', '--peptide_list', type=str, default=False, help='[Optional] Path to file containing list of peptides to monitor intensity and RT distribution across samples')
 
     #id-based metric thresholds
-    parser.add_argument('-x', '--protein_threshold', default=False, help='[Optional] Protein Threshold for each sample')
-    parser.add_argument('-y', '--peptide_threshold', default=False, help='[Optional] Peptide Threshold for each sample')
-    parser.add_argument('-z', '--precursor_threshold', default=False, help='[Optional] Precursor Threshold for each sample')
-    parser.add_argument('-e', '--enzyme', default=False, help="[Optional] User input enzyme. Available input of enzymes will be:\n"+
+    parser.add_argument('-x', '--protein_threshold', type=int, default=False, help='[Optional] Protein Threshold for each sample')
+    parser.add_argument('-y', '--peptide_threshold', type=int, default=False, help='[Optional] Peptide Threshold for each sample')
+    parser.add_argument('-z', '--precursor_threshold', type=int, default=False, help='[Optional] Precursor Threshold for each sample')
+    parser.add_argument('-e', '--enzyme', type=str, default=False, help="[Optional] User input enzyme. Available input of enzymes will be:\n"+
         'Asp-N\t\tcleaves at N terminus of D. \tNo exceptions\n'+
         'Lys-C\t\tcleaves at C terminus of K. \tException: KP\n'+
         'Lys-N\t\tcleaves at N terminus of K. \tNo exception\n'+
@@ -58,12 +58,12 @@ def main():
         'TrypsinP\tcleaves at C terminus of K,R. \tNo exception\n'+
         'CNBr\t\tcleaves at C terminus of M. \tNo exceptions\n'+
         'Arg-C\t\tcleaves at C terminus of R. \tException: RP\n')
-    parser.add_argument('-c', '--miscleavage_threshold', default=False, help='[Optional] 0% Missed Cleavage Threshold for each sample')
-    parser.add_argument('-t', '--tic_cv_threshold', default=False, help='[Optional] TIC CV Threshold for groupwise QC status - Percentage between 0 and 100 - will only be used if grouping file is provided')
-    parser.add_argument('-s', '--cv_percent_threshold', default=False, help='[Optional] Intensity CV Threshold - Percentage between 0 and 100')
-    parser.add_argument('-d', '--data_percent_threshold', default=False, help='[Optional] Data Threshold for Intensity CV - will only be used if platewise comparison is selected')
-    parser.add_argument('-irt', '--irtlabel', default=False, help='[Optional] If iRT peptides are present in your peptide intensity file, please provide how the iRT proteins are labelled in your dataset')
-    parser.add_argument('-v', '--coverage_threshold', default=False, help='[Optional] Intensity or Retention Time Coverage % Threshold in each sample')
+    parser.add_argument('-c', '--miscleavage_threshold', type=int_range(0, 100), default=False, help='[Optional] 0% Missed Cleavage Threshold for each sample')
+    parser.add_argument('-t', '--tic_cv_threshold', type=int_range(0, 100), default=False, help='[Optional] TIC CV Threshold for groupwise QC status - Percentage between 0 and 100 - will only be used if grouping file is provided')
+    parser.add_argument('-s', '--cv_percent_threshold', type=int_range(0, 100), default=False, help='[Optional] Intensity CV Threshold - Percentage between 0 and 100')
+    parser.add_argument('-d', '--data_percent_threshold', type=int_range(0, 100), default=False, help='[Optional] Data Threshold for Intensity CV - will only be used if platewise comparison is selected')
+    parser.add_argument('-irt', '--irtlabel', default=False, type=str, help='[Optional] If iRT peptides are present in your peptide intensity file, please provide how the iRT proteins are labelled in your dataset')
+    parser.add_argument('-v', '--coverage_threshold', type=int_range(0, 100), default=False, help='[Optional] Intensity or Retention Time Coverage % Threshold in each sample')
 
     args = parser.parse_args()
 

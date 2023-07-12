@@ -7,6 +7,7 @@ import numpy as np
 import os
 import sys
 import logging
+import argparse
 
 #-------------------------------------------------------------------------- FUNCTIONS ---------------------------------------------------------------------------
 
@@ -249,3 +250,11 @@ def only_outlier_status(outlier_value):
         return "FAIL"
     else:
         return "PASS"
+
+#adding a function to help check the range of the input values
+def int_range(min_value, max_value):
+    def _type_checker(value):
+        if value < min_value or value > max_value:
+            raise argparse.ArgumentTypeError("Value must be between {} and {}".format(min_value, max_value))
+        return int(value)
+    return _type_checker
