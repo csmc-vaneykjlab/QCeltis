@@ -109,12 +109,20 @@ def check_grouping_file(txtfile, grouping_file):
         logging.error(f"{samples_string} are not present in the given grouping file: {grouping_file}")
         sys.exit(1)
 
-    groups = list(set(group_df['Group'].tolist()))
+    groups_from_df = list(set(group_df['Group'].tolist()))
 
-    if len(groups) < 2:
+    if len(groups_from_df) < 2:
         print("At least 2 groups should be provided")
         logging.error("At least 2 groups should be provided")
         sys.exit(1)
+
+    for group in groups_from_df:
+        group_files = group_df[group_df['Group'] == group]['Filename'].tolist()
+        if len(group_files) < 2:
+            logging.error("For each group, atleast 2 filenames should be present")
+            sys.exit(1)
+
+    groups = [str(group) for group in groups_from_df]
 
     return ", ".join(groups)
 
@@ -185,7 +193,7 @@ def get_grouping_dict(grouping_file):
     for group in groups:
         subset_df = df[df['Group'] == group]
         files = list(set(subset_df['Filename'].tolist()))
-        grouping_dict[group] = files
+        grouping_dict[str(group)] = files
 
     return grouping_dict
 
