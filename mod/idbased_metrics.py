@@ -734,10 +734,12 @@ def calculate_idbased_metrics(out_dir, reportname, input_dict, threshold_dict, g
 
         #getting protein level report parameters - plots + descriptions
         pt_quant_report_params = get_quant_plot(pt_quant, threshold_dict['Protein Threshold'], "Protein", groupwise_comparison, groups)
-        pt_intensity_cv_report_params = intensity_cv_graphs(pt_cv_sum, pt_grouped_cv, "Protein", groupwise_comparison, threshold_dict['CV Percent Threshold'], threshold_dict['Data Percent Threshold'])
+        #pt_intensity_cv_report_params = intensity_cv_graphs(pt_cv_sum, pt_grouped_cv, "Protein", groupwise_comparison, threshold_dict['CV Percent Threshold'], threshold_dict['Data Percent Threshold'])
         if groupwise_comparison:
+            pt_intensity_cv_report_params = intensity_cv_graphs(pt_cv_sum, pt_grouped_cv, "Protein", groupwise_comparison, threshold_dict['CV Percent Threshold'], threshold_dict['Data Percent Threshold'])
             protein_pca_report_params = pca_plot(pt_level,"Protein",filenames, groups)
         else:
+            pt_intensity_cv_report_params = {}
             protein_pca_report_params = {}
 
         protein_report_params = dict(tuple(pt_quant_report_params.items()) + tuple(pt_intensity_cv_report_params.items()) + tuple(protein_pca_report_params.items()))
@@ -807,11 +809,13 @@ def calculate_idbased_metrics(out_dir, reportname, input_dict, threshold_dict, g
 
         #getting peptide level report parameters - plots + descriptions
         pep_quant_report_params = get_quant_plot(pep_quant, threshold_dict['Peptide Threshold'], "Peptide", groupwise_comparison, groups)
-        pep_intensity_cv_report_params = intensity_cv_graphs(pep_cv_sum, pep_grouped_cv, "Peptide", groupwise_comparison, threshold_dict['CV Percent Threshold'], threshold_dict['Data Percent Threshold'])
+        #pep_intensity_cv_report_params = intensity_cv_graphs(pep_cv_sum, pep_grouped_cv, "Peptide", groupwise_comparison, threshold_dict['CV Percent Threshold'], threshold_dict['Data Percent Threshold'])
         if groupwise_comparison:
+            pep_intensity_cv_report_params = intensity_cv_graphs(pep_cv_sum, pep_grouped_cv, "Peptide", groupwise_comparison, threshold_dict['CV Percent Threshold'], threshold_dict['Data Percent Threshold'])
             peptide_pca_report_params = pca_plot(pep_level, "Peptide", filenames, groups)
         else:
-            peptide_pca_report_params = ""
+            pep_intensity_cv_report_params = {}
+            peptide_pca_report_params = {}
 
         pep_common_tic_report_params = common_tic_plot(pep_tic, pep_grouped_tic, "Peptide", threshold_dict['TIC CV Threshold'], groupwise_comparison, groups)
         if threshold_dict['Enzyme']:
@@ -819,7 +823,7 @@ def calculate_idbased_metrics(out_dir, reportname, input_dict, threshold_dict, g
         else:
             miscleavage_report_params = {}
 
-        if irt_plots:
+        if threshold_dict['iRT Label']:
             irt_report_params = selected_peptide_plots(irt_level, filenames, "Peptide", "iRT", threshold_dict['Coverage Threshold'])
         else:
             irt_report_params = {}
@@ -917,10 +921,12 @@ def calculate_idbased_metrics(out_dir, reportname, input_dict, threshold_dict, g
 
         #getting precursor level report parameters - plots + descriptions
         precursor_quant_report_params = get_quant_plot(pre_quant, threshold_dict['Precursor Threshold'], "Precursor", groupwise_comparison, groups)
-        precursor_intensity_cv_report_params = intensity_cv_graphs(pre_cv_sum, pre_grouped_cv, "Precursor", groupwise_comparison, threshold_dict['CV Percent Threshold'], threshold_dict['Data Percent Threshold'])
+        #precursor_intensity_cv_report_params = intensity_cv_graphs(pre_cv_sum, pre_grouped_cv, "Precursor", groupwise_comparison, threshold_dict['CV Percent Threshold'], threshold_dict['Data Percent Threshold'])
         if groupwise_comparison:
+            precursor_intensity_cv_report_params = intensity_cv_graphs(pre_cv_sum, pre_grouped_cv, "Precursor", groupwise_comparison, threshold_dict['CV Percent Threshold'], threshold_dict['Data Percent Threshold'])
             precursor_pca_report_params = pca_plot(pre_level, "Precursor", filenames, groups)
         else:
+            precursor_intensity_cv_report_params = {}
             precursor_pca_report_params = {}
 
         if not input_dict['Peptide Level']:
@@ -932,7 +938,7 @@ def calculate_idbased_metrics(out_dir, reportname, input_dict, threshold_dict, g
             else:
                 miscleavage_report_params = {}
 
-            if irt_plots:
+            if threshold_dict['iRT Label']:
                 irt_report_params = selected_peptide_plots(irt_level, filenames, "Precursor", "iRT", threshold_dict['Coverage Threshold'])
             else:
                 irt_report_params = {}
