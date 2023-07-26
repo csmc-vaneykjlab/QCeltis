@@ -7,7 +7,7 @@ import logging
 from jinja2 import Environment, FileSystemLoader
 from mod.mzml_extract import calculate_idfree_metrics
 from mod.idbased_metrics import calculate_idbased_metrics
-from mod.general_functions import check_path, check_file, check_grouping_file, get_grouping_dict, check_samples, int_range
+from mod.general_functions import check_path, check_file, check_grouping_file, get_grouping_dict, check_samples, int_range, check_duplicates
 
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -101,6 +101,16 @@ def main():
     # ------------------------------------------- CHECKING INPUTS AND THRESHOLDS -----------------------------------
     logging.info("----------------------------- CHECKING PROVIDED INPUTS AND THRESHOLDS -----------------------------\n")
 
+    logging.info("----------------------------- Checking provided inputs for duplicates -----------------------------\n")
+
+   
+    duplicates = check_duplicates(protein_level, peptide_level, precursor_level, grouping_file)
+    if duplicates:
+        print(f"ERROR: Duplicate filenames have been given {','.join(duplicates)} ")
+        logging.error(f"ERROR: Duplicate filenames have been given {','.join(duplicates)}")
+        sys.exit(1)
+
+    
     check_path(out_dir)
     logging.info(f"All outputs will be saved to {out_dir}")
 

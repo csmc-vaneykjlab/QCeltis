@@ -8,6 +8,8 @@ import os
 import sys
 import logging
 import argparse
+from collections import Counter
+
 
 #-------------------------------------------------------------------------- FUNCTIONS ---------------------------------------------------------------------------
 
@@ -19,6 +21,12 @@ def check_path(filepath):
 def check_file(txtfile, level):
 
     #add error handling here - what if the file is not txt or whatever
+    #adding a check if the input file is tab delimited or not. 
+    if not is_tab_delimited(txtfile):
+        print(f"The {txtfile} is not tab delimited, Please check the input")
+        logging.error(f"The {txtfile} is not tab delimited, Please check the input")
+        sys.exit(1)
+
     df = pd.read_csv(txtfile, sep="\t")
 
     if level == "Protein":
@@ -84,6 +92,12 @@ def check_grouping_file(txtfile, grouping_file):
 
     logging.info(f"Checking provided grouping file: {grouping_file}")
 
+    #adding a check if the given input file is tab delimited or not. 
+    if not is_tab_delimited(grouping_file):
+        print(f"The {grouping_file} is not tab delimited, Please check the input")
+        logging.error(f"The {grouping_file} is not tab delimited, Please check the input")
+        sys.exit(1)
+    
     df = pd.read_csv(txtfile, sep="\t")
 
     #add error check for group df
@@ -267,3 +281,18 @@ def int_range(min_value, max_value):
             raise argparse.ArgumentTypeError("Value must be between {} and {}".format(min_value, max_value))
         return ivalue
     return _type_checker
+
+#adding a function to help check if the file is tab delimited or not. 
+def is_tab_delimited(filename):
+    with open(filename, 'r') as file:
+        first_line = file.readline()
+        #print(first_line)
+        return '\t' in first_line
+    
+
+#adding a function to help check for duplicate values in the input file
+def check_duplicates(*args):
+    counts = Counter(args)
+    duplicates = [item for item, count in counts.items() if count > 1]
+    return duplicates
+
