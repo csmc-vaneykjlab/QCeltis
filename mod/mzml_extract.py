@@ -14,7 +14,7 @@ from jinja2 import Environment, FileSystemLoader
 from scipy.stats import shapiro
 import time
 
-from mod.general_functions import cv, cv_status, check_threshold, groupname, label_outlier, get_idfree_sample_qc_status, only_outlier_status
+from mod.general_functions import cv, cv_status, check_threshold, groupname, label_outlier, get_idfree_sample_qc_status, only_outlier_status, color_list
 
 #-------------------------------------------------------------------------- FUNCTIONS ---------------------------------------------------------------------------
 
@@ -269,7 +269,7 @@ def get_idfree_grouped_df(mzml_sample_df, tic_cv, tic_cv_threshold, groups):
 
 #------------------------------------------------------------------------ PLOT FUNCTIONS ----------------------------------------------------------------------------
 
-def tic_plots(mzml_df, tic_cv, ms1_tic_threshold, ms2_tic_threshold, tic_cv_threshold, groupwise_comparison):
+def tic_plots(mzml_df, tic_cv, ms1_tic_threshold, ms2_tic_threshold, tic_cv_threshold, groupwise_comparison, color_list):
 
     df = mzml_df[['Filename','MS1 TIC','MS2 TIC']]
 
@@ -289,7 +289,7 @@ def tic_plots(mzml_df, tic_cv, ms1_tic_threshold, ms2_tic_threshold, tic_cv_thre
     if ms2_tic_threshold:
         tic_line.add_hline(y=ms2_tic_threshold, line_dash="dot", annotation_text=f"MS2 TIC Threshold = {ms2_tic_threshold}")
 
-    tic_plot = plotly.io.to_html(tic_line, include_plotlyjs=False, full_html=False)
+    tic_plot = plotly.io.to_html(tic_line, include_plotlyjs=False, full_html=False, default_width='900px', default_height='450px')
     #tic_plot = offline.plot(tic_line, output_type='div', include_plotlyjs=False)
 
     tic_report_params = {'total_ion_current': True,
@@ -306,7 +306,8 @@ def tic_plots(mzml_df, tic_cv, ms1_tic_threshold, ms2_tic_threshold, tic_cv_thre
         tic_ms1_outlier.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
         )
-        tic_ms1_outlier_plot = plotly.io.to_html(tic_ms1_outlier, include_plotlyjs=False, full_html=False)
+        tic_ms1_outlier.update_traces(marker=dict(line=dict(color='black', width=1)))
+        tic_ms1_outlier_plot = plotly.io.to_html(tic_ms1_outlier, include_plotlyjs=False, full_html=False, default_width='900px', default_height='450px')
 
         tic_report_params['tic_ms1_outlier_plot'] = tic_ms1_outlier_plot
 
@@ -320,21 +321,22 @@ def tic_plots(mzml_df, tic_cv, ms1_tic_threshold, ms2_tic_threshold, tic_cv_thre
         tic_ms2_outlier.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
         )
-        tic_ms2_outlier_plot = plotly.io.to_html(tic_ms2_outlier, include_plotlyjs=False, full_html=False)
+        tic_ms2_outlier.update_traces(marker=dict(line=dict(color='black', width=1)))
+        tic_ms2_outlier_plot = plotly.io.to_html(tic_ms2_outlier, include_plotlyjs=False, full_html=False, default_width='900px', default_height='450px')
 
         tic_report_params['tic_ms2_outlier_plot'] = tic_ms2_outlier_plot
 
     if groupwise_comparison:
         tic_report_params['tic_ms_cv_description'] = "CV is calculated across samples in each given group"
 
-        ms1tic_bar = px.bar(tic_cv, x='Group', y="MS1 TIC CV%", title="MS1 Total Ion Current", color="Group")
+        ms1tic_bar = px.bar(tic_cv, x='Group', y="MS1 TIC CV%", title="MS1 Total Ion Current", color="Group", color_discrete_sequence=color_list)
         ms1tic_bar.update_xaxes(tickfont_size=8)
         ms1tic_bar.add_hline(y=tic_cv_threshold, line_dash="dot", annotation_text=f"TIC CV Threshold = {tic_cv_threshold}")
         ms1tic_bar.update_layout(
             margin=dict(l=20, r=20, t=20, b=20),
         )
 
-        ms1_tic = plotly.io.to_html(ms1tic_bar, include_plotlyjs=False, full_html=False)
+        ms1_tic = plotly.io.to_html(ms1tic_bar, include_plotlyjs=False, full_html=False, default_width='900px', default_height='450px')
         tic_report_params['tic_ms1_cv_plot'] = ms1_tic
 
         if list(set(tic_cv[f'MS1 TIC CV% Threshold = {int(tic_cv_threshold)}'].tolist())) == ['PASS']:
@@ -343,14 +345,14 @@ def tic_plots(mzml_df, tic_cv, ms1_tic_threshold, ms2_tic_threshold, tic_cv_thre
             failed_ms1_groups = ", ".join(tic_cv[tic_cv[f'MS1 TIC CV% Threshold = {int(tic_cv_threshold)}'] == 'FAIL']['Group'].tolist())
             tic_report_params['tic_ms1_cv_description'] = f'The following groups have not met the CV Threshold: {failed_ms1_groups}. This indicates that ...'
 
-        ms2tic_bar = px.bar(tic_cv, x='Group', y="MS2 TIC CV%", title="MS2 Total Ion Current", color="Group")
+        ms2tic_bar = px.bar(tic_cv, x='Group', y="MS2 TIC CV%", title="MS2 Total Ion Current", color="Group", color_discrete_sequence=color_list)
         ms2tic_bar.update_xaxes(tickfont_size=8)
         ms2tic_bar.add_hline(y=tic_cv_threshold, line_dash="dot", annotation_text=f"TIC CV Threshold = {tic_cv_threshold}")
         ms2tic_bar.update_layout(
             margin=dict(l=20, r=20, t=20, b=20),
         )
 
-        ms2_tic = plotly.io.to_html(ms2tic_bar, include_plotlyjs=False, full_html=False)
+        ms2_tic = plotly.io.to_html(ms2tic_bar, include_plotlyjs=False, full_html=False, default_width='900px', default_height='450px')
         tic_report_params['tic_ms2_cv_plot'] = ms2_tic
 
         if list(set(tic_cv[f'MS2 TIC CV% Threshold = {int(tic_cv_threshold)}'].tolist())) == ['PASS']:
@@ -371,7 +373,7 @@ def spectral_plot(mzml_df):
         margin=dict(l=20, r=20, t=20, b=20),
     )
 
-    spectral_count = plotly.io.to_html(count_line, include_plotlyjs=False, full_html=False)
+    spectral_count = plotly.io.to_html(count_line, include_plotlyjs=False, full_html=False, default_width='900px', default_height='450px')
     spectra_report_params = {'ms2_ms1_spectral_ratio': True,
                             'ms2_ms1_spectral_ratio_plot': spectral_count,
                             'ms2_ms1_spectral_ratio_description': 'MS2/MS1 Spectra Count Ratio extracted from given mzML files'}
@@ -386,17 +388,18 @@ def spectral_plot(mzml_df):
         ms2_ms1_spectral_ratio_outlier.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
         )
-        ms2_ms1_spectral_ratio_plot = plotly.io.to_html(ms2_ms1_spectral_ratio_outlier, include_plotlyjs=False, full_html=False)
+        ms2_ms1_spectral_ratio_outlier.update_traces(marker=dict(line=dict(color='black', width=1)))
+        ms2_ms1_spectral_ratio_plot = plotly.io.to_html(ms2_ms1_spectral_ratio_outlier, include_plotlyjs=False, full_html=False, default_width='900px', default_height='450px')
 
         spectra_report_params['ms2_ms1_spectral_ratio_outlier_plot'] = ms2_ms1_spectral_ratio_plot
 
     return spectra_report_params
 
-def basepeak_graph(mzml_df, max_basepeak_intensity_threshold, groups, groupwise_comparison):
+def basepeak_graph(mzml_df, max_basepeak_intensity_threshold, groups, groupwise_comparison, color_list):
 
     if groupwise_comparison:
         mzml_df['Group'] = mzml_df['Filename'].apply(groupname, args=[groups,])
-        bp_bar = px.bar(mzml_df, x='Filename', y="Max Basepeak Intensity", title="Max Basepeak Intensity", color="Group")
+        bp_bar = px.bar(mzml_df, x='Filename', y="Max Basepeak Intensity", title="Max Basepeak Intensity", color="Group", color_discrete_sequence=color_list)
     else:
         bp_bar = px.bar(mzml_df, x='Filename', y="Max Basepeak Intensity", title="Max Basepeak Intensity")
 
@@ -408,7 +411,7 @@ def basepeak_graph(mzml_df, max_basepeak_intensity_threshold, groups, groupwise_
     if max_basepeak_intensity_threshold:
         bp_bar.add_hline(y=max_basepeak_intensity_threshold, line_dash="dot", annotation_text=f"Max Basepeak Intensity Threshold = {max_basepeak_intensity_threshold}")
 
-    bp_plot = plotly.io.to_html(bp_bar, include_plotlyjs=False, full_html=False)
+    bp_plot = plotly.io.to_html(bp_bar, include_plotlyjs=False, full_html=False, default_width='900px', default_height='450px')
 
     basepeak_report_params = {'max_basepeak_intensity' : True,
                               'max_basepeak_intensity_plot': bp_plot,
@@ -424,7 +427,8 @@ def basepeak_graph(mzml_df, max_basepeak_intensity_threshold, groups, groupwise_
         max_basepeak_intensity_outlier.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
         )
-        max_basepeak_intensity_outlier_plot = plotly.io.to_html(max_basepeak_intensity_outlier, include_plotlyjs=False, full_html=False)
+        max_basepeak_intensity_outlier.update_traces(marker=dict(line=dict(color='black', width=1)))
+        max_basepeak_intensity_outlier_plot = plotly.io.to_html(max_basepeak_intensity_outlier, include_plotlyjs=False, full_html=False, default_width='900px', default_height='450px')
 
         basepeak_report_params['max_basepeak_intensity_outlier_plot'] = max_basepeak_intensity_outlier_plot
 
@@ -432,9 +436,9 @@ def basepeak_graph(mzml_df, max_basepeak_intensity_threshold, groups, groupwise_
 
 def create_graphs(mzml_df, tic_cv, groupwise_comparison, groups, mzml_threshold_dict):
 
-    tic_report_params = tic_plots(mzml_df, tic_cv, mzml_threshold_dict['MS1 TIC Threshold'], mzml_threshold_dict['MS2 TIC Threshold'], mzml_threshold_dict['TIC CV Threshold'], groupwise_comparison)
+    tic_report_params = tic_plots(mzml_df, tic_cv, mzml_threshold_dict['MS1 TIC Threshold'], mzml_threshold_dict['MS2 TIC Threshold'], mzml_threshold_dict['TIC CV Threshold'], groupwise_comparison, color_list)
     spectra_report_params = spectral_plot(mzml_df)
-    basepeak_report_params = basepeak_graph(mzml_df, mzml_threshold_dict['Max Basepeak Intensity Threshold'], groups, groupwise_comparison)
+    basepeak_report_params = basepeak_graph(mzml_df, mzml_threshold_dict['Max Basepeak Intensity Threshold'], groups, groupwise_comparison, color_list)
 
     idfree_report_parameters = dict(tuple(tic_report_params.items()) + tuple(spectra_report_params.items()) + tuple(basepeak_report_params.items()))
 

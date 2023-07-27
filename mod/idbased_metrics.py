@@ -20,7 +20,7 @@ import plotly.express as px
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 
-from mod.general_functions import cv, groupname, quant_status, check_threshold, transpose_DF, perc_qc, cv_status
+from mod.general_functions import cv, groupname, quant_status, check_threshold, transpose_DF, perc_qc, cv_status, color_list
 
 enzyme_info =  {'asp-n':{'terminus' : 'N' , 'cleave' : ['D'], 'exceptions' : []},
                 'lys-c' : {'terminus' : 'C' , 'cleave' : ['K'], 'exceptions' : ['KP']},
@@ -409,12 +409,12 @@ def get_overall_df(protein_level, peptide_level, precursor_level, pt_group_df, p
 
 #---------------------------------------------------------------------- GRAPH FUNCTIONS -----------------------------------------------------------------------------
 
-def get_quant_plot(quant_df, threshold, level, groupwise_comparison, groups):
+def get_quant_plot(quant_df, threshold, level, groupwise_comparison, groups, color_list):
 
     #getting protein quant graph
     if groupwise_comparison:
         quant_df['Group'] = quant_df['Filename'].apply(groupname, args=[groups,])
-        quant_plot = px.bar(quant_df, x='Filename', y=f'{level} Number', title=f"Number of {level}s Identified", color="Group")
+        quant_plot = px.bar(quant_df, x='Filename', y=f'{level} Number', title=f"Number of {level}s Identified", color="Group", color_discrete_sequence=color_list)
     else:
         quant_plot = px.bar(quant_df, x='Filename', y=f'{level} Number', title=f"Number of {level}s Identified")
 
@@ -425,7 +425,7 @@ def get_quant_plot(quant_df, threshold, level, groupwise_comparison, groups):
     quant_plot.update_layout(margin=dict(l=20, r=20, t=20, b=20))
     quant_plot.update_layout(title={'font': {'size': 9}})
 
-    quant_div = plotly.io.to_html(quant_plot, include_plotlyjs=True, full_html=False)
+    quant_div = plotly.io.to_html(quant_plot, include_plotlyjs=True, full_html=False, default_width='900px', default_height='450px')
 
     if level == "Protein":
         quant_report_params = {'protein_file': True,
@@ -443,21 +443,21 @@ def get_quant_plot(quant_df, threshold, level, groupwise_comparison, groups):
 
     return quant_report_params
 
-def intensity_cv_graphs(cv_sum, grouped_cv, level, groupwise_comparison, cv_percent_threshold, data_percent_threshold):
+def intensity_cv_graphs(cv_sum, grouped_cv, level, groupwise_comparison, cv_percent_threshold, data_percent_threshold, color_list):
 
     feature_col_name = f"{level} CV% < {cv_percent_threshold}"
     feature_column = f"% {level} under CV% < {cv_percent_threshold}"
 
     grouped_cv[feature_column] = (grouped_cv[feature_col_name]/grouped_cv[f'{level} Number'])*100
 
-    grouped_cv_graph = px.bar(grouped_cv, x='Group', y=feature_column, title=f"Number of {level}s Identified under {cv_percent_threshold}% CV", color='Group')
+    grouped_cv_graph = px.bar(grouped_cv, x='Group', y=feature_column, title=f"Number of {level}s Identified under {cv_percent_threshold}% CV", color='Group', color_discrete_sequence=color_list)
     grouped_cv_graph.add_hline(y=data_percent_threshold, line_dash="dot", annotation_text=f"Data Percent Threshold = {data_percent_threshold}")
     grouped_cv_graph.update_xaxes(tickfont_size=8)
     grouped_cv_graph.update_layout(
             margin=dict(l=20, r=20, t=20, b=20),
         )
     grouped_cv_graph.update_layout(title={'font': {'size': 9}})
-    grouped_cv_plot = plotly.io.to_html(grouped_cv_graph, include_plotlyjs=False, full_html=False)
+    grouped_cv_plot = plotly.io.to_html(grouped_cv_graph, include_plotlyjs=False, full_html=False, default_width='900px', default_height='450px')
 
     if level == "Protein":
         intensity_cv_report_params = {'protein_file': True,
@@ -476,7 +476,7 @@ def intensity_cv_graphs(cv_sum, grouped_cv, level, groupwise_comparison, cv_perc
 
     return intensity_cv_report_params
 
-def pca_plot(df_level, level,filenames, groups): #call it only if groupwise is given
+def pca_plot(df_level, level,filenames, groups, color_list): #call it only if groupwise is given
 
     #keeping only required columns and filling NAs with 0
     df = df_level[[level]+filenames]
@@ -500,11 +500,12 @@ def pca_plot(df_level, level,filenames, groups): #call it only if groupwise is g
 
     pca_fig3 = px.scatter_3d(
         pC3, x=0, y=1, z=2, color=df['Group'],
+        color_discrete_sequence=color_list,
         title=f'Total Explained Variance: {total_var:.2f}%',
         labels={'0': 'PC 1', '1': 'PC 2', '2': 'PC 3'}
     )
 
-    pca3_graph = plotly.io.to_html(pca_fig3, include_plotlyjs=False, full_html=False)
+    pca3_graph = plotly.io.to_html(pca_fig3, include_plotlyjs=False, full_html=False, default_width='900px', default_height='450px')
 
     if level == "Protein":
         pca_report_params = {'protein_pca_plot':pca3_graph,
@@ -520,11 +521,11 @@ def pca_plot(df_level, level,filenames, groups): #call it only if groupwise is g
 
     return pca_report_params
 
-def common_tic_plot(df_tic, group_tic, level, tic_cv_threshold, groupwise_comparison, groups):
+def common_tic_plot(df_tic, group_tic, level, tic_cv_threshold, groupwise_comparison, groups, color_list):
 
     if groupwise_comparison:
         df_tic['Group'] = df_tic['Filename'].apply(groupname, args=[groups, ])
-        tic_bar = px.bar(df_tic, x='Filename', y='TIC', title=f"Common {level} TIC", color=df_tic['Group'].tolist())
+        tic_bar = px.bar(df_tic, x='Filename', y='TIC', title=f"Common {level} TIC", color=df_tic['Group'].tolist(), color_discrete_sequence=color_list)
     else:
         tic_bar = px.bar(df_tic, x='Filename', y='TIC', title=f"Common {level} TIC")
 
@@ -533,7 +534,7 @@ def common_tic_plot(df_tic, group_tic, level, tic_cv_threshold, groupwise_compar
         margin=dict(l=20, r=20, t=20, b=20),
     )
     tic_bar.update_layout(title={'font': {'size': 9}})
-    tic_bar_graph = plotly.io.to_html(tic_bar, include_plotlyjs=True, full_html=False)
+    tic_bar_graph = plotly.io.to_html(tic_bar, include_plotlyjs=True, full_html=False, default_width='900px', default_height='450px')
 
     if level == "Peptide":
         common_tic_report_params = {'common_peptide_tic_plot': tic_bar_graph,
@@ -545,7 +546,7 @@ def common_tic_plot(df_tic, group_tic, level, tic_cv_threshold, groupwise_compar
 
     if groupwise_comparison:
 
-        cv_bar = px.bar(group_tic, x='Group', y='CV %', title=f'Common {level} TIC Group CV%', color=group_tic['Group'].tolist())
+        cv_bar = px.bar(group_tic, x='Group', y='CV %', title=f'Common {level} TIC Group CV%', color=group_tic['Group'].tolist(), color_discrete_sequence=color_list)
 
         if tic_cv_threshold:
             cv_bar.add_hline(y=tic_cv_threshold, line_dash="dot", annotation_text=f"TIC CV Threshold = {tic_cv_threshold}")
@@ -555,7 +556,7 @@ def common_tic_plot(df_tic, group_tic, level, tic_cv_threshold, groupwise_compar
             margin=dict(l=20, r=20, t=20, b=20),
         )
         cv_bar.update_layout(title={'font': {'size': 9}})
-        cv_bar_graph = plotly.io.to_html(cv_bar, include_plotlyjs=True, full_html=False)
+        cv_bar_graph = plotly.io.to_html(cv_bar, include_plotlyjs=True, full_html=False, default_width='900px', default_height='450px')
 
         if level == "Peptide":
             common_tic_report_params['common_peptide_tic_group_cv'] = cv_bar_graph
@@ -567,11 +568,11 @@ def common_tic_plot(df_tic, group_tic, level, tic_cv_threshold, groupwise_compar
 
     return common_tic_report_params
 
-def miscleavage_plot(dig_df, miscleavage_threshold, groupwise_comparison, groups):
+def miscleavage_plot(dig_df, miscleavage_threshold, groupwise_comparison, groups, color_list):
 
     if groupwise_comparison:
         dig_df['Group'] = dig_df['Filename'].apply(groupname, args=[groups, ])
-        dig = px.bar(dig_df, x='Filename', y='0 missed cleavage percentage', title="Percentage of No Missed Cleavages", color=dig_df['Group'].tolist())
+        dig = px.bar(dig_df, x='Filename', y='0 missed cleavage percentage', title="Percentage of No Missed Cleavages", color=dig_df['Group'].tolist(), color_discrete_sequence=color_list)
     else:
         dig = px.bar(dig_df, x='Filename', y='0 missed cleavage percentage', title="Percentage of No Missed Cleavages")
 
@@ -582,41 +583,41 @@ def miscleavage_plot(dig_df, miscleavage_threshold, groupwise_comparison, groups
     dig.update_layout(margin=dict(l=20, r=20, t=20, b=20))
     dig.update_layout(title={'font': {'size': 9}})
 
-    dig_graph = plotly.io.to_html(dig, include_plotlyjs=True, full_html=False)
+    dig_graph = plotly.io.to_html(dig, include_plotlyjs=True, full_html=False, default_width='900px', default_height='450px')
 
     miscleavage_report_params = {'percent_miscleavage_plot': dig_graph,
                                 'percent_miscleavage_description': "0 miscleaved peptides found in each sample."}
 
     return miscleavage_report_params
 
-def selected_peptide_plots(df_level, filenames, level, level2, coverage_threshold):
+def selected_peptide_plots(df_level, filenames, level, level2, coverage_threshold, color_list):
 
     #Intensity Distribution Plot
     int_level = df_level[[level] + filenames]
     df_int = pd.melt(int_level, id_vars=[level], var_name="Filename", value_name="Intensity")
 
     if level2 == "iRT":
-        int_plot = px.line(df_int, x='Filename', y="Intensity", title=f"Intensity Distribution Across iRT {level}s", color=level)
+        int_plot = px.line(df_int, x='Filename', y="Intensity", title=f"Intensity Distribution Across iRT {level}s", color=level, color_discrete_sequence=color_list)
     else:
-        int_plot = px.line(df_int, x='Filename', y="Intensity", title=f"Intensity Distribution Across {level}s", color=level)
+        int_plot = px.line(df_int, x='Filename', y="Intensity", title=f"Intensity Distribution Across {level}s", color=level, color_discrete_sequence=color_list)
 
     int_plot.update_xaxes(tickfont_size=8)
     int_plot.update_layout(margin=dict(l=20, r=20, t=20, b=20))
     int_plot.update_layout(title={'font': {'size': 9}})
-    int_dist = plotly.io.to_html(int_plot, include_plotlyjs=True, full_html=False)
+    int_dist = plotly.io.to_html(int_plot, include_plotlyjs=True, full_html=False, default_width='900px', default_height='450px')
 
     #Peptide/Precursor Coverage Across Samples
     int_cov = df_level[[level, 'Coverage %']]
     if level2 == "iRT":
-        cov = px.bar(int_cov, x=level, y="Coverage %", title=f"Coverage Percentage of iRT {level}s", color=int_cov[level].tolist())
+        cov = px.bar(int_cov, x=level, y="Coverage %", title=f"Coverage Percentage of iRT {level}s", color=int_cov[level].tolist(), color_discrete_sequence=color_list)
     else:
-        cov = px.bar(int_cov, x=level, y="Coverage %", title=f"Coverage Percentage of {level}s", color=int_cov[level].tolist())
+        cov = px.bar(int_cov, x=level, y="Coverage %", title=f"Coverage Percentage of {level}s", color=int_cov[level].tolist(), color_discrete_sequence=color_list)
     cov.add_hline(y=coverage_threshold)
     cov.update_xaxes(tickfont_size=8)
     cov.update_layout(
         margin=dict(l=20, r=20, t=20, b=20),
     )
-    cov_plot = plotly.io.to_html(cov, include_plotlyjs=True, full_html=False)
+    cov_plot = plotly.io.to_html(cov, include_plotlyjs=True, full_html=False, default_width='900px', default_height='450px')
 
     if level2 == "iRT":
         selected_peptide_report_params = {'irt_intensity_plot': int_dist,
@@ -705,7 +706,8 @@ def cumulative_freq_graph(protein_level, peptide_level, precursor_level, pt_cv_s
                 margin=dict(l=20, r=20, t=20, b=20)
         )
 
-    cumfreq_cv_line = plotly.io.to_html(cv_line, include_plotlyjs=True, full_html=False)
+    cv_line.update_layout(title={'font': {'size': 9}})
+    cumfreq_cv_line = plotly.io.to_html(cv_line, include_plotlyjs=True, full_html=False, default_width='900px', default_height='450px')
 
     cumfreq_report_params = {'cumulative_frequency_plot': cumfreq_cv_line,
                              'cumulative_frequency_description': "Cumulative Frequency % of CV%"}
@@ -733,11 +735,10 @@ def calculate_idbased_metrics(out_dir, reportname, input_dict, threshold_dict, g
         pt_level_cv, pt_cv_sum, pt_grouped_cv = intensity_cvs(pt_level, threshold_dict['CV Percent Threshold'], threshold_dict['Data Percent Threshold'], filenames, "Protein", groupwise_comparison, groups)
 
         #getting protein level report parameters - plots + descriptions
-        pt_quant_report_params = get_quant_plot(pt_quant, threshold_dict['Protein Threshold'], "Protein", groupwise_comparison, groups)
-        #pt_intensity_cv_report_params = intensity_cv_graphs(pt_cv_sum, pt_grouped_cv, "Protein", groupwise_comparison, threshold_dict['CV Percent Threshold'], threshold_dict['Data Percent Threshold'])
+        pt_quant_report_params = get_quant_plot(pt_quant, threshold_dict['Protein Threshold'], "Protein", groupwise_comparison, groups, color_list)
         if groupwise_comparison:
-            pt_intensity_cv_report_params = intensity_cv_graphs(pt_cv_sum, pt_grouped_cv, "Protein", groupwise_comparison, threshold_dict['CV Percent Threshold'], threshold_dict['Data Percent Threshold'])
-            protein_pca_report_params = pca_plot(pt_level,"Protein",filenames, groups)
+            pt_intensity_cv_report_params = intensity_cv_graphs(pt_cv_sum, pt_grouped_cv, "Protein", groupwise_comparison, threshold_dict['CV Percent Threshold'], threshold_dict['Data Percent Threshold'], color_list)
+            protein_pca_report_params = pca_plot(pt_level,"Protein",filenames, groups, color_list)
         else:
             pt_intensity_cv_report_params = {}
             protein_pca_report_params = {}
@@ -808,28 +809,27 @@ def calculate_idbased_metrics(out_dir, reportname, input_dict, threshold_dict, g
             pep_sample_df = ""
 
         #getting peptide level report parameters - plots + descriptions
-        pep_quant_report_params = get_quant_plot(pep_quant, threshold_dict['Peptide Threshold'], "Peptide", groupwise_comparison, groups)
-        #pep_intensity_cv_report_params = intensity_cv_graphs(pep_cv_sum, pep_grouped_cv, "Peptide", groupwise_comparison, threshold_dict['CV Percent Threshold'], threshold_dict['Data Percent Threshold'])
+        pep_quant_report_params = get_quant_plot(pep_quant, threshold_dict['Peptide Threshold'], "Peptide", groupwise_comparison, groups, color_list)
         if groupwise_comparison:
-            pep_intensity_cv_report_params = intensity_cv_graphs(pep_cv_sum, pep_grouped_cv, "Peptide", groupwise_comparison, threshold_dict['CV Percent Threshold'], threshold_dict['Data Percent Threshold'])
-            peptide_pca_report_params = pca_plot(pep_level, "Peptide", filenames, groups)
+            pep_intensity_cv_report_params = intensity_cv_graphs(pep_cv_sum, pep_grouped_cv, "Peptide", groupwise_comparison, threshold_dict['CV Percent Threshold'], threshold_dict['Data Percent Threshold'], color_list)
+            peptide_pca_report_params = pca_plot(pep_level, "Peptide", filenames, groups, color_list)
         else:
             pep_intensity_cv_report_params = {}
             peptide_pca_report_params = {}
 
-        pep_common_tic_report_params = common_tic_plot(pep_tic, pep_grouped_tic, "Peptide", threshold_dict['TIC CV Threshold'], groupwise_comparison, groups)
+        pep_common_tic_report_params = common_tic_plot(pep_tic, pep_grouped_tic, "Peptide", threshold_dict['TIC CV Threshold'], groupwise_comparison, groups, color_list)
         if threshold_dict['Enzyme']:
-            miscleavage_report_params = miscleavage_plot(dig_df, threshold_dict['Miscleavage Threshold'], groupwise_comparison, groups)
+            miscleavage_report_params = miscleavage_plot(dig_df, threshold_dict['Miscleavage Threshold'], groupwise_comparison, groups, color_list)
         else:
             miscleavage_report_params = {}
 
         if threshold_dict['iRT Label']:
-            irt_report_params = selected_peptide_plots(irt_level, filenames, "Peptide", "iRT", threshold_dict['Coverage Threshold'])
+            irt_report_params = selected_peptide_plots(irt_level, filenames, "Peptide", "iRT", threshold_dict['Coverage Threshold'], color_list)
         else:
             irt_report_params = {}
 
         if input_dict['Peptide List']:
-            selected_peptide_report_params = selected_peptide_plots(selected_peptide_df, filenames, "Peptide", "Peptide List", threshold_dict['Coverage Threshold'])
+            selected_peptide_report_params = selected_peptide_plots(selected_peptide_df, filenames, "Peptide", "Peptide List", threshold_dict['Coverage Threshold'], color_list)
         else:
             selected_peptide_report_params = {}
 
@@ -920,31 +920,30 @@ def calculate_idbased_metrics(out_dir, reportname, input_dict, threshold_dict, g
             pre_sample_df = ""
 
         #getting precursor level report parameters - plots + descriptions
-        precursor_quant_report_params = get_quant_plot(pre_quant, threshold_dict['Precursor Threshold'], "Precursor", groupwise_comparison, groups)
-        #precursor_intensity_cv_report_params = intensity_cv_graphs(pre_cv_sum, pre_grouped_cv, "Precursor", groupwise_comparison, threshold_dict['CV Percent Threshold'], threshold_dict['Data Percent Threshold'])
+        precursor_quant_report_params = get_quant_plot(pre_quant, threshold_dict['Precursor Threshold'], "Precursor", groupwise_comparison, groups, color_list)
         if groupwise_comparison:
-            precursor_intensity_cv_report_params = intensity_cv_graphs(pre_cv_sum, pre_grouped_cv, "Precursor", groupwise_comparison, threshold_dict['CV Percent Threshold'], threshold_dict['Data Percent Threshold'])
-            precursor_pca_report_params = pca_plot(pre_level, "Precursor", filenames, groups)
+            precursor_intensity_cv_report_params = intensity_cv_graphs(pre_cv_sum, pre_grouped_cv, "Precursor", groupwise_comparison, threshold_dict['CV Percent Threshold'], threshold_dict['Data Percent Threshold'], color_list)
+            precursor_pca_report_params = pca_plot(pre_level, "Precursor", filenames, groups, color_list)
         else:
             precursor_intensity_cv_report_params = {}
             precursor_pca_report_params = {}
 
         if not input_dict['Peptide Level']:
 
-            pre_common_tic_report_params = common_tic_plot(pre_tic, pre_grouped_tic, "Precursor", threshold_dict['TIC CV Threshold'], groupwise_comparison, groups)
+            pre_common_tic_report_params = common_tic_plot(pre_tic, pre_grouped_tic, "Precursor", threshold_dict['TIC CV Threshold'], groupwise_comparison, groups, color_list)
 
             if threshold_dict['Enzyme']:
-                miscleavage_report_params = miscleavage_plot(dig_df, threshold_dict['Miscleavage Threshold'], groupwise_comparison, groups)
+                miscleavage_report_params = miscleavage_plot(dig_df, threshold_dict['Miscleavage Threshold'], groupwise_comparison, groups, color_list)
             else:
                 miscleavage_report_params = {}
 
             if threshold_dict['iRT Label']:
-                irt_report_params = selected_peptide_plots(irt_level, filenames, "Precursor", "iRT", threshold_dict['Coverage Threshold'])
+                irt_report_params = selected_peptide_plots(irt_level, filenames, "Precursor", "iRT", threshold_dict['Coverage Threshold'], color_list)
             else:
                 irt_report_params = {}
 
             if input_dict['Peptide List']:
-                selected_peptide_report_params = selected_peptide_plots(selected_peptide_df, filenames, "Precursor", "Peptide List", threshold_dict['Coverage Threshold'])
+                selected_peptide_report_params = selected_peptide_plots(selected_peptide_df, filenames, "Precursor", "Peptide List", threshold_dict['Coverage Threshold'], color_list)
             else:
                 selected_peptide_report_params = {}
 

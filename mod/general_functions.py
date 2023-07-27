@@ -8,6 +8,18 @@ import os
 import sys
 import logging
 import argparse
+from collections import Counter
+
+#-------------------------------------------------------------------------- VARIABLES --------------------------------------------------------------------------
+
+#50 unique colors 
+color_list = [
+    "#1f77b4", "#2ca02c", "#d62728", "#ff7f0e", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf",
+    "#aec7e8", "#ffbb78", "#98df8a", "#ff9896", "#c5b0d5", "#c49c94", "#f7b6d2", "#c7c7c7", "#dbdb8d", "#9edae5",
+    "#393b79", "#e7ba52", "#ad494a", "#8c6d31", "#7b4173", "#843c39", "#d6616b", "#7b4173", "#ce6dbd", "#c6c6c6",
+    "#cedb9c", "#9c9ede", "#5254a3", "#e6ab02", "#bd9e39", "#6b6ecf", "#6b6ecf", "#b5cf6b", "#7fc97f", "#e7cb94",
+    "#e7969c", "#fddbc7", "#c7eae5", "#9edae5", "#fdae6b", "#fdd0a2", "#636363", "#989898", "#bdbdbd", "#f7f7f7"
+]
 
 #-------------------------------------------------------------------------- FUNCTIONS ---------------------------------------------------------------------------
 
@@ -18,7 +30,12 @@ def check_path(filepath):
 
 def check_file(txtfile, level):
 
-    #add error handling here - what if the file is not txt or whatever
+    #adding a check if the input file is tab delimited or not.
+    if not is_tab_delimited(txtfile):
+        print(f"The {txtfile} is not tab delimited, Please check the input")
+        logging.error(f"The {txtfile} is not tab delimited, Please check the input")
+        sys.exit(1)
+
     df = pd.read_csv(txtfile, sep="\t")
 
     if level == "Protein":
@@ -83,6 +100,12 @@ def check_file(txtfile, level):
 def check_grouping_file(txtfile, grouping_file):
 
     logging.info(f"Checking provided grouping file: {grouping_file}")
+
+    #adding a check if the given input file is tab delimited or not.
+    if not is_tab_delimited(grouping_file):
+        print(f"The {grouping_file} is not tab delimited, Please check the input")
+        logging.error(f"The {grouping_file} is not tab delimited, Please check the input")
+        sys.exit(1)
 
     df = pd.read_csv(txtfile, sep="\t")
 
@@ -267,3 +290,17 @@ def int_range(min_value, max_value):
             raise argparse.ArgumentTypeError("Value must be between {} and {}".format(min_value, max_value))
         return ivalue
     return _type_checker
+
+#adding a function to help check if the file is tab delimited or not.
+def is_tab_delimited(filename):
+    with open(filename, 'r') as file:
+        first_line = file.readline()
+        #print(first_line)
+        return '\t' in first_line
+
+
+#adding a function to help check for duplicate values in the input file
+def check_duplicates(*args):
+    counts = Counter(args)
+    duplicates = [item for item, count in counts.items() if count > 1]
+    return duplicates
