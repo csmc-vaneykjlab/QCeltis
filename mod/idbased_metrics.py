@@ -93,6 +93,7 @@ def get_quant(df, filenames, threshold, level, groupwise_comparison, groups):
     quant = pd.DataFrame(df[filenames].count())
     quant = quant.reset_index()
     quant.columns = ['Filename', f'{level} Number']
+    quant = quant.sort_values('Filename')
 
     if threshold:
         threshold_col = f'{level} Threshold = {threshold}'
@@ -116,6 +117,7 @@ def get_quant(df, filenames, threshold, level, groupwise_comparison, groups):
 
 
             group_status_df = pd.DataFrame(list(group_status_dict.items()), columns=['Group',f'{level} Threshold QC Status'])
+            group_status_df = group_status_df.sort_values('Group')
 
         else:
             group_status_df = ""
@@ -173,6 +175,7 @@ def intensity_cvs(df, intensity_cv_threshold, data_percent_threshold, filenames,
                 grouped_df = pd.DataFrame.from_dict(grouped_cv_dict, orient="index")
                 grouped_df.reset_index(drop=False, inplace=True)
                 grouped_df.rename(columns = {"index":"Group"}, inplace=True)
+                grouped_df = grouped_df.sort_values('Group')
 
     else:
         grouped_df = ""
@@ -246,6 +249,7 @@ def miscleavage(pep_level, enzyme, miscleavage_threshold, filenames, groups, gro
 
             group_df = pd.DataFrame(list(group_level.items()), columns=['Group','0 Miscleaved Peptides QC Status'])
             group_df['0 Miscleaved Peptides QC Status'] = group_df['0 Miscleaved Peptides QC Status'].astype(str)
+            group_df = group_df.sort_values('Group')
 
         else:
             group_df = ""
@@ -254,6 +258,7 @@ def miscleavage(pep_level, enzyme, miscleavage_threshold, filenames, groups, gro
         group_df = ""
 
     dig_df.rename(columns={'Digestion':'Filename'}, inplace=True)
+    dig_df = dig_df.sort_values('Filename')
 
     return (dig_df, group_df)
 
@@ -272,6 +277,7 @@ def common_tic(df_level, level, tic_cv_threshold, filenames, groups, groupwise_c
     df_tic = df.T.reset_index(drop=False)[['index','TIC']]
     df_tic.rename({'index':'Filename'}, axis=1, inplace=True)
     df_tic = df_tic[df_tic['Filename'] != level]
+    df_tic = df_tic.sort_values('Filename')
 
     if groupwise_comparison and tic_cv_threshold:
         #getting group level information
@@ -289,6 +295,7 @@ def common_tic(df_level, level, tic_cv_threshold, filenames, groups, groupwise_c
 
         df_tic.drop(['Group'], axis=1, inplace=True)
         group_df[f'Common {level} TIC QC Status'] = group_df[f'Common {level} TIC QC Status'].astype(str)
+        group_df = group_df.sort_values('Group')
 
     else:
         group_df = ""
@@ -414,6 +421,7 @@ def get_quant_plot(quant_df, threshold, level, groupwise_comparison, groups, col
     #getting protein quant graph
     if groupwise_comparison:
         quant_df['Group'] = quant_df['Filename'].apply(groupname, args=[groups,])
+        quant_df = quant_df.sort_values('Group')
         quant_plot = px.bar(quant_df, x='Filename', y=f'{level} Number', title=f"Number of {level}s Identified", color="Group", color_discrete_sequence=color_list)
     else:
         quant_plot = px.bar(quant_df, x='Filename', y=f'{level} Number', title=f"Number of {level}s Identified")
@@ -421,7 +429,7 @@ def get_quant_plot(quant_df, threshold, level, groupwise_comparison, groups, col
     if threshold:
         quant_plot.add_hline(y=threshold, line_dash="dot", annotation_text=f"{level} Threshold = {threshold}")
 
-    quant_plot.update_xaxes(tickfont_size=8)
+    quant_plot.update_xaxes(tickfont_size=6)
     quant_plot.update_layout(margin=dict(l=20, r=20, t=20, b=20))
     quant_plot.update_layout(title={'font': {'size': 9}})
 
@@ -452,7 +460,7 @@ def intensity_cv_graphs(cv_sum, grouped_cv, level, groupwise_comparison, cv_perc
 
     grouped_cv_graph = px.bar(grouped_cv, x='Group', y=feature_column, title=f"Number of {level}s Identified under {cv_percent_threshold}% CV", color='Group', color_discrete_sequence=color_list)
     grouped_cv_graph.add_hline(y=data_percent_threshold, line_dash="dot", annotation_text=f"Data Percent Threshold = {data_percent_threshold}")
-    grouped_cv_graph.update_xaxes(tickfont_size=8)
+    grouped_cv_graph.update_xaxes(tickfont_size=6)
     grouped_cv_graph.update_layout(
             margin=dict(l=20, r=20, t=20, b=20),
         )
@@ -525,11 +533,12 @@ def common_tic_plot(df_tic, group_tic, level, tic_cv_threshold, groupwise_compar
 
     if groupwise_comparison:
         df_tic['Group'] = df_tic['Filename'].apply(groupname, args=[groups, ])
+        df_tic = df_tic.sort_values('Group')
         tic_bar = px.bar(df_tic, x='Filename', y='TIC', title=f"Common {level} TIC", color=df_tic['Group'].tolist(), color_discrete_sequence=color_list)
     else:
         tic_bar = px.bar(df_tic, x='Filename', y='TIC', title=f"Common {level} TIC")
 
-    tic_bar.update_xaxes(tickfont_size=8)
+    tic_bar.update_xaxes(tickfont_size=6)
     tic_bar.update_layout(
         margin=dict(l=20, r=20, t=20, b=20),
     )
@@ -551,7 +560,7 @@ def common_tic_plot(df_tic, group_tic, level, tic_cv_threshold, groupwise_compar
         if tic_cv_threshold:
             cv_bar.add_hline(y=tic_cv_threshold, line_dash="dot", annotation_text=f"TIC CV Threshold = {tic_cv_threshold}")
 
-        cv_bar.update_xaxes(tickfont_size=8)
+        cv_bar.update_xaxes(tickfont_size=6)
         cv_bar.update_layout(
             margin=dict(l=20, r=20, t=20, b=20),
         )
@@ -572,6 +581,7 @@ def miscleavage_plot(dig_df, miscleavage_threshold, groupwise_comparison, groups
 
     if groupwise_comparison:
         dig_df['Group'] = dig_df['Filename'].apply(groupname, args=[groups, ])
+        dig_df = dig_df.sort_values('Group')
         dig = px.bar(dig_df, x='Filename', y='0 missed cleavage percentage', title="Percentage of No Missed Cleavages", color=dig_df['Group'].tolist(), color_discrete_sequence=color_list)
     else:
         dig = px.bar(dig_df, x='Filename', y='0 missed cleavage percentage', title="Percentage of No Missed Cleavages")
@@ -579,7 +589,7 @@ def miscleavage_plot(dig_df, miscleavage_threshold, groupwise_comparison, groups
     if miscleavage_threshold:
         dig.add_hline(y=miscleavage_threshold, line_dash="dot", annotation_text=f"No Missed Cleavage Percentage Threshold = {miscleavage_threshold}")
 
-    dig.update_xaxes(tickfont_size=8)
+    dig.update_xaxes(tickfont_size=6)
     dig.update_layout(margin=dict(l=20, r=20, t=20, b=20))
     dig.update_layout(title={'font': {'size': 9}})
 
@@ -601,7 +611,7 @@ def selected_peptide_plots(df_level, filenames, level, level2, coverage_threshol
     else:
         int_plot = px.line(df_int, x='Filename', y="Intensity", title=f"Intensity Distribution Across {level}s", color=level, color_discrete_sequence=color_list)
 
-    int_plot.update_xaxes(tickfont_size=8)
+    int_plot.update_xaxes(tickfont_size=6)
     int_plot.update_layout(margin=dict(l=20, r=20, t=20, b=20))
     int_plot.update_layout(title={'font': {'size': 9}})
     int_dist = plotly.io.to_html(int_plot, include_plotlyjs=True, full_html=False, default_width='900px', default_height='450px')
@@ -613,7 +623,7 @@ def selected_peptide_plots(df_level, filenames, level, level2, coverage_threshol
     else:
         cov = px.bar(int_cov, x=level, y="Coverage %", title=f"Coverage Percentage of {level}s", color=int_cov[level].tolist(), color_discrete_sequence=color_list)
     cov.add_hline(y=coverage_threshold)
-    cov.update_xaxes(tickfont_size=8)
+    cov.update_xaxes(tickfont_size=6)
     cov.update_layout(
         margin=dict(l=20, r=20, t=20, b=20),
     )
@@ -640,8 +650,8 @@ def cumulative_freq_graph(protein_level, peptide_level, precursor_level, pt_cv_s
                     var_name="Label",
                     value_name="Cumulative Frequency %")
 
-        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Proteins, Peptides and Precursors under CV% (Across all Samples)", color="Label", line_shape="spline", markers=True)
-        cv_line.update_xaxes(tickfont_size=8)
+        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Proteins, Peptides and Precursors under CV% (Across all Samples)", color="Label", line_shape="spline")
+        cv_line.update_xaxes(tickfont_size=6)
         cv_line.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
         )
@@ -653,8 +663,8 @@ def cumulative_freq_graph(protein_level, peptide_level, precursor_level, pt_cv_s
                     var_name="Label",
                     value_name="Cumulative Frequency %")
 
-        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Proteins and Peptides under CV% (Across all Samples)", color="Label", line_shape="spline", markers=True)
-        cv_line.update_xaxes(tickfont_size=8)
+        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Proteins and Peptides under CV% (Across all Samples)", color="Label", line_shape="spline")
+        cv_line.update_xaxes(tickfont_size=6)
         cv_line.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
         )
@@ -666,8 +676,8 @@ def cumulative_freq_graph(protein_level, peptide_level, precursor_level, pt_cv_s
                     var_name="Label",
                     value_name="Cumulative Frequency %")
 
-        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Proteins and Precursors under CV% (Across all Samples)", color="Label", line_shape="spline", markers=True)
-        cv_line.update_xaxes(tickfont_size=8)
+        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Proteins and Precursors under CV% (Across all Samples)", color="Label", line_shape="spline")
+        cv_line.update_xaxes(tickfont_size=6)
         cv_line.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
         )
@@ -679,29 +689,29 @@ def cumulative_freq_graph(protein_level, peptide_level, precursor_level, pt_cv_s
                     var_name="Label",
                     value_name="Cumulative Frequency %")
 
-        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Peptides and Precursors under CV% (Across all Samples)", color="Label", line_shape="spline", markers=True)
-        cv_line.update_xaxes(tickfont_size=8)
+        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Peptides and Precursors under CV% (Across all Samples)", color="Label", line_shape="spline")
+        cv_line.update_xaxes(tickfont_size=6)
         cv_line.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
         )
 
     elif protein_level:
-        cv_line = px.line(pt_cv_sum, x='CV%', y="Protein Cumulative Frequency %", title="Number of Proteins under CV% (Across all Samples)", line_shape="spline", markers=True)
-        cv_line.update_xaxes(tickfont_size=8)
+        cv_line = px.line(pt_cv_sum, x='CV%', y="Protein Cumulative Frequency %", title="Number of Proteins under CV% (Across all Samples)", line_shape="spline")
+        cv_line.update_xaxes(tickfont_size=6)
         cv_line.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
         )
 
     elif peptide_level:
-        cv_line = px.line(cv_sum, x='CV%', y="Peptide Cumulative Frequency %", title="Number of Peptides under CV% (Across all Samples)", line_shape="spline", markers=True)
-        cv_line.update_xaxes(tickfont_size=8)
+        cv_line = px.line(cv_sum, x='CV%', y="Peptide Cumulative Frequency %", title="Number of Peptides under CV% (Across all Samples)", line_shape="spline")
+        cv_line.update_xaxes(tickfont_size=6)
         cv_line.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
         )
 
     elif precursor_level:
-        cv_line = px.line(cv_sum, x='CV%', y="Precursor Cumulative Frequency %", title="Number of Precursors under CV% (Across all Samples)", line_shape="spline", markers=True)
-        cv_line.update_xaxes(tickfont_size=8)
+        cv_line = px.line(cv_sum, x='CV%', y="Precursor Cumulative Frequency %", title="Number of Precursors under CV% (Across all Samples)", line_shape="spline")
+        cv_line.update_xaxes(tickfont_size=6)
         cv_line.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
         )
@@ -724,6 +734,8 @@ def calculate_idbased_metrics(out_dir, reportname, input_dict, threshold_dict, g
 
     if input_dict['Protein Level']:
 
+        logging.info("Getting Protein Level QC Metrics")
+
         pt_level = pd.read_csv(input_dict['Protein Level'], sep="\t")
         pt_level = pt_level[pt_level.columns.tolist()].replace({'0':np.nan, 0:np.nan})
 
@@ -744,6 +756,8 @@ def calculate_idbased_metrics(out_dir, reportname, input_dict, threshold_dict, g
             protein_pca_report_params = {}
 
         protein_report_params = dict(tuple(pt_quant_report_params.items()) + tuple(pt_intensity_cv_report_params.items()) + tuple(protein_pca_report_params.items()))
+
+        logging.info(f"Saving Protein Level QC Report to {out_dir}/{reportname}_ProteinLevel_QC_Report.xlsx")
 
         #saving dataframes to excel document
         protein_report_writer = pd.ExcelWriter(f"{out_dir}/{reportname}_ProteinLevel_QC_Report.xlsx", engine='xlsxwriter')
@@ -768,8 +782,9 @@ def calculate_idbased_metrics(out_dir, reportname, input_dict, threshold_dict, g
                                "Protein Threshold QC Status",
                                f"{threshold_dict['Data Percent Threshold']}% Proteins <= {threshold_dict['CV Percent Threshold']}% CV"]]
 
-
     if input_dict['Peptide Level']:
+
+        logging.info("Getting Peptide Level QC Metrics")
 
         pep_level = pd.read_csv(input_dict['Peptide Level'], sep="\t")
         pep_level = pep_level[pep_level.columns.tolist()].replace({'0':np.nan, 0:np.nan})
@@ -841,6 +856,8 @@ def calculate_idbased_metrics(out_dir, reportname, input_dict, threshold_dict, g
                                 tuple(irt_report_params.items()) +
                                 tuple(selected_peptide_report_params.items()))
 
+        logging.info(f"Saving Peptide Level QC Report to {out_dir}/{reportname}_PeptideLevel_QC_Report.xlsx")
+
         #saving dataframes to excel document
         peptide_report_writer = pd.ExcelWriter(f"{out_dir}/{reportname}_PeptideLevel_QC_Report.xlsx", engine='xlsxwriter')
         pep_quant.to_excel(peptide_report_writer, index=False, sheet_name='Peptide Quant Summary')
@@ -872,6 +889,8 @@ def calculate_idbased_metrics(out_dir, reportname, input_dict, threshold_dict, g
                             "Common Peptide TIC QC Status"]]
 
     if input_dict['Precursor Level']:
+
+        logging.info("Getting Precursor Level QC Metrics")
 
         pre_level = pd.read_csv(input_dict['Precursor Level'], sep="\t")
         pre_level = pre_level[pre_level.columns.tolist()].replace({'0':np.nan, 0:np.nan})
@@ -954,6 +973,8 @@ def calculate_idbased_metrics(out_dir, reportname, input_dict, threshold_dict, g
                                 tuple(miscleavage_report_params.items()) +
                                 tuple(irt_report_params.items()) +
                                 tuple(selected_peptide_report_params.items()))
+
+        logging.info(f"Saving Precursor Level QC Report to {out_dir}/{reportname}_PrecursorLevel_QC_Report.xlsx")
 
         #saving dataframes to excel document
         precursor_report_writer = pd.ExcelWriter(f"{out_dir}/{reportname}_PrecursorLevel_QC_Report.xlsx", engine='xlsxwriter')

@@ -4,6 +4,7 @@ import pandas as pd
 import os
 import sys
 import logging
+import time
 from jinja2 import Environment, FileSystemLoader
 from mod.mzml_extract import calculate_idfree_metrics
 from mod.idbased_metrics import calculate_idbased_metrics
@@ -11,6 +12,8 @@ from mod.general_functions import check_path, check_file, check_grouping_file, g
 
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
+
+start_time = time.time()
 
 def main():
 
@@ -346,6 +349,8 @@ def main():
         if groupwise_comparison:
             grouped_df = idbased_group_df
 
+
+    logging.info(f"Saving Overall QC Report to {out_dir}/{reportname}_QC_Status_Report.xlsx")
     #saving dataframes to excel document
     writer = pd.ExcelWriter(f"{out_dir}/{reportname}_QC_Status_Report.xlsx", engine='xlsxwriter')
     sample_df.to_excel(writer, index=False, sheet_name="Samplewise QC Metrics")
@@ -367,6 +372,7 @@ def main():
     all_report_params['groupwise_comparison'] = groupwise_comparison
     all_report_params['mzml_dir'] = mzml_dir
 
+    logging.info(f"Saving HTML QC Report to {out_dir}/{reportname}.html")
     if all_report_params:
         env = Environment(loader=FileSystemLoader(str("/common/vegesnam/qcpackage/github/QCPackage/templates"))) #remove hardcoding - added this for now
         template = env.get_template(str("report_template.html"))
@@ -379,3 +385,6 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+print("--- %s seconds ---" % (time.time() - start_time))
+logging.info("--- %s seconds ---" % (time.time() - start_time))

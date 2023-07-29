@@ -87,6 +87,8 @@ def get_mzml_info_dataframe(mzml_list):
 
     mzml_dataframe = pd.DataFrame(mzml_data)
 
+    mzml_dataframe = mzml_dataframe.sort_values("Filename")
+
     return mzml_dataframe
 
 def apply_idfree_thresholds(mzml_df, mzml_threshold_dict):
@@ -200,6 +202,7 @@ def calculate_tic_cv(mzml_df, groups, tic_cv_threshold):
     tic_cv = pd.DataFrame.from_dict(group_cv, orient="index")
     tic_cv.index = tic_cv.index.set_names(['Group'])
     tic_cv.reset_index(drop=False, inplace=True)
+    tic_cv = tic_cv.sort_values('Group')
 
     tic_cv[f'MS1 TIC CV% Threshold = {int(tic_cv_threshold)}'] = tic_cv['MS1 TIC CV%'].apply(cv_status, args=[tic_cv_threshold,])
     tic_cv[f'MS2 TIC CV% Threshold = {int(tic_cv_threshold)}'] = tic_cv['MS2 TIC CV%'].apply(cv_status, args=[tic_cv_threshold,])
@@ -277,8 +280,8 @@ def tic_plots(mzml_df, tic_cv, ms1_tic_threshold, ms2_tic_threshold, tic_cv_thre
         var_name="Label",
         value_name="TIC")
 
-    tic_line = px.line(df, x='Filename', y="TIC", title="Total Ion Current", color="Label", line_shape="spline", markers=True)
-    tic_line.update_xaxes(tickfont_size=8)
+    tic_line = px.line(df, x='Filename', y="TIC", title="Total Ion Current", color="Label", line_shape="spline")
+    tic_line.update_xaxes(tickfont_size=6)
     tic_line.update_layout(
             margin=dict(l=20, r=20, t=20, b=20)
     )
@@ -302,7 +305,7 @@ def tic_plots(mzml_df, tic_cv, ms1_tic_threshold, ms2_tic_threshold, tic_cv_thre
         tic_report_params['tic_ms1_outlier_description'] = f"{mzml_df['MS1 TIC Outliers'].tolist().count(1)} outliers were found. The following files have been detected as outliers: {ms1_outliers_filenames}"
 
         tic_ms1_outlier = px.scatter(mzml_df, x='Filename', y='MS1 TIC', color='MS1 TIC Outliers')
-        tic_ms1_outlier.update_xaxes(tickfont_size=8)
+        tic_ms1_outlier.update_xaxes(tickfont_size=6)
         tic_ms1_outlier.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
         )
@@ -317,7 +320,7 @@ def tic_plots(mzml_df, tic_cv, ms1_tic_threshold, ms2_tic_threshold, tic_cv_thre
         tic_report_params['tic_ms2_outlier_description'] = f"{mzml_df['MS2 TIC Outliers'].tolist().count(1)} outliers were found. The following files have been detected as outliers: {ms2_outliers_filenames}"
 
         tic_ms2_outlier = px.scatter(mzml_df, x='Filename', y='MS2 TIC', color='MS2 TIC Outliers')
-        tic_ms2_outlier.update_xaxes(tickfont_size=8)
+        tic_ms2_outlier.update_xaxes(tickfont_size=6)
         tic_ms2_outlier.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
         )
@@ -330,7 +333,7 @@ def tic_plots(mzml_df, tic_cv, ms1_tic_threshold, ms2_tic_threshold, tic_cv_thre
         tic_report_params['tic_ms_cv_description'] = "CV is calculated across samples in each given group"
 
         ms1tic_bar = px.bar(tic_cv, x='Group', y="MS1 TIC CV%", title="MS1 Total Ion Current", color="Group", color_discrete_sequence=color_list)
-        ms1tic_bar.update_xaxes(tickfont_size=8)
+        ms1tic_bar.update_xaxes(tickfont_size=6)
         ms1tic_bar.add_hline(y=tic_cv_threshold, line_dash="dot", annotation_text=f"TIC CV Threshold = {tic_cv_threshold}")
         ms1tic_bar.update_layout(
             margin=dict(l=20, r=20, t=20, b=20),
@@ -346,7 +349,7 @@ def tic_plots(mzml_df, tic_cv, ms1_tic_threshold, ms2_tic_threshold, tic_cv_thre
             tic_report_params['tic_ms1_cv_description'] = f'The following groups have not met the CV Threshold: {failed_ms1_groups}. This indicates that ...'
 
         ms2tic_bar = px.bar(tic_cv, x='Group', y="MS2 TIC CV%", title="MS2 Total Ion Current", color="Group", color_discrete_sequence=color_list)
-        ms2tic_bar.update_xaxes(tickfont_size=8)
+        ms2tic_bar.update_xaxes(tickfont_size=6)
         ms2tic_bar.add_hline(y=tic_cv_threshold, line_dash="dot", annotation_text=f"TIC CV Threshold = {tic_cv_threshold}")
         ms2tic_bar.update_layout(
             margin=dict(l=20, r=20, t=20, b=20),
@@ -367,8 +370,8 @@ def spectral_plot(mzml_df):
 
     df = mzml_df[['Filename','MS2/MS1 Spectra', 'MS2/MS1 Spectra Outliers']]
 
-    count_line = px.line(df, x='Filename', y="MS2/MS1 Spectra", title="MS2/MS1 Spectra Count", line_shape="spline", markers=True)
-    count_line.update_xaxes(tickfont_size=8)
+    count_line = px.line(df, x='Filename', y="MS2/MS1 Spectra", title="MS2/MS1 Spectra Count", line_shape="spline")
+    count_line.update_xaxes(tickfont_size=6)
     count_line.update_layout(
         margin=dict(l=20, r=20, t=20, b=20),
     )
@@ -384,7 +387,7 @@ def spectral_plot(mzml_df):
         spectra_report_params['ms2_ms1_spectral_ratio_outlier_description'] = f"{mzml_df['MS2/MS1 Spectra Outliers'].tolist().count(1)} outliers were found. The following files have been detected as outliers: {spectra_outliers_filenames}"
 
         ms2_ms1_spectral_ratio_outlier = px.scatter(mzml_df, x='Filename', y='MS2/MS1 Spectra', color='MS2/MS1 Spectra Outliers')
-        ms2_ms1_spectral_ratio_outlier.update_xaxes(tickfont_size=8)
+        ms2_ms1_spectral_ratio_outlier.update_xaxes(tickfont_size=6)
         ms2_ms1_spectral_ratio_outlier.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
         )
@@ -399,11 +402,12 @@ def basepeak_graph(mzml_df, max_basepeak_intensity_threshold, groups, groupwise_
 
     if groupwise_comparison:
         mzml_df['Group'] = mzml_df['Filename'].apply(groupname, args=[groups,])
+        mzml_df = mzml_df.sort_values('Group')
         bp_bar = px.bar(mzml_df, x='Filename', y="Max Basepeak Intensity", title="Max Basepeak Intensity", color="Group", color_discrete_sequence=color_list)
     else:
         bp_bar = px.bar(mzml_df, x='Filename', y="Max Basepeak Intensity", title="Max Basepeak Intensity")
 
-    bp_bar.update_xaxes(tickfont_size=8)
+    bp_bar.update_xaxes(tickfont_size=6)
     bp_bar.update_layout(
         margin=dict(l=20, r=20, t=20, b=20),
     )
@@ -423,7 +427,7 @@ def basepeak_graph(mzml_df, max_basepeak_intensity_threshold, groups, groupwise_
         basepeak_report_params['max_basepeak_intensity_outlier_description'] = f"{mzml_df['Max Basepeak Intensity Outliers'].tolist().count(1)} outliers were found. The following files have been detected as outliers: {bp_outliers_filenames}"
 
         max_basepeak_intensity_outlier = px.scatter(mzml_df, x='Filename', y='Max Basepeak Intensity', color='Max Basepeak Intensity Outliers')
-        max_basepeak_intensity_outlier.update_xaxes(tickfont_size=8)
+        max_basepeak_intensity_outlier.update_xaxes(tickfont_size=6)
         max_basepeak_intensity_outlier.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
         )
@@ -464,7 +468,6 @@ def calculate_idfree_metrics(out_dir, reportname, mzml_dir, groupwise_comparison
         mzml_df = pd.concat([mzml_df, extracted_df], ignore_index=True)
         time.sleep(100)
 
-
     #applying thresholds + outlier detection
     mzml_df = apply_idfree_thresholds(mzml_df, mzml_threshold_dict)
     mzml_df = outlier_detection(mzml_df)
@@ -473,6 +476,8 @@ def calculate_idfree_metrics(out_dir, reportname, mzml_dir, groupwise_comparison
         tic_cv = calculate_tic_cv(mzml_df, groups, mzml_threshold_dict['TIC CV Threshold'])
     else:
         tic_cv = ""
+
+    logging.info(f"Saving ID-Free QC Report to {out_dir}/{reportname}_ID-Free_QC_Report.xlsx")
 
     #saving dataframes to excel document
     writer = pd.ExcelWriter(f"{out_dir}/{reportname}_ID-Free_QC_Report.xlsx", engine='xlsxwriter')
