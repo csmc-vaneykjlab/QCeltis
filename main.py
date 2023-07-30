@@ -122,15 +122,15 @@ def main():
 
         #checking if directory exists
         if not os.path.exists(mzml_dir):
-            print(f"Given MzML Directory path doesn't exist = {mzml_dir}")
-            logging.error(f"Given MzML Directory path doesn't exist = {mzml_dir}")
+            print(f"ERROR: Given MzML Directory path doesn't exist = {mzml_dir}")
+            logging.error(f"ERROR: Given MzML Directory path doesn't exist = {mzml_dir}")
             sys.exit(1)
         else:
             logging.info(f"mzML files found under {mzml_dir} will be used to extract ID-Free QC Metrics")
 
         if grouping_file:
             if not tic_cv_threshold:
-                logging.error("TIC CV threshold is not provided, no MS1 and MS2 TIC comparison between groups can be performed. Please provide TIC CV threshold")
+                logging.error("ERROR: TIC CV threshold is not provided, no MS1 and MS2 TIC comparison between groups can be performed. Please provide TIC CV threshold")
                 sys.exit(1)
 
     else:
@@ -178,7 +178,7 @@ def main():
             logging.info(f"{grouping_file} will be used for comparing samples across the following groups: {groups}")
 
             if not tic_cv_threshold:
-                logging.error("TIC CV threshold is not provided, no peptide TIC comparison between groups can be performed. Please provide TIC CV threshold")
+                logging.error("ERROR: TIC CV threshold is not provided, no peptide TIC comparison between groups can be performed. Please provide TIC CV threshold")
                 sys.exit(1)
 
         if protein_threshold:
@@ -221,7 +221,7 @@ def main():
             logging.info(f"{grouping_file} will be used for comparing samples across the following groups: {groups}")
 
             if not tic_cv_threshold:
-                logging.error("TIC CV threshold is not provided, no precursor TIC comparison between groups can be performed. Please provide TIC CV threshold")
+                logging.error("ERROR: TIC CV threshold is not provided, no precursor TIC comparison between groups can be performed. Please provide TIC CV threshold")
                 sys.exit(1)
 
         if precursor_threshold:
@@ -252,7 +252,7 @@ def main():
 
         if grouping_file:
             if not tic_cv_threshold:
-                logging.error("TIC CV threshold is not provided, no precursor TIC comparison between groups can be performed. Please provide TIC CV threshold")
+                logging.error("ERROR: TIC CV threshold is not provided, no precursor TIC comparison between groups can be performed. Please provide TIC CV threshold")
                 sys.exit(1)
 
     else:

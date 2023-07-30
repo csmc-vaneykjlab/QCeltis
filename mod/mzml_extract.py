@@ -40,6 +40,7 @@ def mzml_extract(mzml_path, mzml_data):
 
     logging.info(f"Extracting file: {mzml_path}")
 
+    data_dict = {}
     basepeak_intensity_list = []
     ms1_spectra = 0
     ms2_spectra = 0
@@ -49,22 +50,48 @@ def mzml_extract(mzml_path, mzml_data):
     msrun = pymzml.run.Reader(mzml_path)
 
     for spectrum in msrun:
-
         #getting basepeak intensity
-        basepeak_intensity_value = spectrum['base peak intensity']
-        basepeak_intensity_list.append(basepeak_intensity_value)
+        if 'base peak intensity' in spectrum: #MS:1000505 --> accession for basepeak intensity
+            basepeak_intensity_value = spectrum['base peak intensity']
+            basepeak_intensity_list.append(basepeak_intensity_value)
+        #getting spectra count + tic
+        if 'ms level' and 'total ion current' in spectrum:
+            #getting spectra and tic from proteowizard converted mzML files
+            if isinstance(spectrum['ms level'], list):
+                if int(list(set(spectrum['ms level']))[0]) == 1:
+                    ms1_spectra += 1
+                    ms1_tic += spectrum['total ion current']
+                if int(list(set(spectrum['ms level']))[0]) == 2:
+                    ms2_spectra += 1
+                    ms2_tic += spectrum['total ion current']
+            else: #for thermoconverter converted mzML files
+                if spectrum['ms level'] == 1:
+                    ms1_spectra += 1
+                    ms1_tic += spectrum['total ion current']
+                if spectrum['ms level'] == 2:
+                    ms2_spectra += 1
+                    ms2_tic += spectrum['total ion current']
 
-        #getting spectra count + tic (check the for the exception in tic parser - why??)
-        if spectrum['ms level'] == 1:
-            ms1_spectra += 1
-            ms1_tic += spectrum['total ion current']
+    data_dict['Filename'] = os.path.split(mzml_path)[1]
 
-        if spectrum['ms level'] == 2:
-            ms2_spectra += 1
-            ms2_tic += spectrum['total ion current']
+    #throwing an error if no spectra can be extracted from the mzML file
+    if ms1_spectra == 0 and ms2_spectra == 0:
+        logging.error(f"Not able to read spectra in the mzML file. Please remove this file: {mzml_path} from all inputs.")
+        sys.exit(1)
 
-    data_dict = {"Filename": os.path.split(mzml_path)[1], "MS1 TIC": ms1_tic, "MS2 TIC": ms2_tic, "MS1 Spectra": ms1_spectra, "MS2 Spectra": ms2_spectra, "MS2/MS1 Spectra": (ms2_spectra/ms1_spectra),"Max Basepeak Intensity": max(basepeak_intensity_list)}
-    #print(f"File: {mzml_path}, data {data_dict}")
+    else:
+        data_dict['MS1 Spectra'] = ms1_spectra
+        data_dict['MS2 Spectra'] = ms2_spectra
+        data_dict['MS2/MS1 Spectra'] = (ms2_spectra/ms1_spectra)
+
+    if ms1_tic != 0:
+        data_dict['MS1 TIC'] = ms1_tic
+
+    if ms2_tic != 0:
+        data_dict['MS2 TIC'] = ms2_tic
+
+    if len(basepeak_intensity_list) != 0:
+        data_dict['Max Basepeak Intensity'] = max(basepeak_intensity_list)
 
     mzml_data.append(data_dict)
 
@@ -86,17 +113,16 @@ def get_mzml_info_dataframe(mzml_list):
         job.join()
 
     mzml_dataframe = pd.DataFrame(mzml_data)
-
     mzml_dataframe = mzml_dataframe.sort_values("Filename")
 
     return mzml_dataframe
 
 def apply_idfree_thresholds(mzml_df, mzml_threshold_dict):
 
-    if mzml_threshold_dict['MS1 TIC Threshold']:
+    if mzml_threshold_dict['MS1 TIC Threshold'] and 'MS1 TIC' in mzml_df.columns.tolist():
         mzml_df[f"MS1TIC QC Threshold = {mzml_threshold_dict['MS1 TIC Threshold']}"] = mzml_df['MS1 TIC'].apply(check_threshold, args=[mzml_threshold_dict['MS1 TIC Threshold'],])
 
-    if mzml_threshold_dict['MS2 TIC Threshold']:
+    if mzml_threshold_dict['MS2 TIC Threshold'] and 'MS2 TIC' in mzml_df.columns.tolist():
         mzml_df[f"MS2TIC QC Threshold = {mzml_threshold_dict['MS2 TIC Threshold']}"] = mzml_df['MS2 TIC'].apply(check_threshold, args=[mzml_threshold_dict['MS2 TIC Threshold'],])
 
     if mzml_threshold_dict['MS1 Spectra Threshold']:
@@ -105,7 +131,7 @@ def apply_idfree_thresholds(mzml_df, mzml_threshold_dict):
     if mzml_threshold_dict['MS2 Spectra Threshold']:
         mzml_df[f"MS2Spectra QC Threshold = {mzml_threshold_dict['MS2 Spectra Threshold']}"] = mzml_df['MS2 Spectra'].apply(check_threshold, args=[mzml_threshold_dict['MS2 Spectra Threshold'],])
 
-    if mzml_threshold_dict['Max Basepeak Intensity Threshold']:
+    if mzml_threshold_dict['Max Basepeak Intensity Threshold'] and 'Max Basepeak Intensity' in mzml_df.columns.tolist():
         mzml_df[f"Max Basepeak Intensity QC Threshold = {mzml_threshold_dict['Max Basepeak Intensity Threshold']}"] = mzml_df['Max Basepeak Intensity'].apply(check_threshold, args=[mzml_threshold_dict['Max Basepeak Intensity Threshold'],])
 
     return mzml_df
@@ -156,34 +182,35 @@ def iqr_outliers(df, colname):
 
 def outlier_detection(mzml_df, zscore_threshold = 2):
 
-    cols = ['MS1 TIC', 'MS2 TIC', 'MS2/MS1 Spectra', 'Max Basepeak Intensity']
+    idfree_metrics = ['MS1 TIC', 'MS2 TIC', 'MS2/MS1 Spectra', 'Max Basepeak Intensity']
 
-    for colname in cols:
+    for colname in mzml_df.columns.tolist():
+        if colname in idfree_metrics:
 
-        #check normality and decide outlier method
-        logging.info(f"Checking outliers for {colname}")
+            #check normality and decide outlier method
+            logging.info(f"Checking outliers for {colname}")
 
-        if check_normality(mzml_df[colname].tolist()) == "z-score":
+            if check_normality(mzml_df[colname].tolist()) == "z-score":
 
-            logging.info(f"{colname} values are normally distributed, z-score outlier detection will be used")
-            logging.info(f"Z-score Threshold has been set to {zscore_threshold}")
+                logging.info(f"{colname} values are normally distributed, z-score outlier detection will be used")
+                logging.info(f"Z-score Threshold has been set to {zscore_threshold}")
 
-            mzml_df, num_outliers = zscore_outliers(mzml_df, colname, zscore_threshold)
+                mzml_df, num_outliers = zscore_outliers(mzml_df, colname, zscore_threshold)
 
-            if num_outliers == 0:
-                logging.info(f"No outliers found for {colname}")
-            else:
-                logging.info(f"{num_outliers} outliers were found for {colname}")
+                if num_outliers == 0:
+                    logging.info(f"No outliers found for {colname}")
+                else:
+                    logging.info(f"{num_outliers} outliers were found for {colname}")
 
-        elif check_normality(mzml_df[colname].tolist()) == "iqr":
+            elif check_normality(mzml_df[colname].tolist()) == "iqr":
 
-            logging.info(f"{colname} values are not normally distributed, iqr outlier detection will be used")
-            mzml_df, num_outliers = iqr_outliers(mzml_df, colname)
+                logging.info(f"{colname} values are not normally distributed, iqr outlier detection will be used")
+                mzml_df, num_outliers = iqr_outliers(mzml_df, colname)
 
-            if num_outliers == 0:
-                logging.info(f"No outliers found for {colname}")
-            else:
-                logging.info(f"{num_outliers} outliers were found for {colname}")
+                if num_outliers == 0:
+                    logging.info(f"No outliers found for {colname}")
+                else:
+                    logging.info(f"{num_outliers} outliers were found for {colname}")
 
     return mzml_df
 
@@ -211,15 +238,17 @@ def calculate_tic_cv(mzml_df, groups, tic_cv_threshold):
 
 def get_sample_qc(mzml_df, mzml_threshold_dict):
 
-    if mzml_threshold_dict['MS1 TIC Threshold']:
-        mzml_df['MS1 TIC Sample QC Status'] = mzml_df[['MS1 TIC Outliers',f"MS1TIC QC Threshold = {mzml_threshold_dict['MS1 TIC Threshold']}"]].apply(get_idfree_sample_qc_status, axis=1)
-    else:
-        mzml_df['MS1 TIC Sample QC Status'] =  mzml_df['MS1 TIC Outliers'].apply(only_outlier_status)
+    if 'MS1 TIC' in mzml_df.columns.tolist():
+        if mzml_threshold_dict['MS1 TIC Threshold']:
+            mzml_df['MS1 TIC Sample QC Status'] = mzml_df[['MS1 TIC Outliers',f"MS1TIC QC Threshold = {mzml_threshold_dict['MS1 TIC Threshold']}"]].apply(get_idfree_sample_qc_status, axis=1)
+        else:
+            mzml_df['MS1 TIC Sample QC Status'] =  mzml_df['MS1 TIC Outliers'].apply(only_outlier_status)
 
-    if mzml_threshold_dict['MS2 TIC Threshold']:
-        mzml_df['MS2 TIC Sample QC Status'] = mzml_df[['MS2 TIC Outliers',f"MS2TIC QC Threshold = {mzml_threshold_dict['MS2 TIC Threshold']}"]].apply(get_idfree_sample_qc_status, axis=1)
-    else:
-        mzml_df['MS2 TIC Sample QC Status'] = mzml_df['MS2 TIC Outliers'].apply(only_outlier_status)
+    if 'MS2 TIC' in mzml_df.columns.tolist():
+        if mzml_threshold_dict['MS2 TIC Threshold']:
+            mzml_df['MS2 TIC Sample QC Status'] = mzml_df[['MS2 TIC Outliers',f"MS2TIC QC Threshold = {mzml_threshold_dict['MS2 TIC Threshold']}"]].apply(get_idfree_sample_qc_status, axis=1)
+        else:
+            mzml_df['MS2 TIC Sample QC Status'] = mzml_df['MS2 TIC Outliers'].apply(only_outlier_status)
 
     if mzml_threshold_dict['MS1 Spectra Threshold']:
         mzml_df['MS1 Spectra QC Status'] = mzml_df[['MS2/MS1 Spectra Outliers',f"MS1Spectra QC Threshold = {mzml_threshold_dict['MS1 Spectra Threshold']}"]].apply(get_idfree_sample_qc_status, axis=1)
@@ -231,12 +260,19 @@ def get_sample_qc(mzml_df, mzml_threshold_dict):
     else:
         mzml_df['MS2 Spectra QC Status'] = mzml_df['MS2/MS1 Spectra Outliers'].apply(only_outlier_status)
 
-    if mzml_threshold_dict['Max Basepeak Intensity Threshold']:
-        mzml_df['Max Basepeak Intensity QC Status'] = mzml_df[['Max Basepeak Intensity Outliers', f"Max Basepeak Intensity QC Threshold = {mzml_threshold_dict['Max Basepeak Intensity Threshold']}"]].apply(get_idfree_sample_qc_status, axis=1)
-    else:
-        mzml_df['Max Basepeak Intensity QC Status'] = mzml_df['Max Basepeak Intensity Outliers'].apply(only_outlier_status)
+    if 'Max Basepeak Intensity' in mzml_df.columns.tolist():
+        if mzml_threshold_dict['Max Basepeak Intensity Threshold']:
+            mzml_df['Max Basepeak Intensity QC Status'] = mzml_df[['Max Basepeak Intensity Outliers', f"Max Basepeak Intensity QC Threshold = {mzml_threshold_dict['Max Basepeak Intensity Threshold']}"]].apply(get_idfree_sample_qc_status, axis=1)
+        else:
+            mzml_df['Max Basepeak Intensity QC Status'] = mzml_df['Max Basepeak Intensity Outliers'].apply(only_outlier_status)
 
-    mzml_df = mzml_df[['Filename', 'MS1 TIC Sample QC Status', 'MS2 TIC Sample QC Status', 'MS1 Spectra QC Status', 'MS2 Spectra QC Status', 'Max Basepeak Intensity QC Status']]
+    sample_qc_cols = ['MS1 TIC Sample QC Status', 'MS2 TIC Sample QC Status', 'MS1 Spectra QC Status', 'MS2 Spectra QC Status', 'Max Basepeak Intensity QC Status']
+    matched_sample_qc_cols = []
+    for colname in mzml_df.columns.tolist():
+        if colname in sample_qc_cols:
+            matched_sample_qc_cols.append(colname)
+
+    mzml_df = mzml_df[['Filename'] + matched_sample_qc_cols]
 
     return mzml_df
 
@@ -253,11 +289,12 @@ def get_idfree_grouped_df(mzml_sample_df, tic_cv, tic_cv_threshold, groups):
         col_dict = {}
 
         for colname in ['MS1 TIC Sample QC Status', 'MS2 TIC Sample QC Status', 'MS1 Spectra QC Status', 'MS2 Spectra QC Status', 'Max Basepeak Intensity QC Status']:
-            group_colname = colname.replace("Sample", "Group")
-            if not list(set(group_subset[colname].tolist())) == "PASS":
-                col_dict[group_colname] = "FAIL"
-            else:
-                col_dict[group_colname] = "PASS"
+            if colname in group_subset.columns.tolist():
+                group_colname = colname.replace("Sample", "Group")
+                if not list(set(group_subset[colname].tolist())) == "PASS":
+                    col_dict[group_colname] = "FAIL"
+                else:
+                    col_dict[group_colname] = "PASS"
 
         group_status_dict[group] = col_dict
 
@@ -440,9 +477,19 @@ def basepeak_graph(mzml_df, max_basepeak_intensity_threshold, groups, groupwise_
 
 def create_graphs(mzml_df, tic_cv, groupwise_comparison, groups, mzml_threshold_dict):
 
-    tic_report_params = tic_plots(mzml_df, tic_cv, mzml_threshold_dict['MS1 TIC Threshold'], mzml_threshold_dict['MS2 TIC Threshold'], mzml_threshold_dict['TIC CV Threshold'], groupwise_comparison, color_list)
+    if 'MS1 TIC' and 'MS2 TIC' in mzml_df.columns.tolist():
+        tic_report_params = tic_plots(mzml_df, tic_cv, mzml_threshold_dict['MS1 TIC Threshold'], mzml_threshold_dict['MS2 TIC Threshold'], mzml_threshold_dict['TIC CV Threshold'], groupwise_comparison, color_list)
+    else:
+        logging.info("No TIC information was extracted from provided mzML files, no plots for TIC will be generated")
+        tic_report_params = {}
+
+    if 'Max Basepeak Intensity' in mzml_df.columns.tolist():
+        basepeak_report_params = basepeak_graph(mzml_df, mzml_threshold_dict['Max Basepeak Intensity Threshold'], groups, groupwise_comparison, color_list)
+    else:
+        logging.info("No Basepeak Intensity information was extracted from provided mzML files, no plots for Max Basepeak Intensity will be generated")
+        basepeak_report_params = {}
+
     spectra_report_params = spectral_plot(mzml_df)
-    basepeak_report_params = basepeak_graph(mzml_df, mzml_threshold_dict['Max Basepeak Intensity Threshold'], groups, groupwise_comparison, color_list)
 
     idfree_report_parameters = dict(tuple(tic_report_params.items()) + tuple(spectra_report_params.items()) + tuple(basepeak_report_params.items()))
 
@@ -455,8 +502,8 @@ def calculate_idfree_metrics(out_dir, reportname, mzml_dir, groupwise_comparison
     #getting list of mzML files
     mzml_list = get_mzml_list(mzml_dir)
 
-    if len(mzml_list) > 50:
-        mzml_list_chunks = [mzml_list[x:x+50] for x in range(0, len(mzml_list), 50)]
+    if len(mzml_list) > 30:
+        mzml_list_chunks = [mzml_list[x:x+30] for x in range(0, len(mzml_list), 30)]
     else:
         mzml_list_chunks = [mzml_list]
 
