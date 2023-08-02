@@ -14,7 +14,7 @@ from jinja2 import Environment, FileSystemLoader
 from scipy.stats import shapiro
 import time
 
-from mod.general_functions import cv, cv_status, check_threshold, groupname, label_outlier, get_idfree_sample_qc_status, only_outlier_status, color_list
+from mod.general_functions import cv, cv_status, check_threshold, groupname, label_outlier, get_outlier_and_cv_status, only_outlier_status, get_series_status, color_list
 
 #-------------------------------------------------------------------------- FUNCTIONS ---------------------------------------------------------------------------
 
@@ -236,33 +236,33 @@ def calculate_tic_cv(mzml_df, groups, tic_cv_threshold):
 
     return tic_cv
 
-def get_sample_qc(mzml_df, mzml_threshold_dict):
+def get_sample_qc(mzml_df, mzml_threshold_dict, groupwise_comparison, groups):
 
     if 'MS1 TIC' in mzml_df.columns.tolist():
         if mzml_threshold_dict['MS1 TIC Threshold']:
-            mzml_df['MS1 TIC Sample QC Status'] = mzml_df[['MS1 TIC Outliers',f"MS1TIC QC Threshold = {mzml_threshold_dict['MS1 TIC Threshold']}"]].apply(get_idfree_sample_qc_status, axis=1)
+            mzml_df['MS1 TIC Sample QC Status'] = mzml_df[['MS1 TIC Outliers',f"MS1TIC QC Threshold = {mzml_threshold_dict['MS1 TIC Threshold']}"]].apply(get_outlier_and_cv_status, axis=1)
         else:
             mzml_df['MS1 TIC Sample QC Status'] =  mzml_df['MS1 TIC Outliers'].apply(only_outlier_status)
 
     if 'MS2 TIC' in mzml_df.columns.tolist():
         if mzml_threshold_dict['MS2 TIC Threshold']:
-            mzml_df['MS2 TIC Sample QC Status'] = mzml_df[['MS2 TIC Outliers',f"MS2TIC QC Threshold = {mzml_threshold_dict['MS2 TIC Threshold']}"]].apply(get_idfree_sample_qc_status, axis=1)
+            mzml_df['MS2 TIC Sample QC Status'] = mzml_df[['MS2 TIC Outliers',f"MS2TIC QC Threshold = {mzml_threshold_dict['MS2 TIC Threshold']}"]].apply(get_outlier_and_cv_status, axis=1)
         else:
             mzml_df['MS2 TIC Sample QC Status'] = mzml_df['MS2 TIC Outliers'].apply(only_outlier_status)
 
     if mzml_threshold_dict['MS1 Spectra Threshold']:
-        mzml_df['MS1 Spectra QC Status'] = mzml_df[['MS2/MS1 Spectra Outliers',f"MS1Spectra QC Threshold = {mzml_threshold_dict['MS1 Spectra Threshold']}"]].apply(get_idfree_sample_qc_status, axis=1)
+        mzml_df['MS1 Spectra QC Status'] = mzml_df[['MS2/MS1 Spectra Outliers',f"MS1Spectra QC Threshold = {mzml_threshold_dict['MS1 Spectra Threshold']}"]].apply(get_outlier_and_cv_status, axis=1)
     else:
         mzml_df['MS1 Spectra QC Status'] = mzml_df['MS2/MS1 Spectra Outliers'].apply(only_outlier_status)
 
     if mzml_threshold_dict['MS2 Spectra Threshold']:
-        mzml_df['MS2 Spectra QC Status'] = mzml_df[['MS2/MS1 Spectra Outliers',f"MS2Spectra QC Threshold = {mzml_threshold_dict['MS2 Spectra Threshold']}"]].apply(get_idfree_sample_qc_status, axis=1)
+        mzml_df['MS2 Spectra QC Status'] = mzml_df[['MS2/MS1 Spectra Outliers',f"MS2Spectra QC Threshold = {mzml_threshold_dict['MS2 Spectra Threshold']}"]].apply(get_outlier_and_cv_status, axis=1)
     else:
         mzml_df['MS2 Spectra QC Status'] = mzml_df['MS2/MS1 Spectra Outliers'].apply(only_outlier_status)
 
     if 'Max Basepeak Intensity' in mzml_df.columns.tolist():
         if mzml_threshold_dict['Max Basepeak Intensity Threshold']:
-            mzml_df['Max Basepeak Intensity QC Status'] = mzml_df[['Max Basepeak Intensity Outliers', f"Max Basepeak Intensity QC Threshold = {mzml_threshold_dict['Max Basepeak Intensity Threshold']}"]].apply(get_idfree_sample_qc_status, axis=1)
+            mzml_df['Max Basepeak Intensity QC Status'] = mzml_df[['Max Basepeak Intensity Outliers', f"Max Basepeak Intensity QC Threshold = {mzml_threshold_dict['Max Basepeak Intensity Threshold']}"]].apply(get_outlier_and_cv_status, axis=1)
         else:
             mzml_df['Max Basepeak Intensity QC Status'] = mzml_df['Max Basepeak Intensity Outliers'].apply(only_outlier_status)
 
@@ -273,6 +273,7 @@ def get_sample_qc(mzml_df, mzml_threshold_dict):
             matched_sample_qc_cols.append(colname)
 
     mzml_df = mzml_df[['Filename'] + matched_sample_qc_cols]
+    mzml_df = mzml_df.sort_values('Filename')
 
     return mzml_df
 
@@ -291,10 +292,10 @@ def get_idfree_grouped_df(mzml_sample_df, tic_cv, tic_cv_threshold, groups):
         for colname in ['MS1 TIC Sample QC Status', 'MS2 TIC Sample QC Status', 'MS1 Spectra QC Status', 'MS2 Spectra QC Status', 'Max Basepeak Intensity QC Status']:
             if colname in group_subset.columns.tolist():
                 group_colname = colname.replace("Sample", "Group")
-                if not list(set(group_subset[colname].tolist())) == "PASS":
-                    col_dict[group_colname] = "FAIL"
-                else:
+                if list(set(group_subset[colname].tolist())) == ["PASS"]:
                     col_dict[group_colname] = "PASS"
+                else:
+                    col_dict[group_colname] = "FAIL"
 
         group_status_dict[group] = col_dict
 
@@ -304,6 +305,16 @@ def get_idfree_grouped_df(mzml_sample_df, tic_cv, tic_cv_threshold, groups):
     grouped_df.rename(columns={'index':'Group'}, inplace=True)
 
     grouped_df = pd.merge(grouped_df, tic_group_df, on='Group')
+
+    if 'MS1 TIC Group QC Status' in grouped_df.columns.tolist():
+        grouped_df['MS1 TIC Group QC Status'] = grouped_df[['MS1 TIC Group QC Status', f'MS1 TIC CV% Threshold = {tic_cv_threshold}']].apply(get_series_status, axis=1)
+        grouped_df = grouped_df.drop(f'MS1 TIC CV% Threshold = {tic_cv_threshold}', axis=1)
+
+    if 'MS2 TIC Group QC Status' in grouped_df.columns.tolist():
+        grouped_df['MS2 TIC Group QC Status'] = grouped_df[['MS2 TIC Group QC Status', f'MS2 TIC CV% Threshold = {tic_cv_threshold}']].apply(get_series_status, axis=1)
+        grouped_df = grouped_df.drop(f'MS2 TIC CV% Threshold = {tic_cv_threshold}', axis=1)
+
+    grouped_df = grouped_df.sort_values('Group')
 
     return grouped_df
 

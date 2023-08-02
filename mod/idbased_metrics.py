@@ -362,7 +362,7 @@ def selected_peps(df_level, level, coverage_threshold, filenames, irtlabel, pept
 
     return (irt_level, irt_plots, selected_pep_df)
 
-def get_sample_df(protein_level, peptide_level, precursor_level, pt_sample_df, pep_sample_df, pre_sample_df, threshold_dict):
+def get_sample_df(protein_level, peptide_level, precursor_level, pt_sample_df, pep_sample_df, pre_sample_df, threshold_dict, groupwise_comparison, groups):
 
     if protein_level and peptide_level and precursor_level and threshold_dict['Protein Threshold'] and threshold_dict['Peptide Threshold'] and threshold_dict['Precursor Threshold']:
         overall_sample_df = pd.merge(pt_sample_df, pep_sample_df, on="Filename")
@@ -378,13 +378,18 @@ def get_sample_df(protein_level, peptide_level, precursor_level, pt_sample_df, p
         overall_sample_df = pd.merge(pep_sample_df, pre_sample_df, on="Filename")
 
     elif protein_level and threshold_dict['Protein Threshold']:
+        pt_sample_df = pt_sample_df.sort_values('Filename')
         return pt_sample_df
 
     elif peptide_level and threshold_dict['Peptide Threshold']:
+        pep_sample_df = pep_sample_df.sort_values('Filename')
         return pep_sample_df
 
     elif precursor_level and threshold_dict['Precursor Threshold']:
+        pre_sample_df = pre_sample_df.sort_values('Filename')
         return pre_sample_df
+
+    overall_sample_df = overall_sample_df.sort_values('Filename')
 
     return overall_sample_df
 
@@ -404,13 +409,18 @@ def get_overall_df(protein_level, peptide_level, precursor_level, pt_group_df, p
         overall_group_df = pd.merge(pep_group_df, pre_group_df, on="Group")
 
     elif protein_level:
+        pt_group_df = pt_group_df.sort_values('Group')
         return pt_group_df
 
     elif peptide_level:
+        pep_group_df = pep_group_df.sort_values('Group')
         return pep_group_df
 
     elif precursor_level:
+        pre_group_df = pre_group_df.sort_values('Group')
         return pre_group_df
+
+    overall_group_df = overall_group_df.sort_values('Group')
 
     return overall_group_df
 
@@ -1028,7 +1038,7 @@ def calculate_idbased_metrics(out_dir, reportname, input_dict, threshold_dict, g
 
 
     #overall sample dataframe
-    overall_sample_df = get_sample_df(input_dict['Protein Level'], input_dict['Peptide Level'], input_dict['Precursor Level'], pt_sample_df, pep_sample_df, pre_sample_df, threshold_dict)
+    overall_sample_df = get_sample_df(input_dict['Protein Level'], input_dict['Peptide Level'], input_dict['Precursor Level'], pt_sample_df, pep_sample_df, pre_sample_df, threshold_dict, groupwise_comparison, groups)
 
     #overall grouped dataframe
     if groupwise_comparison:

@@ -12,7 +12,7 @@ from collections import Counter
 
 #-------------------------------------------------------------------------- VARIABLES --------------------------------------------------------------------------
 
-#50 unique colors 
+#50 unique colors
 color_list = [
     "#1f77b4", "#2ca02c", "#d62728", "#ff7f0e", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf",
     "#aec7e8", "#ffbb78", "#98df8a", "#ff9896", "#c5b0d5", "#c49c94", "#f7b6d2", "#c7c7c7", "#dbdb8d", "#9edae5",
@@ -265,7 +265,7 @@ def label_outlier(value, outliers):
         else:
             return 0
 
-def get_idfree_sample_qc_status(series):
+def get_outlier_and_cv_status(series):
     outlier = series[0]
     threshold = series[1]
 
@@ -281,6 +281,27 @@ def only_outlier_status(outlier_value):
         return "FAIL"
     else:
         return "PASS"
+
+def get_series_status(series):
+
+    if series[0] == "FAIL":
+        return "FAIL"
+    elif series[1] == "FAIL":
+        return "FAIL"
+    else:
+        return "PASS"
+
+def get_overall_qc_status(series, cols_len):
+
+    status_list = []
+    for i in range(cols_len):
+        status_list.append(series[i])
+
+    if list(set(status_list)) == ['PASS']:
+        return pd.Series(['PASS',f'0 out of {cols_len} metrics'])
+    else:
+        failed = status_list.count('FAIL')
+        return pd.Series(['FAIL',f'{failed} out of {cols_len} metrics'])
 
 #adding a function to help check the range of the input values
 def int_range(min_value, max_value):

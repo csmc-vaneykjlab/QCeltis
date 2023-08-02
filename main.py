@@ -8,7 +8,7 @@ import time
 from jinja2 import Environment, FileSystemLoader
 from mod.mzml_extract import calculate_idfree_metrics
 from mod.idbased_metrics import calculate_idbased_metrics
-from mod.general_functions import check_path, check_file, check_grouping_file, get_grouping_dict, check_samples, int_range, check_duplicates
+from mod.general_functions import check_path, check_file, check_grouping_file, get_grouping_dict, check_samples, int_range, check_duplicates, get_overall_qc_status, groupname
 
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -316,8 +316,6 @@ def main():
         input_dict['Protein Level'] = protein_level
         input_dict['Peptide Level'] = peptide_level
         input_dict['Precursor Level'] = precursor_level
-        input_dict['Peptide RT'] = peptide_rt
-        input_dict['Precursor RT'] = precursor_rt
         input_dict['Peptide List'] = peptide_list
 
         threshold_dict = {}
@@ -348,6 +346,16 @@ def main():
         sample_df = idbased_sample_df
         if groupwise_comparison:
             grouped_df = idbased_group_df
+
+    if groupwise_comparison:
+        if not 'Group' in sample_df.columns.tolist():
+            sample_df['Group'] = sample_df['Filename'].apply(groupname, args=[groups,])
+        other_sample_cols = [col for col in sample_df.columns.tolist() if col not in ['Filename','Group']]
+        sample_df = sample_df[['Filename','Group'] + other_sample_cols]
+        sample_df = sample_df.sort_values('Group')
+
+        status_cols = [col for col in grouped_df.columns.tolist() if col != 'Group']
+        grouped_df[['Overall QC Status','QC Fail Score']] = grouped_df[status_cols].apply(get_overall_qc_status, args=[len(status_cols)], axis=1)
 
 
     logging.info(f"Saving Overall QC Report to {out_dir}/{reportname}_QC_Status_Report.xlsx")
@@ -386,5 +394,5 @@ def main():
 if __name__ == '__main__':
     main()
 
-print("--- %s seconds ---" % (time.time() - start_time))
-logging.info("--- %s seconds ---" % (time.time() - start_time))
+print("--- Runtime: %s seconds ---" % (time.time() - start_time))
+logging.info("--- Runtime: %s seconds ---" % (time.time() - start_time))
