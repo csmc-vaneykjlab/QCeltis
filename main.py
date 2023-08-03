@@ -38,8 +38,6 @@ def main():
     parser.add_argument('-pt', '--protein_level', type=str, default=False, help='[Optional] Path to Protein Intensity File')
     parser.add_argument('-pep', '--peptide_level', type=str, default=False, help='[Optional] Path to Peptide Intensity File')
     parser.add_argument('-pre', '--precursor_level', type=str, default=False, help='[Optional] Path to Precursor Intensity File')
-    parser.add_argument('-peprt', '--peptide_rt',  type=str, default=False, help='[Optional] Path to Peptide Retention Time File')
-    parser.add_argument('-prert', '--precursor_rt',type=str,  default=False, help='[Optional] Path to Precursor Retention Time File')
     parser.add_argument('-g', '--grouping_file', type=str, default=False, help='[Optional] Path to Grouping File')
     parser.add_argument('-peplt', '--peptide_list', type=str, default=False, help='[Optional] Path to file containing list of peptides to monitor intensity and RT distribution across samples')
 
@@ -85,8 +83,6 @@ def main():
     protein_level = args.protein_level
     peptide_level = args.peptide_level
     precursor_level = args.precursor_level
-    peptide_rt = args.peptide_rt
-    precursor_rt = args.precursor_rt
     grouping_file = args.grouping_file
     peptide_list = args.peptide_list
 
@@ -268,21 +264,6 @@ def main():
 
         if peptide_list:
             check_file(peptide_list, "Peptide List")
-
-    if precursor_rt or peptide_rt:
-        logging.info("---------------------------------------- Checking Retention Time Inputs --------------------------------------------------------")
-
-    if precursor_rt:
-        check_file(precursor_rt, "precursor")
-        #coverage_threshold
-    else:
-        logging.info("Precursor RT file not provided, no precursor RT metrics will be calculated")
-
-    if peptide_rt:
-        check_file(peptide_rt, "peptide")
-        #coverage_threshold
-    else:
-        logging.info("Peptide RT file not provided, no peptide RT metrics will be calculated")
 
     #check samples across all provided inputs
     logging.info("--------------------------------------------- Checking Samples in Inputs --------------------------------------------- ")

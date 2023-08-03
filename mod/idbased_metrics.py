@@ -447,17 +447,29 @@ def get_quant_plot(quant_df, threshold, level, groupwise_comparison, groups, col
 
     if level == "Protein":
         quant_report_params = {'protein_file': True,
-                            'protein_quant_plot': quant_div,
-                            'protein_quant_description': "Number of Proteins Identified from each sample" }
+                            'protein_quant_plot': quant_div}
+        if threshold:
+            quant_report_params['protein_quant_description'] =  "Number of proteins identified from each sample. Any sample not meeting the threshold could indicate an issue within sample preparation or digestion protocols."
+        else:
+            quant_report_params['protein_quant_description'] = "Number of proteins identified from each sample."
+
     if level == "Peptide":
         quant_report_params = {'peptide_file': True,
-                            'peptide_quant_plot': quant_div,
-                            'peptide_quant_description': "Number of Peptides Identified from each sample" }
+                            'peptide_quant_plot': quant_div}
+
+        if threshold:
+            quant_report_params['peptide_quant_description'] =  "Number of peptides identified from each sample. Any sample not meeting the threshold could indicate an issue within sample preparation or digestion protocols."
+        else:
+            quant_report_params['peptide_quant_description'] = "Number of peptides identified from each sample."
 
     if level == "Precursor":
         quant_report_params = {'precursor_file': True,
-                            'precursor_quant_plot': quant_div,
-                            'precursor_quant_description': "Number of Precursors Identified from each sample" }
+                            'precursor_quant_plot': quant_div}
+
+        if threshold:
+            quant_report_params['precursor_quant_description'] =  "Number of precursors identified from each sample. Any sample not meeting the threshold could indicate an issue within sample preparation or digestion protocols."
+        else:
+            quant_report_params['precursor_quant_description'] = "Number of precursors identified from each sample."
 
     return quant_report_params
 
@@ -480,17 +492,17 @@ def intensity_cv_graphs(cv_sum, grouped_cv, level, groupwise_comparison, cv_perc
     if level == "Protein":
         intensity_cv_report_params = {'protein_file': True,
                             'percentage_proteins_undercv_plot': grouped_cv_plot,
-                            'percentage_proteins_undercv_description': f"Number of Proteins under {cv_percent_threshold}" }
+                            'percentage_proteins_undercv_description': f"Intensity CV% across samples within each group is calculated. Threshold is set to {data_percent_threshold}% of proteins under {cv_percent_threshold} CV%" }
 
     if level == "Peptide":
         intensity_cv_report_params = {'peptide_file': True,
                             'percentage_peptides_undercv_plot': grouped_cv_plot,
-                            'percentage_peptides_undercv_description': f"Number of Peptides under {cv_percent_threshold}" }
+                            'percentage_peptides_undercv_description': f"Intensity CV% across samples within each group is calculated. Threshold is set to {data_percent_threshold}% of peptides under {cv_percent_threshold} CV%" }
 
     if level == "Precursor":
         intensity_cv_report_params = {'precursor_file': True,
                             'percentage_precursors_undercv_plot': grouped_cv_plot,
-                            'percentage_precursors_undercv_description': f"Number of Peptides under {cv_percent_threshold}" }
+                            'percentage_precursors_undercv_description': f"Intensity CV% across samples within each group is calculated. Threshold is set to {data_percent_threshold}% of precursors under {cv_percent_threshold} CV%" }
 
     return intensity_cv_report_params
 
@@ -579,11 +591,11 @@ def common_tic_plot(df_tic, group_tic, level, tic_cv_threshold, groupwise_compar
 
         if level == "Peptide":
             common_tic_report_params['common_peptide_tic_group_cv'] = cv_bar_graph
-            common_tic_report_params['common_peptide_tic_group_cv_description'] = "Common Peptide TIC CV% calculated across groups"
+            common_tic_report_params['common_peptide_tic_group_cv_description'] = f"Common Peptide TIC CV% calculated across groups. A CV% higher than the set threshold of {tic_cv_threshold} indicates an inconsistency within the samples of the group"
 
         if level == "Precursor":
             common_tic_report_params['common_precursor_tic_group_cv'] = cv_bar_graph
-            common_tic_report_params['common_precursor_tic_group_cv_description'] = "Common Precursor TIC CV% calculated across groups"
+            common_tic_report_params['common_precursor_tic_group_cv_description'] = f"Common Precursor TIC CV% calculated across groups. A CV% higher than the set threshold of {tic_cv_threshold} indicates an inconsistency within the samples of the group."
 
     return common_tic_report_params
 
@@ -606,7 +618,7 @@ def miscleavage_plot(dig_df, miscleavage_threshold, groupwise_comparison, groups
     dig_graph = plotly.io.to_html(dig, include_plotlyjs=True, full_html=False, default_width='900px', default_height='450px')
 
     miscleavage_report_params = {'percent_miscleavage_plot': dig_graph,
-                                'percent_miscleavage_description': "0 miscleaved peptides found in each sample."}
+                                'percent_miscleavage_description': f"Number of 0 miscleaved peptides found in each sample. If the number of 0 miscleaved peptides is under the miscleavage threshold value of {miscleavage_threshold}% "}
 
     return miscleavage_report_params
 
@@ -642,11 +654,13 @@ def selected_peptide_plots(df_level, filenames, level, level2, coverage_threshol
     if level2 == "iRT":
         selected_peptide_report_params = {'irt_intensity_plot': int_dist,
                                           'irt_intensity_coverage_plot': cov_plot,
-                                          'irt_intensity_description': 'iRT Intensity Distribution'}
+                                          'irt_intensity_description': 'iRT Intensity Distribution',
+                                          'irt_plots': True}
     else:
         selected_peptide_report_params = {'selected_peptide_intensity_plot': int_dist,
                                           'selected_peptide_intensity_coverage_plot': cov_plot,
-                                          'selected_peptide_intensity_description': 'User-Given Peptides Intensity Distribution'}
+                                          'selected_peptide_intensity_description': 'User-Given Peptides Intensity Distribution',
+                                          'peptide_list': True}
 
     return selected_peptide_report_params
 
@@ -730,7 +744,7 @@ def cumulative_freq_graph(protein_level, peptide_level, precursor_level, pt_cv_s
     cumfreq_cv_line = plotly.io.to_html(cv_line, include_plotlyjs=True, full_html=False, default_width='900px', default_height='450px')
 
     cumfreq_report_params = {'cumulative_frequency_plot': cumfreq_cv_line,
-                             'cumulative_frequency_description': "Cumulative Frequency % of CV%"}
+                             'cumulative_frequency_description': "Cumulative Frequency percentage of CV% across all samples"}
 
     return cumfreq_report_params
 

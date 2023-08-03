@@ -307,12 +307,12 @@ def get_idfree_grouped_df(mzml_sample_df, tic_cv, tic_cv_threshold, groups):
     grouped_df = pd.merge(grouped_df, tic_group_df, on='Group')
 
     if 'MS1 TIC Group QC Status' in grouped_df.columns.tolist():
-        grouped_df['MS1 TIC Group QC Status'] = grouped_df[['MS1 TIC Group QC Status', f'MS1 TIC CV% Threshold = {tic_cv_threshold}']].apply(get_series_status, axis=1)
-        grouped_df = grouped_df.drop(f'MS1 TIC CV% Threshold = {tic_cv_threshold}', axis=1)
+        grouped_df['MS1 TIC Group QC Status'] = grouped_df[['MS1 TIC Group QC Status', f'MS1 TIC CV% Threshold = {int(tic_cv_threshold)}']].apply(get_series_status, axis=1)
+        grouped_df = grouped_df.drop(f'MS1 TIC CV% Threshold = {int(tic_cv_threshold)}', axis=1)
 
     if 'MS2 TIC Group QC Status' in grouped_df.columns.tolist():
-        grouped_df['MS2 TIC Group QC Status'] = grouped_df[['MS2 TIC Group QC Status', f'MS2 TIC CV% Threshold = {tic_cv_threshold}']].apply(get_series_status, axis=1)
-        grouped_df = grouped_df.drop(f'MS2 TIC CV% Threshold = {tic_cv_threshold}', axis=1)
+        grouped_df['MS2 TIC Group QC Status'] = grouped_df[['MS2 TIC Group QC Status', f'MS2 TIC CV% Threshold = {int(tic_cv_threshold)}']].apply(get_series_status, axis=1)
+        grouped_df = grouped_df.drop(f'MS2 TIC CV% Threshold = {int(tic_cv_threshold)}', axis=1)
 
     grouped_df = grouped_df.sort_values('Group')
 
@@ -330,6 +330,7 @@ def tic_plots(mzml_df, tic_cv, ms1_tic_threshold, ms2_tic_threshold, tic_cv_thre
 
     tic_line = px.line(df, x='Filename', y="TIC", title="Total Ion Current", color="Label", line_shape="spline")
     tic_line.update_xaxes(tickfont_size=6)
+    tic_line.update_layout(title={'font': {'size': 9}})
     tic_line.update_layout(
             margin=dict(l=20, r=20, t=20, b=20)
     )
@@ -345,7 +346,7 @@ def tic_plots(mzml_df, tic_cv, ms1_tic_threshold, ms2_tic_threshold, tic_cv_thre
 
     tic_report_params = {'total_ion_current': True,
                     'tic_plot': tic_plot,
-                    'tic_ms_plot_description': 'MS1 and MS2 Total Ion Current Values extracted from given mzML files'}
+                    'tic_ms_plot_description': 'The total ion current (TIC) is the summed intensity across the entire range of masses being detected in each sample. MS1 and MS2 Total Ion Current Values extracted from spectra within the given mzML files'}
 
     if not list(set(mzml_df['MS1 TIC Outliers'].tolist())) == [0]:
         ms1_outliers = mzml_df[mzml_df['MS1 TIC Outliers'] == 1]['Filename'].tolist()
@@ -353,6 +354,7 @@ def tic_plots(mzml_df, tic_cv, ms1_tic_threshold, ms2_tic_threshold, tic_cv_thre
         tic_report_params['tic_ms1_outlier_description'] = f"{mzml_df['MS1 TIC Outliers'].tolist().count(1)} outliers were found. The following files have been detected as outliers: {ms1_outliers_filenames}"
 
         tic_ms1_outlier = px.scatter(mzml_df, x='Filename', y='MS1 TIC', color='MS1 TIC Outliers')
+        tic_ms1_outlier.update_layout(title={'font': {'size': 9}})
         tic_ms1_outlier.update_xaxes(tickfont_size=6)
         tic_ms1_outlier.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
@@ -368,6 +370,7 @@ def tic_plots(mzml_df, tic_cv, ms1_tic_threshold, ms2_tic_threshold, tic_cv_thre
         tic_report_params['tic_ms2_outlier_description'] = f"{mzml_df['MS2 TIC Outliers'].tolist().count(1)} outliers were found. The following files have been detected as outliers: {ms2_outliers_filenames}"
 
         tic_ms2_outlier = px.scatter(mzml_df, x='Filename', y='MS2 TIC', color='MS2 TIC Outliers')
+        tic_ms2_outlier.update_layout(title={'font': {'size': 9}})
         tic_ms2_outlier.update_xaxes(tickfont_size=6)
         tic_ms2_outlier.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
@@ -380,8 +383,9 @@ def tic_plots(mzml_df, tic_cv, ms1_tic_threshold, ms2_tic_threshold, tic_cv_thre
     if groupwise_comparison:
         tic_report_params['tic_ms_cv_description'] = "CV is calculated across samples in each given group"
 
-        ms1tic_bar = px.bar(tic_cv, x='Group', y="MS1 TIC CV%", title="MS1 Total Ion Current", color="Group", color_discrete_sequence=color_list)
+        ms1tic_bar = px.bar(tic_cv, x='Group', y="MS1 TIC CV%", title="MS1 Total Ion Current - CV%", color="Group", color_discrete_sequence=color_list)
         ms1tic_bar.update_xaxes(tickfont_size=6)
+        ms1tic_bar.update_layout(title={'font': {'size': 9}})
         ms1tic_bar.add_hline(y=tic_cv_threshold, line_dash="dot", annotation_text=f"TIC CV Threshold = {tic_cv_threshold}")
         ms1tic_bar.update_layout(
             margin=dict(l=20, r=20, t=20, b=20),
@@ -391,13 +395,14 @@ def tic_plots(mzml_df, tic_cv, ms1_tic_threshold, ms2_tic_threshold, tic_cv_thre
         tic_report_params['tic_ms1_cv_plot'] = ms1_tic
 
         if list(set(tic_cv[f'MS1 TIC CV% Threshold = {int(tic_cv_threshold)}'].tolist())) == ['PASS']:
-            tic_report_params['tic_ms1_cv_description'] = 'All groups have passed the CV Threshold'
+            tic_report_params['tic_ms1_cv_description'] = 'CV% for MS1 TIC was calculated using TIC values from each sample within a provided group. All groups have passed the CV Threshold'
         else:
             failed_ms1_groups = ", ".join(tic_cv[tic_cv[f'MS1 TIC CV% Threshold = {int(tic_cv_threshold)}'] == 'FAIL']['Group'].tolist())
-            tic_report_params['tic_ms1_cv_description'] = f'The following groups have not met the CV Threshold: {failed_ms1_groups}. This indicates that ...'
+            tic_report_params['tic_ms1_cv_description'] = f'CV% for MS1 TIC was calculated using TIC values from each sample within a provided group. The following groups have not met the CV Threshold: {failed_ms1_groups}. This represents an inconsistent TIC pattern for the samples within the groups. Please check the samples within the failed groups.'
 
-        ms2tic_bar = px.bar(tic_cv, x='Group', y="MS2 TIC CV%", title="MS2 Total Ion Current", color="Group", color_discrete_sequence=color_list)
+        ms2tic_bar = px.bar(tic_cv, x='Group', y="MS2 TIC CV%", title="MS2 Total Ion Current - CV%", color="Group", color_discrete_sequence=color_list)
         ms2tic_bar.update_xaxes(tickfont_size=6)
+        ms2tic_bar.update_layout(title={'font': {'size': 9}})
         ms2tic_bar.add_hline(y=tic_cv_threshold, line_dash="dot", annotation_text=f"TIC CV Threshold = {tic_cv_threshold}")
         ms2tic_bar.update_layout(
             margin=dict(l=20, r=20, t=20, b=20),
@@ -407,10 +412,10 @@ def tic_plots(mzml_df, tic_cv, ms1_tic_threshold, ms2_tic_threshold, tic_cv_thre
         tic_report_params['tic_ms2_cv_plot'] = ms2_tic
 
         if list(set(tic_cv[f'MS2 TIC CV% Threshold = {int(tic_cv_threshold)}'].tolist())) == ['PASS']:
-            tic_report_params['tic_ms2_cv_description'] = 'All groups have passed the CV Threshold'
+            tic_report_params['tic_ms2_cv_description'] = 'CV% for MS2 TIC was calculated using TIC values from each sample within a provided group. All groups have passed the CV Threshold'
         else:
             failed_ms2_groups = ", ".join(tic_cv[tic_cv[f'MS2 TIC CV% Threshold = {int(tic_cv_threshold)}'] == 'FAIL']['Group'].tolist())
-            tic_report_params['tic_ms2_cv_description'] = f'The following groups have not met the CV Threshold: {failed_ms2_groups}. This indicates that ...'
+            tic_report_params['tic_ms2_cv_description'] = f'CV% for MS1 TIC was calculated using TIC values from each sample within a provided group. The following groups have not met the CV Threshold: {failed_ms2_groups}. This represents an inconsistent TIC pattern for the samples within the groups. Please check the samples within the failed groups.'
 
     return tic_report_params
 
@@ -436,6 +441,7 @@ def spectral_plot(mzml_df):
 
         ms2_ms1_spectral_ratio_outlier = px.scatter(mzml_df, x='Filename', y='MS2/MS1 Spectra', color='MS2/MS1 Spectra Outliers')
         ms2_ms1_spectral_ratio_outlier.update_xaxes(tickfont_size=6)
+        ms2_ms1_spectral_ratio_outlier.update_layout(title={'font': {'size': 9}})
         ms2_ms1_spectral_ratio_outlier.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
         )
@@ -455,6 +461,7 @@ def basepeak_graph(mzml_df, max_basepeak_intensity_threshold, groups, groupwise_
     else:
         bp_bar = px.bar(mzml_df, x='Filename', y="Max Basepeak Intensity", title="Max Basepeak Intensity")
 
+    bp_bar.update_layout(title={'font': {'size': 9}})
     bp_bar.update_xaxes(tickfont_size=6)
     bp_bar.update_layout(
         margin=dict(l=20, r=20, t=20, b=20),
@@ -467,7 +474,7 @@ def basepeak_graph(mzml_df, max_basepeak_intensity_threshold, groups, groupwise_
 
     basepeak_report_params = {'max_basepeak_intensity' : True,
                               'max_basepeak_intensity_plot': bp_plot,
-                              'max_basepeak_intensity_description': 'Maxiumum Basepeak Intensities identified from given mzML files'}
+                              'max_basepeak_intensity_description': 'Maximum Base Peak Intensities identified from given mzML files'}
 
     if not list(set(mzml_df['Max Basepeak Intensity Outliers'].tolist())) == [0]:
         bp_outliers = mzml_df[mzml_df['Max Basepeak Intensity Outliers'] == 1]['Filename'].tolist()
@@ -475,6 +482,7 @@ def basepeak_graph(mzml_df, max_basepeak_intensity_threshold, groups, groupwise_
         basepeak_report_params['max_basepeak_intensity_outlier_description'] = f"{mzml_df['Max Basepeak Intensity Outliers'].tolist().count(1)} outliers were found. The following files have been detected as outliers: {bp_outliers_filenames}"
 
         max_basepeak_intensity_outlier = px.scatter(mzml_df, x='Filename', y='Max Basepeak Intensity', color='Max Basepeak Intensity Outliers')
+        max_basepeak_intensity_outlier.update_layout(title={'font': {'size': 9}})
         max_basepeak_intensity_outlier.update_xaxes(tickfont_size=6)
         max_basepeak_intensity_outlier.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
@@ -546,7 +554,7 @@ def calculate_idfree_metrics(out_dir, reportname, mzml_dir, groupwise_comparison
 
     idfree_report_parameters = create_graphs(mzml_df, tic_cv, groupwise_comparison, groups, mzml_threshold_dict)
 
-    mzml_sample_df = get_sample_qc(mzml_df, mzml_threshold_dict)
+    mzml_sample_df = get_sample_qc(mzml_df, mzml_threshold_dict, groupwise_comparison, groups)
     if groupwise_comparison:
         idfree_grouped_df = get_idfree_grouped_df(mzml_sample_df, tic_cv, mzml_threshold_dict['TIC CV Threshold'], groups)
     else:
