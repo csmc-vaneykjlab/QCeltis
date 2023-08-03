@@ -78,7 +78,7 @@ python  main.py [-h] -o OUTDIRECTORY -r REPORTNAME [-m MZML_DIRECTORY]
 
 ## Input Files Descriptions 
 
-# protein_level input file
+### protein_level input file
 
 | Column                | Description |
 |--------------------------|------------|
@@ -87,7 +87,7 @@ python  main.py [-h] -o OUTDIRECTORY -r REPORTNAME [-m MZML_DIRECTORY]
 
 see example: and link
 
-# peptide_level input file
+### peptide_level input file
 
 | Column                | Description |
 |--------------------------|------------|
@@ -96,7 +96,7 @@ see example: and link
 
 see example: and link
 
-# precursor_level input file
+### precursor_level input file
 
 | Column                | Description |
 |--------------------------|------------|
@@ -105,7 +105,7 @@ see example: and link
 
 see example: and link
 
-# Grouping input file
+### Grouping input file
 
 | Column                | Description |
 |--------------------------|------------|
