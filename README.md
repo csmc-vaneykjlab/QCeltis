@@ -19,12 +19,14 @@ First, clone the repository from GitHub: git clone https://github.com/vegesnam/Q
 
 Then, navigate to the downloaded directory and install the package using `pip`:
 
+~~~bash
 cd qcp
 pip install -r requirements.txt
-pip install .
+~~~
 
 Alternatively, the package can be installed directly from PyPI:
-pip install -i < pypi instance will go here > 
+
+~pip install -i < pypi instance will go here > ~
 
 ## Usage 
 
