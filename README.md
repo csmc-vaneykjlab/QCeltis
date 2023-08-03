@@ -4,10 +4,11 @@ Initial Code Source for the QC Package
 ## Table of Contents
 1. [Introduction](#introduction)
 2. [Installation](#installation)
-3. [Description of Parameters](#description-of-parameters)
-4. [Example Run Command](#example-run-command)
-5. [Contributions](#contributions)
-6. [Example Output](#example-output)
+3. [Usage](#Usage)
+4. [Description of Parameters](#description-of-parameters)
+5. [Input File Description](#input-file-description)
+6. [Contributions](#contributions)
+7. [Example Output](#example-output)
 
 ## Introduction
 Quality Control for Proteomics (QCP) is a Python package designed to...
@@ -26,90 +27,92 @@ pip install -r requirements.txt
 
 Alternatively, the package can be installed directly from PyPI:
 
-~pip install -i < pypi instance will go here > ~
+`pip install -i < pypi instance will go here >`
 
 ## Usage 
 
+```python
+python  main.py [-h] -o OUTDIRECTORY -r REPORTNAME [-m MZML_DIRECTORY]
+               [-t1 MS1_TIC_THRESHOLD] [-t2 MS2_TIC_THRESHOLD]
+               [-s1 MS1_SPECTRA_THRESHOLD] [-s2 MS2_SPECTRA_THRESHOLD]
+               [-bp MAX_BASEPEAK_INTENSITY] [-pt PROTEIN_LEVEL]
+               [-pep PEPTIDE_LEVEL] [-pre PRECURSOR_LEVEL] [-peprt PEPTIDE_RT]
+               [-prert PRECURSOR_RT] [-g GROUPING_FILE] [-peplt PEPTIDE_LIST]
+               [-x PROTEIN_THRESHOLD] [-y PEPTIDE_THRESHOLD]
+               [-z PRECURSOR_THRESHOLD] [-e ENZYME] [-c MISCLEAVAGE_THRESHOLD]
+               [-t TIC_CV_THRESHOLD] [-s CV_PERCENT_THRESHOLD]
+               [-d DATA_PERCENT_THRESHOLD] [-irt IRTLABEL]
+               [-v COVERAGE_THRESHOLD]
+```
+
 ## Parameters 
 
---outdirectory or -o: Output directory path
+| Parameter                | Short Form | Description                                      | Default Value |
+|--------------------------|------------|--------------------------------------------------|---------------|
+| --outdirectory           | -o         | Output directory path                            | None          |
+| --reportname             | -r         | Report name for HTML and Excel reports           | None          |
+| --mzml_directory         | -m         | Path to the directory where mzML files are present | None          |
+| --ms1_tic_threshold      | -t1        | MS1 TIC threshold                                | False         |
+| --ms2_tic_threshold      | -t2        | MS2 TIC threshold                                | False         |
+| --ms1_spectra_threshold  | -s1        | MS1 spectra threshold                            | False         |
+| --ms2_spectra_threshold  | -s2        | MS2 spectra threshold                            | False         |
+| --max_basepeak_intensity | -bp        | Maximum base peak intensity threshold             | False         |
+| --protein_level          | -pt        | Path to protein intensity file                   | None          |
+| --peptide_level          | -pep       | Path to peptide intensity file                   | None          |
+| --precursor_level        | -pre       | Path to precursor intensity file                 | None          |
+| --peptide_rt             | -peprt     | Path to peptide retention time file              | None          |
+| --precursor_rt           | -prert     | Path to precursor retention time file            | None          |
+| --grouping_file          | -g         | Path to grouping file                            | None          |
+| --peptide_list           | -peplt     | Path to file containing list of peptides to monitor intensity and RT distribution across samples | None          |
+| --protein_threshold      | -x         | Protein threshold for each sample                | False         |
+| --peptide_threshold      | -y         | Peptide threshold for each sample                | False         |
+| --precursor_threshold    | -z         | Precursor threshold for each sample              | False         |
+| --enzyme                 | -e         | User input enzyme                                | None          |
+| --miscleavage_threshold  | -c         | Missed cleavage threshold for each sample        | False         |
+| --tic_cv_threshold       | -t         | TIC CV threshold for groupwise QC status         | False         |
+| --cv_percent_threshold   | -s         | Intensity CV threshold                           | False         |
+| --data_percent_threshold | -d         | Data threshold for intensity CV                  | False         |
+| --irtlabel               | -irt       | Label for iRT peptides present in your peptide intensity file | None          |
+| --coverage_threshold     | -v         | Intensity or retention time coverage % threshold in each sample | False         |
 
---reportname or -r: Report name for HTML and Excel reports
 
---mzml_directory or -m: Path to the directory where mzML files are present
+## Input Files Descriptions 
 
---ms1_tic_threshold or -t1: MS1 TIC threshold
+# protein_level input file
 
---ms2_tic_threshold or -t2: MS2 TIC threshold
+| Column                | Description |
+|--------------------------|------------|
+| Protein           | A column containing Protein names      |
+| < list of samples >             | a list of samples followed by their intensity values     |
 
---ms1_spectra_threshold or -s1: MS1 spectra threshold
+see example: and link
 
---ms2_spectra_threshold or -s2: MS2 spectra threshold
+# peptide_level input file
 
---max_basepeak_intensity or -bp: Maximum base peak intensity threshold
+| Column                | Description |
+|--------------------------|------------|
+| Peptides           | A column containing Peptides names      |
+| < list of samples >             | a list of samples followed by their intensity values     |
 
---protein_level or -pt: Path to protein intensity file
+see example: and link
 
---peptide_level or -pep: Path to peptide intensity file
+# precursor_level input file
 
---precursor_level or -pre: Path to precursor intensity file
+| Column                | Description |
+|--------------------------|------------|
+| Precursors           | A column containing Precursors names      |
+| < list of samples >             | a list of samples followed by their intensity values     |
 
---peptide_rt or -peprt: Path to peptide retention time file
+see example: and link
 
---precursor_rt or -prert: Path to precursor retention time file
+# Grouping input file
 
---grouping_file or -g: Path to grouping file
+| Column                | Description |
+|--------------------------|------------|
+| Filename           | A column containing file names      |
+| Group            | The group the sample belongs to     |
 
---peptide_list or -peplt: Path to file containing list of peptides to monitor intensity and RT distribution across samples
-
---protein_threshold or -x: Protein threshold for each sample
-
---peptide_threshold or -y: Peptide threshold for each sample
-
---precursor_threshold or -z: Precursor threshold for each sample
-
---enzyme or -e: User input enzyme
-
---miscleavage_threshold or -c: Missed cleavage threshold for each sample
-
---tic_cv_threshold or -t: TIC CV threshold for groupwise QC status
-
---cv_percent_threshold or -s: Intensity CV threshold
-
---data_percent_threshold or -d: Data threshold for intensity CV
-
---irtlabel or -irt: Label for iRT peptides present in your peptide intensity file
-
---coverage_threshold or -v: Intensity or retention time coverage % threshold in each sample
-
-## Example run command
-
-python main.py \ [ to be changed with pip execution command ]
---outdirectory /path/to/output/directory \
---reportname ReportName \
-[Optional] --mzml_directory /path/to/mzml/directory \
-[Optional] --ms1_tic_threshold 1000 \
-[Optional] --ms2_tic_threshold 2000 \
-[Optional] --ms1_spectra_threshold 3000 \
-[Optional] --ms2_spectra_threshold 4000 \
-[Optional] --max_basepeak_intensity 5000 \
-[Optional] --protein_level /path/to/protein/intensity/file \
-[Optional] --peptide_level /path/to/peptide/intensity/file \
-[Optional] --precursor_level /path/to/precursor/intensity/file \
-[Optional] --peptide_rt /path/to/peptide/retention/time/file \
-[Optional] --precursor_rt /path/to/precursor/retention/time/file \
-[Optional] --grouping_file /path/to/grouping/file \
-[Optional] --peptide_list /path/to/peptide/list/file \
-[Optional] --protein_threshold 100 \
-[Optional] --peptide_threshold 200 \
-[Optional] --precursor_threshold 300 \
-[Optional] --enzyme enzyme_name \
-[Optional] --miscleavage_threshold 10 \
-[Optional] --tic_cv_threshold 15 \
-[Optional] --cv_percent_threshold 20 \
-[Optional] --data_percent_threshold 25 \
-[Optional] --irtlabel iRT_Label \
-[Optional] --coverage_threshold 30
+see example: and link
 
 ## outputs and explanantions
 
