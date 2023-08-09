@@ -155,8 +155,8 @@ The script will only pick the files with .mzML extention from the input director
 
 <table>
   <tr>
-    <td>![totalIonCurrent_MS1_MS2](https://github.com/vegesnam/QCPackage/assets/32958585/b2747915-1666-410c-ad55-417de72b0834) </td>
-    <td>![totalIonCurrent_MS1_MS2](https://github.com/vegesnam/QCPackage/assets/32958585/b2747915-1666-410c-ad55-417de72b0834) </td>
+    <td> <img src="https://github.com/vegesnam/QCPackage/assets/32958585/b2747915-1666-410c-ad55-417de72b0834" alt="First Image" width="400"/> </td>
+    <td> <img src="https://github.com/vegesnam/QCPackage/assets/32958585/b2747915-1666-410c-ad55-417de72b0834" alt="First Image" width="400"/> </td>
   </tr>
 </table>
 
