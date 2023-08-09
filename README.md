@@ -11,7 +11,10 @@ Initial Code Source for the QC Package
 7. [Example Output](#example-output)
 
 ## Introduction
-Quality Control for Proteomics (QCP) is a Python package designed to...
+
+### Why is Quality Control Required
+The sources of variability in a proteomics experiment that are addressed by QC can be categorized into two groups: biological and technical. Technical variability is derived from sample collection, transportation, storage, preparation, and/or instrument performance. Teasing out the cause of outliers in the category of technical variability can be done by evaluating some data parameters which can vary depending on the mass spectrometer, LC column, instrument cleaning, length of proteolytic digestion, and sample cleanup, and can improve downstream analysis. This is the aim of the QCPackage. 
+
 
 ## Installation
 QCP can be installed from the command line using `git` and `pip`. 
@@ -36,8 +39,8 @@ python  main.py [-h] -o OUTDIRECTORY -r REPORTNAME [-m MZML_DIRECTORY]
                [-t1 MS1_TIC_THRESHOLD] [-t2 MS2_TIC_THRESHOLD]
                [-s1 MS1_SPECTRA_THRESHOLD] [-s2 MS2_SPECTRA_THRESHOLD]
                [-bp MAX_BASEPEAK_INTENSITY] [-pt PROTEIN_LEVEL]
-               [-pep PEPTIDE_LEVEL] [-pre PRECURSOR_LEVEL] [-peprt PEPTIDE_RT]
-               [-prert PRECURSOR_RT] [-g GROUPING_FILE] [-peplt PEPTIDE_LIST]
+               [-pep PEPTIDE_LEVEL] [-pre PRECURSOR_LEVEL] 
+               [-g GROUPING_FILE] [-peplt PEPTIDE_LIST]
                [-x PROTEIN_THRESHOLD] [-y PEPTIDE_THRESHOLD]
                [-z PRECURSOR_THRESHOLD] [-e ENZYME] [-c MISCLEAVAGE_THRESHOLD]
                [-t TIC_CV_THRESHOLD] [-s CV_PERCENT_THRESHOLD]
@@ -60,8 +63,6 @@ python  main.py [-h] -o OUTDIRECTORY -r REPORTNAME [-m MZML_DIRECTORY]
 | --protein_level          | -pt        | Path to protein intensity file                   | None          |
 | --peptide_level          | -pep       | Path to peptide intensity file                   | None          |
 | --precursor_level        | -pre       | Path to precursor intensity file                 | None          |
-| --peptide_rt             | -peprt     | Path to peptide retention time file              | None          |
-| --precursor_rt           | -prert     | Path to precursor retention time file            | None          |
 | --grouping_file          | -g         | Path to grouping file                            | None          |
 | --peptide_list           | -peplt     | Path to file containing list of peptides to monitor intensity and RT distribution across samples | None          |
 | --protein_threshold      | -x         | Protein threshold for each sample                | False         |
@@ -114,9 +115,52 @@ see example: and link
 
 see example: and link
 
-## outputs and explanantions
+### mzml_directory 
 
-[ Place holder ]
+A directory containing mzML files needs to be given as input. Please refer https://github.com/HUPO-PSI/mzML for specifications of the mzML file format. 
+The script will only pick the files with .mzML extention from the input directory. 
+
+## Outputs and explanantions
+
+### ID-Free and ID-Based Metrics:
+
+| Metric                                | Category | Expected Output                                                                                                           |
+|---------------------------------------|----------|--------------------------------------------------------------------------------------------------------------------------|
+| MS1 TIC                               | ID-Free  | TIC Values, MS1 + MS2 TIC Graph, Outlier Detection, Threshold FAIL/PASS, TIC CV% across groups                            |
+| MS2 TIC                               | ID-Free  | TIC Values, MS1 + MS2 TIC Graph, Outlier Detection, Threshold FAIL/PASS, TIC CV% across groups                            |
+| MS2/MS1 Spectra                       | ID-Free  | TIC Values, MS2/MS1 Graph, Outlier Detection on MS2/MS1, Threshold FAIL/PASS                                             |
+| Max Basepeak Intensity                | ID-Free  | Max Basepeak Values, Basepeak Intensity Graph + Outlier Detection                                                        |
+| Quant                                 | ID-Based | Protein/Peptide/Precursor Quant + Threshold PASS/FAIL + graph                                                            |
+| Intensity CVs                         | ID-Based | Protein/Peptide/Precursor Overall CV + Cumulative CV% + Groupwise CV % + Cumulative/Groupwise Graphs + Threshold PASS/FAIL (if groupwise) |
+| Common TIC                            | ID-Based | Peptide/Precursor Common TIC values + TIC CV% across groups + graphs for samples + groups + Threshold PASS/FAIL (if groupwise) |
+| 0 Missed Cleavage Percentage          | ID-Based | Missed Cleavage Summary + Threshold PASS/FAIL                                                                           |
+| iRT Peptide Intensity Distribution    | ID-Based | Peptide/Precursor Level Intensities Distribution + Graph + Coverage Summary across samples + Threshold PASS/FAIL         |
+| Selected Peptide Intensity Distribution | ID-Based | Peptide/Precursor Level Intensities Distribution + Graph + Coverage Summary across samples + Threshold PASS/FAIL         |
+| RT Coverage Summary Distribution      | ID-Based | if RT files are given, iRT or selected peptide RT distribution + coverage summary + Threshold PASS/FAIL                  |
+
+### Excel reports 
+
+| Report Type        | Sheets                                                  |
+|--------------------|---------------------------------------------------------|
+| ID-Free            | ID-Free Metrics Summary, Group TIC CV                   |
+| Protein Level      | Protein Quant Summary, Groupwise Protein Quant, Protein Level CV, Protein CV Group Summary |
+| Precursor Level    | Precursor Quant Summary, Groupwise Precursor Quant, Precursor Level CV, Precursor CV Group Summary, Common Precursor TIC, Common Precursor TIC Group CV, Miscleavage Threshold, iRT Precursor Intensity |
+| Status Report      | Samplewise QC Metrics, Groupwise QC Metrics             |
+
+### HTML Reports
+
+#### ID-Free plots 
+
+##### Total Ion Current 
+
+<table>
+  <tr>
+    <td>![totalIonCurrent_MS1_MS2](https://github.com/vegesnam/QCPackage/assets/32958585/b2747915-1666-410c-ad55-417de72b0834) </td>
+    <td>![totalIonCurrent_MS1_MS2](https://github.com/vegesnam/QCPackage/assets/32958585/b2747915-1666-410c-ad55-417de72b0834) </td>
+  </tr>
+</table>
+
+#### ID-Based plots 
 
 ## Cite 
 
