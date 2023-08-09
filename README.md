@@ -7,8 +7,10 @@ Initial Code Source for the QC Package
 3. [Usage](#Usage)
 4. [Description of Parameters](#description-of-parameters)
 5. [Input File Description](#input-file-description)
-6. [Contributions](#contributions)
-7. [Example Output](#example-output)
+6. Outputs and explanations(#outputs-and-explanations)
+7. Cite(#Cite)
+8. [Contributions](#contributions)
+9. [Release Notes](#release-notes)
 
 ## Introduction
 
