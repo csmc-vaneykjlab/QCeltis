@@ -674,7 +674,7 @@ def cumulative_freq_graph(protein_level, peptide_level, precursor_level, pt_cv_s
                     var_name="Label",
                     value_name="Cumulative Frequency %")
 
-        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Proteins, Peptides and Precursors under CV% (Across all Samples)", color="Label", line_shape="spline")
+        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Proteins, Peptides and Precursors under CV% (Across all Samples)", color="Label", line_shape="spline", markers=True)
         cv_line.update_xaxes(tickfont_size=6)
         cv_line.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
@@ -687,7 +687,7 @@ def cumulative_freq_graph(protein_level, peptide_level, precursor_level, pt_cv_s
                     var_name="Label",
                     value_name="Cumulative Frequency %")
 
-        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Proteins and Peptides under CV% (Across all Samples)", color="Label", line_shape="spline")
+        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Proteins and Peptides under CV% (Across all Samples)", color="Label", line_shape="spline", markers=True)
         cv_line.update_xaxes(tickfont_size=6)
         cv_line.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
@@ -700,7 +700,7 @@ def cumulative_freq_graph(protein_level, peptide_level, precursor_level, pt_cv_s
                     var_name="Label",
                     value_name="Cumulative Frequency %")
 
-        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Proteins and Precursors under CV% (Across all Samples)", color="Label", line_shape="spline")
+        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Proteins and Precursors under CV% (Across all Samples)", color="Label", line_shape="spline", markers=True)
         cv_line.update_xaxes(tickfont_size=6)
         cv_line.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
@@ -713,28 +713,28 @@ def cumulative_freq_graph(protein_level, peptide_level, precursor_level, pt_cv_s
                     var_name="Label",
                     value_name="Cumulative Frequency %")
 
-        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Peptides and Precursors under CV% (Across all Samples)", color="Label", line_shape="spline")
+        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Peptides and Precursors under CV% (Across all Samples)", color="Label", line_shape="spline", markers=True)
         cv_line.update_xaxes(tickfont_size=6)
         cv_line.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
         )
 
     elif protein_level:
-        cv_line = px.line(pt_cv_sum, x='CV%', y="Protein Cumulative Frequency %", title="Number of Proteins under CV% (Across all Samples)", line_shape="spline")
+        cv_line = px.line(pt_cv_sum, x='CV%', y="Protein Cumulative Frequency %", title="Number of Proteins under CV% (Across all Samples)", line_shape="spline", markers=True)
         cv_line.update_xaxes(tickfont_size=6)
         cv_line.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
         )
 
     elif peptide_level:
-        cv_line = px.line(cv_sum, x='CV%', y="Peptide Cumulative Frequency %", title="Number of Peptides under CV% (Across all Samples)", line_shape="spline")
+        cv_line = px.line(cv_sum, x='CV%', y="Peptide Cumulative Frequency %", title="Number of Peptides under CV% (Across all Samples)", line_shape="spline", markers=True)
         cv_line.update_xaxes(tickfont_size=6)
         cv_line.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
         )
 
     elif precursor_level:
-        cv_line = px.line(cv_sum, x='CV%', y="Precursor Cumulative Frequency %", title="Number of Precursors under CV% (Across all Samples)", line_shape="spline")
+        cv_line = px.line(cv_sum, x='CV%', y="Precursor Cumulative Frequency %", title="Number of Precursors under CV% (Across all Samples)", line_shape="spline", markers=True)
         cv_line.update_xaxes(tickfont_size=6)
         cv_line.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)

@@ -328,7 +328,7 @@ def tic_plots(mzml_df, tic_cv, ms1_tic_threshold, ms2_tic_threshold, tic_cv_thre
         var_name="Label",
         value_name="TIC")
 
-    tic_line = px.line(df, x='Filename', y="TIC", title="Total Ion Current", color="Label", line_shape="spline")
+    tic_line = px.line(df, x='Filename', y="TIC", title="Total Ion Current", color="Label", line_shape="spline", markers=True)
     tic_line.update_xaxes(tickfont_size=6)
     tic_line.update_layout(title={'font': {'size': 9}})
     tic_line.update_layout(
@@ -423,7 +423,7 @@ def spectral_plot(mzml_df):
 
     df = mzml_df[['Filename','MS2/MS1 Spectra', 'MS2/MS1 Spectra Outliers']]
 
-    count_line = px.line(df, x='Filename', y="MS2/MS1 Spectra", title="MS2/MS1 Spectra Count", line_shape="spline")
+    count_line = px.line(df, x='Filename', y="MS2/MS1 Spectra", title="MS2/MS1 Spectra Count", line_shape="spline", markers=True)
     count_line.update_xaxes(tickfont_size=6)
     count_line.update_layout(
         margin=dict(l=20, r=20, t=20, b=20),
