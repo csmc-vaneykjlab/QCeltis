@@ -539,15 +539,15 @@ def pca_plot(df_level, level,filenames, groups, color_list): #call it only if gr
 
     if level == "Protein":
         pca_report_params = {'protein_pca_plot':pca3_graph,
-                            'protein_pca_description': "PCA for Protein Intensities Across Groups"}
+                            'protein_pca_description': "PCA plot from protein intensities across provided groups. If any grouping/clustering is observed, please check for batch effects across the provided groups."}
 
     if level == "Peptide":
         pca_report_params = {'peptide_pca_plot':pca3_graph,
-                            'peptide_pca_description': "PCA for Peptide Intensities Across Groups"}
+                            'peptide_pca_description': "PCA plot from peptide intensities across provided groups. If any grouping/clustering is observed, please check for batch effects across the provided groups."}
 
     if level == "Precursor":
         pca_report_params = {'precursor_pca_plot':pca3_graph,
-                            'precursor_pca_description': "PCA for Precursor Intensities Across Groups"}
+                            'precursor_pca_description': "PCA plot from precursor intensities across provided groups. If any grouping/clustering is observed, please check for batch effects across the provided groups."}
 
     return pca_report_params
 
@@ -569,11 +569,11 @@ def common_tic_plot(df_tic, group_tic, level, tic_cv_threshold, groupwise_compar
 
     if level == "Peptide":
         common_tic_report_params = {'common_peptide_tic_plot': tic_bar_graph,
-                                'common_peptide_tic_description': "Total Ion Current calculated from peptide intensities found in all given samples"}
+                                'common_peptide_tic_description': "The Total Ion Current here is calculated from intensities of common peptides found in all samples. Any inconsistent patterns could indicate problems in sample preparation."}
 
     if level == "Precursor":
         common_tic_report_params = {'common_precursor_tic_plot': tic_bar_graph,
-                                'common_precursor_tic_description': "Total Ion Current calculated from precursor intensities found in all given samples"}
+                                'common_precursor_tic_description': "The Total Ion Current here is calculated from intensities of common precursors found in all samples. Any inconsistent patterns could indicate problems in sample preparation."}
 
     if groupwise_comparison:
 
@@ -591,11 +591,11 @@ def common_tic_plot(df_tic, group_tic, level, tic_cv_threshold, groupwise_compar
 
         if level == "Peptide":
             common_tic_report_params['common_peptide_tic_group_cv'] = cv_bar_graph
-            common_tic_report_params['common_peptide_tic_group_cv_description'] = f"Common Peptide TIC CV% calculated across groups. A CV% higher than the set threshold of {tic_cv_threshold} indicates an inconsistency within the samples of the group"
+            common_tic_report_params['common_peptide_tic_group_cv_description'] = f"Common Peptide TIC CV% calculated from intensities of common peptides within each provided group. A CV% higher than the set threshold of {tic_cv_threshold} indicates an inconsistency within the samples of the group"
 
         if level == "Precursor":
             common_tic_report_params['common_precursor_tic_group_cv'] = cv_bar_graph
-            common_tic_report_params['common_precursor_tic_group_cv_description'] = f"Common Precursor TIC CV% calculated across groups. A CV% higher than the set threshold of {tic_cv_threshold} indicates an inconsistency within the samples of the group."
+            common_tic_report_params['common_precursor_tic_group_cv_description'] = f"Common Precursor TIC CV% calculated from intensities of common precursors within each provided group. A CV% higher than the set threshold of {tic_cv_threshold} indicates an inconsistency within the samples of the group."
 
     return common_tic_report_params
 
@@ -618,7 +618,7 @@ def miscleavage_plot(dig_df, miscleavage_threshold, groupwise_comparison, groups
     dig_graph = plotly.io.to_html(dig, include_plotlyjs=True, full_html=False, default_width='900px', default_height='450px')
 
     miscleavage_report_params = {'percent_miscleavage_plot': dig_graph,
-                                'percent_miscleavage_description': f"Number of 0 miscleaved peptides found in each sample. If the number of 0 miscleaved peptides is under the miscleavage threshold value of {miscleavage_threshold}% "}
+                                'percent_miscleavage_description': f"Total Number of 0 miscleaved peptides found in each sample. If the percentage of 0 miscleaved peptides is under the miscleavage threshold value of {miscleavage_threshold}%, this could indicate issues with sample preparation and digestion protocols."}
 
     return miscleavage_report_params
 
@@ -646,6 +646,7 @@ def selected_peptide_plots(df_level, filenames, level, level2, coverage_threshol
         cov = px.bar(int_cov, x=level, y="Coverage %", title=f"Coverage Percentage of {level}s", color=int_cov[level].tolist(), color_discrete_sequence=color_list)
     cov.add_hline(y=coverage_threshold)
     cov.update_xaxes(tickfont_size=6)
+    cov.update_layout(title={'font': {'size': 9}})
     cov.update_layout(
         margin=dict(l=20, r=20, t=20, b=20),
     )
@@ -674,7 +675,7 @@ def cumulative_freq_graph(protein_level, peptide_level, precursor_level, pt_cv_s
                     var_name="Label",
                     value_name="Cumulative Frequency %")
 
-        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Proteins, Peptides and Precursors under CV% (Across all Samples)", color="Label", line_shape="spline", markers=True)
+        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Proteins, Peptides and Precursors under CV% (Across all Samples)", color="Label", line_shape="spline")
         cv_line.update_xaxes(tickfont_size=6)
         cv_line.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
@@ -687,7 +688,7 @@ def cumulative_freq_graph(protein_level, peptide_level, precursor_level, pt_cv_s
                     var_name="Label",
                     value_name="Cumulative Frequency %")
 
-        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Proteins and Peptides under CV% (Across all Samples)", color="Label", line_shape="spline", markers=True)
+        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Proteins and Peptides under CV% (Across all Samples)", color="Label", line_shape="spline")
         cv_line.update_xaxes(tickfont_size=6)
         cv_line.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
@@ -700,7 +701,7 @@ def cumulative_freq_graph(protein_level, peptide_level, precursor_level, pt_cv_s
                     var_name="Label",
                     value_name="Cumulative Frequency %")
 
-        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Proteins and Precursors under CV% (Across all Samples)", color="Label", line_shape="spline", markers=True)
+        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Proteins and Precursors under CV% (Across all Samples)", color="Label", line_shape="spline")
         cv_line.update_xaxes(tickfont_size=6)
         cv_line.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
@@ -713,28 +714,28 @@ def cumulative_freq_graph(protein_level, peptide_level, precursor_level, pt_cv_s
                     var_name="Label",
                     value_name="Cumulative Frequency %")
 
-        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Peptides and Precursors under CV% (Across all Samples)", color="Label", line_shape="spline", markers=True)
+        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Peptides and Precursors under CV% (Across all Samples)", color="Label", line_shape="spline")
         cv_line.update_xaxes(tickfont_size=6)
         cv_line.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
         )
 
     elif protein_level:
-        cv_line = px.line(pt_cv_sum, x='CV%', y="Protein Cumulative Frequency %", title="Number of Proteins under CV% (Across all Samples)", line_shape="spline", markers=True)
+        cv_line = px.line(pt_cv_sum, x='CV%', y="Protein Cumulative Frequency %", title="Number of Proteins under CV% (Across all Samples)", line_shape="spline")
         cv_line.update_xaxes(tickfont_size=6)
         cv_line.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
         )
 
     elif peptide_level:
-        cv_line = px.line(cv_sum, x='CV%', y="Peptide Cumulative Frequency %", title="Number of Peptides under CV% (Across all Samples)", line_shape="spline", markers=True)
+        cv_line = px.line(cv_sum, x='CV%', y="Peptide Cumulative Frequency %", title="Number of Peptides under CV% (Across all Samples)", line_shape="spline")
         cv_line.update_xaxes(tickfont_size=6)
         cv_line.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
         )
 
     elif precursor_level:
-        cv_line = px.line(cv_sum, x='CV%', y="Precursor Cumulative Frequency %", title="Number of Precursors under CV% (Across all Samples)", line_shape="spline", markers=True)
+        cv_line = px.line(cv_sum, x='CV%', y="Precursor Cumulative Frequency %", title="Number of Precursors under CV% (Across all Samples)", line_shape="spline")
         cv_line.update_xaxes(tickfont_size=6)
         cv_line.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
@@ -744,7 +745,7 @@ def cumulative_freq_graph(protein_level, peptide_level, precursor_level, pt_cv_s
     cumfreq_cv_line = plotly.io.to_html(cv_line, include_plotlyjs=True, full_html=False, default_width='900px', default_height='450px')
 
     cumfreq_report_params = {'cumulative_frequency_plot': cumfreq_cv_line,
-                             'cumulative_frequency_description': "Cumulative Frequency percentage of CV% across all samples"}
+                             'cumulative_frequency_description': "Cumulative Frequency % of calculated CV% across all samples"}
 
     return cumfreq_report_params
 

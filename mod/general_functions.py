@@ -324,4 +324,6 @@ def is_tab_delimited(filename):
 def check_duplicates(*args):
     counts = Counter(args)
     duplicates = [item for item, count in counts.items() if count > 1]
+    if duplicates == [False]:
+        return False
     return duplicates

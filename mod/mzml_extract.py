@@ -381,7 +381,7 @@ def tic_plots(mzml_df, tic_cv, ms1_tic_threshold, ms2_tic_threshold, tic_cv_thre
         tic_report_params['tic_ms2_outlier_plot'] = tic_ms2_outlier_plot
 
     if groupwise_comparison:
-        tic_report_params['tic_ms_cv_description'] = "CV is calculated across samples in each given group"
+        tic_report_params['tic_ms_cv_description'] = "When a grouping file is provided, CV% for TIC values across samples in each group is calculated. This provides an insignt into how consistent the samples are within each group."
 
         ms1tic_bar = px.bar(tic_cv, x='Group', y="MS1 TIC CV%", title="MS1 Total Ion Current - CV%", color="Group", color_discrete_sequence=color_list)
         ms1tic_bar.update_xaxes(tickfont_size=6)
@@ -398,7 +398,7 @@ def tic_plots(mzml_df, tic_cv, ms1_tic_threshold, ms2_tic_threshold, tic_cv_thre
             tic_report_params['tic_ms1_cv_description'] = 'CV% for MS1 TIC was calculated using TIC values from each sample within a provided group. All groups have passed the CV Threshold'
         else:
             failed_ms1_groups = ", ".join(tic_cv[tic_cv[f'MS1 TIC CV% Threshold = {int(tic_cv_threshold)}'] == 'FAIL']['Group'].tolist())
-            tic_report_params['tic_ms1_cv_description'] = f'CV% for MS1 TIC was calculated using TIC values from each sample within a provided group. The following groups have not met the CV Threshold: {failed_ms1_groups}. This represents an inconsistent TIC pattern for the samples within the groups. Please check the samples within the failed groups.'
+            tic_report_params['tic_ms1_cv_description'] = f'CV% for MS1 TIC was calculated using TIC values from each sample within a provided group. The following groups have not met the CV Threshold: {failed_ms1_groups}. This represents an inconsistent TIC pattern, please check the samples within the failed groups.'
 
         ms2tic_bar = px.bar(tic_cv, x='Group', y="MS2 TIC CV%", title="MS2 Total Ion Current - CV%", color="Group", color_discrete_sequence=color_list)
         ms2tic_bar.update_xaxes(tickfont_size=6)
@@ -415,7 +415,7 @@ def tic_plots(mzml_df, tic_cv, ms1_tic_threshold, ms2_tic_threshold, tic_cv_thre
             tic_report_params['tic_ms2_cv_description'] = 'CV% for MS2 TIC was calculated using TIC values from each sample within a provided group. All groups have passed the CV Threshold'
         else:
             failed_ms2_groups = ", ".join(tic_cv[tic_cv[f'MS2 TIC CV% Threshold = {int(tic_cv_threshold)}'] == 'FAIL']['Group'].tolist())
-            tic_report_params['tic_ms2_cv_description'] = f'CV% for MS1 TIC was calculated using TIC values from each sample within a provided group. The following groups have not met the CV Threshold: {failed_ms2_groups}. This represents an inconsistent TIC pattern for the samples within the groups. Please check the samples within the failed groups.'
+            tic_report_params['tic_ms2_cv_description'] = f'CV% for MS1 TIC was calculated using TIC values from each sample within a provided group. The following groups have not met the CV Threshold: {failed_ms2_groups}. This represents an inconsistent TIC pattern, please check the samples within the failed groups.'
 
     return tic_report_params
 
@@ -425,6 +425,7 @@ def spectral_plot(mzml_df):
 
     count_line = px.line(df, x='Filename', y="MS2/MS1 Spectra", title="MS2/MS1 Spectra Count", line_shape="spline", markers=True)
     count_line.update_xaxes(tickfont_size=6)
+    count_line.update_layout(title={'font': {'size': 9}})
     count_line.update_layout(
         margin=dict(l=20, r=20, t=20, b=20),
     )
@@ -473,8 +474,7 @@ def basepeak_graph(mzml_df, max_basepeak_intensity_threshold, groups, groupwise_
     bp_plot = plotly.io.to_html(bp_bar, include_plotlyjs=False, full_html=False, default_width='900px', default_height='450px')
 
     basepeak_report_params = {'max_basepeak_intensity' : True,
-                              'max_basepeak_intensity_plot': bp_plot,
-                              'max_basepeak_intensity_description': 'Maximum Base Peak Intensities identified from given mzML files'}
+                              'max_basepeak_intensity_plot': bp_plot}
 
     if not list(set(mzml_df['Max Basepeak Intensity Outliers'].tolist())) == [0]:
         bp_outliers = mzml_df[mzml_df['Max Basepeak Intensity Outliers'] == 1]['Filename'].tolist()
@@ -539,6 +539,8 @@ def calculate_idfree_metrics(out_dir, reportname, mzml_dir, groupwise_comparison
     mzml_df = outlier_detection(mzml_df)
 
     if groupwise_comparison:
+        mzml_df['Group'] = mzml_df['Filename'].apply(groupname, args=[groups, ])
+        mzml_df = mzml_df.sort_values("Group")
         tic_cv = calculate_tic_cv(mzml_df, groups, mzml_threshold_dict['TIC CV Threshold'])
     else:
         tic_cv = ""
