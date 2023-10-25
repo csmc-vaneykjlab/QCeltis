@@ -1,5 +1,4 @@
-# QCPackage
-Initial Code Source for the QC Package
+# Using the QCPackage using an example dataset
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -12,16 +11,10 @@ Initial Code Source for the QC Package
 8. [Contributions](#contributions)
 9. [Release Notes](#release-notes)
 
-## Introduction
-
-### Why is Quality Control Required
-The sources of variability in a proteomics experiment that are addressed by QC can be categorized into two groups: biological and technical. Technical variability is derived from sample collection, transportation, storage, preparation, and/or instrument performance. Teasing out the cause of outliers in the category of technical variability can be done by evaluating some data parameters which can vary depending on the mass spectrometer, LC column, instrument cleaning, length of proteolytic digestion, and sample cleanup, and can improve downstream analysis. This is the aim of the QCPackage. 
-
-
 ## Installation
-QCP can be installed from the command line using `git` and `pip`. 
+QCP can be installed from the command line using `git` and `pip`.
 
-First, clone the repository from GitHub: 
+First, clone the repository from GitHub:
 
 git clone https://github.com/vegesnam/QCPackage.git
 
@@ -36,132 +29,90 @@ Alternatively, the package can be installed directly from PyPI:
 
 `pip install -i < pypi instance will go here >`
 
-## Usage 
+## Parameters and Commands
+
+Parameters (link to parameters in the main readme)
+Input File Descriptions (link to input file descriptions)
+
+To begin with analysis, you can download the mzML files, protein and precursor level files from (example_dataset link). You can provide these as input parameters and execute the following command:
+
+ID-Free + ID-Based + Groupwise Comparison Command:
 
 ```python
-python  main.py [-h] -o OUTDIRECTORY -r REPORTNAME [-m MZML_DIRECTORY]
-               [-t1 MS1_TIC_THRESHOLD] [-t2 MS2_TIC_THRESHOLD]
-               [-s1 MS1_SPECTRA_THRESHOLD] [-s2 MS2_SPECTRA_THRESHOLD]
-               [-bp MAX_BASEPEAK_INTENSITY] [-pt PROTEIN_LEVEL]
-               [-pep PEPTIDE_LEVEL] [-pre PRECURSOR_LEVEL] 
-               [-g GROUPING_FILE] [-peplt PEPTIDE_LIST]
-               [-x PROTEIN_THRESHOLD] [-y PEPTIDE_THRESHOLD]
-               [-z PRECURSOR_THRESHOLD] [-e ENZYME] [-c MISCLEAVAGE_THRESHOLD]
-               [-t TIC_CV_THRESHOLD] [-s CV_PERCENT_THRESHOLD]
-               [-d DATA_PERCENT_THRESHOLD] [-irt IRTLABEL]
-               [-v COVERAGE_THRESHOLD]
+python  main.py --outdirectory ./output --reportname ExampleDataset-QCReport --mzml_directory ./mzML_files
+               --protein_level ./protein_level.txt --precursor_level ./precursor_level.txt --grouping_file ./grouping_file.txt
+               --protein_threshold 200 --precursor_threshold 3000 --enzyme 'trypsin'
+               --miscleavage_threshold 80 --tic_cv_threshold 40 --cv_percent_threshold 40
+               --data_percent_threshold 70 --irtlabel 'iRT'--coverage_threshold 80
 ```
 
-## Parameters 
+ID-Free + Groupwise Comparison Command:
 
-| Parameter                | Short Form | Description                                      | Default Value |
-|--------------------------|------------|--------------------------------------------------|---------------|
-| --outdirectory           | -o         | Output directory path                            | None          |
-| --reportname             | -r         | Report name for HTML and Excel reports           | None          |
-| --mzml_directory         | -m         | Path to the directory where mzML files are present | None          |
-| --ms1_tic_threshold      | -t1        | MS1 TIC threshold                                | False         |
-| --ms2_tic_threshold      | -t2        | MS2 TIC threshold                                | False         |
-| --ms1_spectra_threshold  | -s1        | MS1 spectra threshold                            | False         |
-| --ms2_spectra_threshold  | -s2        | MS2 spectra threshold                            | False         |
-| --max_basepeak_intensity | -bp        | Maximum base peak intensity threshold             | False         |
-| --protein_level          | -pt        | Path to protein intensity file                   | None          |
-| --peptide_level          | -pep       | Path to peptide intensity file                   | None          |
-| --precursor_level        | -pre       | Path to precursor intensity file                 | None          |
-| --grouping_file          | -g         | Path to grouping file                            | None          |
-| --peptide_list           | -peplt     | Path to file containing list of peptides to monitor intensity and RT distribution across samples | None          |
-| --protein_threshold      | -x         | Protein threshold for each sample                | False         |
-| --peptide_threshold      | -y         | Peptide threshold for each sample                | False         |
-| --precursor_threshold    | -z         | Precursor threshold for each sample              | False         |
-| --enzyme                 | -e         | User input enzyme                                | None          |
-| --miscleavage_threshold  | -c         | Missed cleavage threshold for each sample        | False         |
-| --tic_cv_threshold       | -t         | TIC CV threshold for groupwise QC status         | False         |
-| --cv_percent_threshold   | -s         | Intensity CV threshold                           | False         |
-| --data_percent_threshold | -d         | Data threshold for intensity CV                  | False         |
-| --irtlabel               | -irt       | Label for iRT peptides present in your peptide intensity file | None          |
-| --coverage_threshold     | -v         | Intensity or retention time coverage % threshold in each sample | False         |
+```python
+python  main.py --outdirectory ./output --reportname ExampleDataset-QCReport --mzml_directory ./mzML_files
+               --grouping_file ./grouping_file.txt --tic_cv_threshold 40 --cv_percent_threshold 40
+```
 
+ID-Based + Groupwise Comparison Command:
 
-## Input Files Descriptions 
+```python
+python  main.py --outdirectory ./output --reportname ExampleDataset-QCReport
+               --protein_level ./protein_level.txt --precursor_level ./precursor_level.txt --grouping_file ./grouping_file.txt
+               --protein_threshold 200 --precursor_threshold 3000 --enzyme 'trypsin'
+               --miscleavage_threshold 80 --tic_cv_threshold 40 --cv_percent_threshold 40
+               --data_percent_threshold 70 --irtlabel 'iRT'--coverage_threshold 80
+```
 
-### protein_level input file
+## Dataset
 
-| Column                | Description |
-|--------------------------|------------|
-| Protein           | A column containing Protein names      |
-| < list of samples >             | a list of samples followed by their intensity values     |
+Dataset description + Groups
 
-see example: and link
+## Outputs
 
-### peptide_level input file
+After the command is executed, the corresponding excel reports and html report are generated in the given output directory.
+Results included here: (link to results)
 
-| Column                | Description |
-|--------------------------|------------|
-| Peptides           | A column containing Peptides names      |
-| < list of samples >             | a list of samples followed by their intensity values     |
+For the ID-Free + ID-Based + Groupwise Comparison Command, the following outputs will be generated:
 
-see example: and link
+1. ExampleDataset-QCReport.html (both ID-Free and ID-Based tabs will be populated)
+2. ExampleDataset-QCReport_ID-Free_QC_Report.xlsx
+3. ExampleDataset-QCReport_ProteinLevel_QC_Report.xlsx
+4. ExampleDataset-QCReport_PrecursorLevel_QC_Report.xlsx
+5. ExampleDataset-QCReport_QC_Status_Report.xlsx (Combined overall QC PASS/FAIL status is provided from ID-Free + ID-Based metrics)
 
-### precursor_level input file
+For the ID-Free + Groupwise Comparison Command, the following outputs will be generated:
 
-| Column                | Description |
-|--------------------------|------------|
-| Precursors           | A column containing Precursors names      |
-| < list of samples >             | a list of samples followed by their intensity values     |
+1. ExampleDataset-QCReport.html (only ID-Free tab will be populated)
+2. ExampleDataset-QCReport_ID-Free_QC_Report.xlsx
+5. ExampleDataset-QCReport_QC_Status_Report.xlsx (Overall QC PASS/FAIL status is provided based on ID-Free metrics only)
 
-see example: and link
+For the ID-Based + Groupwise Comparison Command, the following outputs will be generated:
 
-### Grouping input file
+1. ExampleDataset-QCReport.html (only ID-Based tab will be populated)
+3. ExampleDataset-QCReport_ProteinLevel_QC_Report.xlsx
+4. ExampleDataset-QCReport_PrecursorLevel_QC_Report.xlsx
+5. ExampleDataset-QCReport_QC_Status_Report.xlsx (Overall QC PASS/FAIL status is provided based on ID-Based metrics only)
 
-| Column                | Description |
-|--------------------------|------------|
-| Filename           | A column containing file names      |
-| Group            | The group the sample belongs to     |
+### Detailed Explanation for ID-Free + ID-Based + Groupwise Comparison QC Analysis
 
-see example: and link
+### HTML Report
 
-### mzml_directory 
+The report is divided into 2 tabs:
 
-A directory containing mzML files needs to be given as input. Please refer https://github.com/HUPO-PSI/mzML for specifications of the mzML file format. 
-The script will only pick the files with .mzML extention from the input directory. 
+1. ID-Free - When a mzML directory is provided as input, ID-Free Tab is populated with plots from ID-Free parameters extracted from your mzML files.
+2. ID-Based - When a protein, peptide or precursor level intensity file is provided, ID-based Tab will be populated with ID-based parameters extracted from your quantified input.
 
-## Outputs and explanantions
+In the case of the example dataset, both ID-Free and ID-Based tabs will be populated since we have provided the mzML directory, protein level, precursor level and grouping file parameters.
 
-### ID-Free and ID-Based Metrics:
+#### ID-Free Tab
 
-| Metric                                | Category | Expected Output                                                                                                           |
-|---------------------------------------|----------|--------------------------------------------------------------------------------------------------------------------------|
-| MS1 TIC                               | ID-Free  | TIC Values, MS1 + MS2 TIC Graph, Outlier Detection, Threshold FAIL/PASS, TIC CV% across groups                            |
-| MS2 TIC                               | ID-Free  | TIC Values, MS1 + MS2 TIC Graph, Outlier Detection, Threshold FAIL/PASS, TIC CV% across groups                            |
-| MS2/MS1 Spectra                       | ID-Free  | TIC Values, MS2/MS1 Graph, Outlier Detection on MS2/MS1, Threshold FAIL/PASS                                             |
-| Max Basepeak Intensity                | ID-Free  | Max Basepeak Values, Basepeak Intensity Graph + Outlier Detection                                                        |
-| Quant                                 | ID-Based | Protein/Peptide/Precursor Quant + Threshold PASS/FAIL + graph                                                            |
-| Intensity CVs                         | ID-Based | Protein/Peptide/Precursor Overall CV + Cumulative CV% + Groupwise CV % + Cumulative/Groupwise Graphs + Threshold PASS/FAIL (if groupwise) |
-| Common TIC                            | ID-Based | Peptide/Precursor Common TIC values + TIC CV% across groups + graphs for samples + groups + Threshold PASS/FAIL (if groupwise) |
-| 0 Missed Cleavage Percentage          | ID-Based | Missed Cleavage Summary + Threshold PASS/FAIL                                                                           |
-| iRT Peptide Intensity Distribution    | ID-Based | Peptide/Precursor Level Intensities Distribution + Graph + Coverage Summary across samples + Threshold PASS/FAIL         |
-| Selected Peptide Intensity Distribution | ID-Based | Peptide/Precursor Level Intensities Distribution + Graph + Coverage Summary across samples + Threshold PASS/FAIL         |
-| RT Coverage Summary Distribution      | ID-Based | if RT files are given, iRT or selected peptide RT distribution + coverage summary + Threshold PASS/FAIL                  |
+##### Total Ion Current
 
-### Excel reports 
-
-| Report Type        | Sheets                                                  |
-|--------------------|---------------------------------------------------------|
-| ID-Free            | ID-Free Metrics Summary, Group TIC CV                   |
-| Protein Level      | Protein Quant Summary, Groupwise Protein Quant, Protein Level CV, Protein CV Group Summary |
-| Precursor Level    | Precursor Quant Summary, Groupwise Precursor Quant, Precursor Level CV, Precursor CV Group Summary, Common Precursor TIC, Common Precursor TIC Group CV, Miscleavage Threshold, iRT Precursor Intensity |
-| Status Report      | Samplewise QC Metrics, Groupwise QC Metrics             |
-
-### HTML Reports
-
-#### ID-Free plots 
-
-##### Total Ion Current 
-
-The total ion current (TIC) is the summed intensity across the entire range of masses being detected in each sample. MS1 and MS2 Total Ion Current Values extracted from spectra within the given mzML files. Total Ion Current values from MS1 and MS2 Spectra are expected to be consistent across the QC samples. If extreme values are found, they are labelled as outliers. Outliers found in TIC can indicate an issue If groups are provided, TIC CV% is calculated across samples within each group and the tic cv threshold is applied if provided.  If any group doesn’t pass the threshold, this indicates an inconsistent TIC pattern within the samples of the group.
+MS1 and MS2 Total Ion Current Values is extracted from spectra within the given <number> mzML files.
 
 ![TIC_CV](https://github.com/vegesnam/QCPackage/assets/32958585/960d1ac5-491b-43fc-a0a5-43d91e51f766)
 
-![TIC_Outlier](https://github.com/vegesnam/QCPackage/assets/32958585/f0102ca2-5adb-4d56-b443-ec7b4bd09f49) 
+![TIC_Outlier](https://github.com/vegesnam/QCPackage/assets/32958585/f0102ca2-5adb-4d56-b443-ec7b4bd09f49)
 
 ![total_ion_current](https://github.com/vegesnam/QCPackage/assets/32958585/2daa3e5c-e486-4547-bacf-500802184db9)
 
@@ -179,17 +130,17 @@ The mass spectrometer consistently tallies both MS1 and MS2 Counts; thus, if the
 
 ![max_basepeak_intensity](https://github.com/vegesnam/QCPackage/assets/32958585/3921d0e6-d8be-4f9a-8f54-3d6f41fee59b)
 
-The base peak intensity is the recorded intensity of the most intense peak from each spectrum in the mzML file. The Max Base Peak Intensity represents the highest recorded base peak intensity in each mzML file. 
+The base peak intensity is the recorded intensity of the most intense peak from each spectrum in the mzML file. The Max Base Peak Intensity represents the highest recorded base peak intensity in each mzML file.
 
 ![Uploading max_basepeak_intensity_outlier_plot.png…]()
 
-Max Base Peak Intensity is expected to be consistent across QC samples. Any outliers detected are highlighted in yellow. Outliers detected could point to issues with sample pickup or samples being dried out. Usually correlates with ID-free TIC. 
-Note: The outlier here will also be labelled as an outlier in the TIC graph. 
+Max Base Peak Intensity is expected to be consistent across QC samples. Any outliers detected are highlighted in yellow. Outliers detected could point to issues with sample pickup or samples being dried out. Usually correlates with ID-free TIC.
+Note: The outlier here will also be labelled as an outlier in the TIC graph.
 
 
-#### ID-Based plots 
+#### ID-Based plots
 
-##### Quantification Plots 
+##### Quantification Plots
 
 Displays the number of proteins and peptides or precursors. When the threshold is provided, any samples not meeting the threshold is flagged as a ‘FAIL’, this could indicate an issue with the sample prep or digestion protocol.
 
@@ -203,8 +154,8 @@ Displays the number of proteins and peptides or precursors. When the threshold i
   <img src="[URL_to_Image4](https://github.com/vegesnam/QCPackage/assets/32958585/2fcd40f4-3b57-4fcd-8909-7405c13f0948)" width="50%" />
 </p>
 
-In this case, even though the threshold is met, the last 3 groups have significantly less proteins and precursors. Further investigation showed a high percentage of missingness in the samples and indicated an issue with sample prep. 
-So these plots can be a good way to visualize any varying patterns within samples 
+In this case, even though the threshold is met, the last 3 groups have significantly less proteins and precursors. Further investigation showed a high percentage of missingness in the samples and indicated an issue with sample prep.
+So these plots can be a good way to visualize any varying patterns within samples
 
 ##### CV Plots
 
@@ -212,18 +163,18 @@ So these plots can be a good way to visualize any varying patterns within sample
 
 ![CV_IDbased_Precursor](https://github.com/vegesnam/QCPackage/assets/32958585/57060297-0e84-48e3-b5ae-6ebc7f26c6d2)
 
-CVs are calculated with intensity values from samples within each group [ Please note: groupwise input must be given ]. Data and CV Thershold: simple explanation. 
+CVs are calculated with intensity values from samples within each group [ Please note: groupwise input must be given ]. Data and CV Thershold: simple explanation.
 
-If inconsistent ( data threshold failure ), then the samples were poorly digested (unless TIC suggests otherwise). If TIC is high but the CV isn't, then digestion issue or if TIC is also low, then the sample didn't get picked up properly. 
+If inconsistent ( data threshold failure ), then the samples were poorly digested (unless TIC suggests otherwise). If TIC is high but the CV isn't, then digestion issue or if TIC is also low, then the sample didn't get picked up properly.
 [ write better explanations for this ]
 
 ##### Common TIC
 
 ![IDbased_Common_TIC](https://github.com/vegesnam/QCPackage/assets/32958585/48f71adf-ae7f-471b-8607-2218da6bd0a8)
 
-Common Peptide/Precursor TIC is the summed intensity of all the common peptides or precursors found in all samples. If both peptide and precursor files are provided, only common peptide will be calculated. 
+Common Peptide/Precursor TIC is the summed intensity of all the common peptides or precursors found in all samples. If both peptide and precursor files are provided, only common peptide will be calculated.
 
-If TIC is consistent with other samples here but the TIC is labelled as an outlier in ID-free, then it could be a contamination issue (if TIC is high in id-free) 
+If TIC is consistent with other samples here but the TIC is labelled as an outlier in ID-free, then it could be a contamination issue (if TIC is high in id-free)
 
 ![IDbased_common_TIC_CV](https://github.com/vegesnam/QCPackage/assets/32958585/e28bb8dd-660c-46f5-8109-1fb63917a6e8)
 
@@ -233,28 +184,19 @@ CVs are calculated with intensity values from samples within each group.
 
 ![miscleavage_TR](https://github.com/vegesnam/QCPackage/assets/32958585/217d48be-94cf-479c-9c8d-1370f4d6b450)
 
-Having a high number of peptides with 0 miscleavages indicates a good digestion protocol. If the samples don’t have enough 0 missed cleaved peptides, (doesn’t meet threshold), then this indicates a digestion issue. 
+Having a high number of peptides with 0 miscleavages indicates a good digestion protocol. If the samples don’t have enough 0 missed cleaved peptides, (doesn’t meet threshold), then this indicates a digestion issue.
 
 ![miscleavage_DR](https://github.com/vegesnam/QCPackage/assets/32958585/98746b87-073c-4f4d-93eb-da77731e7131)
 
-Here, there is a difference in numbers and this is due to the missingness in the last 3 plates (also indicated in the protein and peptide quant) – further indicates that it is a digestion/sampleprep issue. 
+Here, there is a difference in numbers and this is due to the missingness in the last 3 plates (also indicated in the protein and peptide quant) – further indicates that it is a digestion/sampleprep issue.
 
-##### Other Plots: 
+##### Other Plots:
 
-###### PCA: 
-if groups are given, QC Samples from groups are expected to cluster together, if separation is observed, this could indicate an issue with mass spec (if using TR samples) or sampleprep/digestion protocols (if using DR samples) or could be batch effects 
+###### PCA:
+if groups are given, QC Samples from groups are expected to cluster together, if separation is observed, this could indicate an issue with mass spec (if using TR samples) or sampleprep/digestion protocols (if using DR samples) or could be batch effects
 
-###### Irt / Selected Peptide Intensity Distribution + Coverage Summary: 
+###### Irt / Selected Peptide Intensity Distribution + Coverage Summary:
 
-Intensity Distribution for peptides is plotted. If iRT is selected, the script will look for peptides from the iRT Biognosys kit. If precursor file is given, it will select iRT precursors with charge 2. If both peptide and precursor input files are given, then only peptides will be plotted. If no iRTs were used, users can provide a list of peptides to plot. Intensity coverage of these peptides is also plotted. CiRT peptide list can be used for eukaryotic datasets: link to Identification of a Set of Conserved Eukaryotic Internal Retention Time Standards for Data-independent Acquisition Mass Spectrometry - PubMed (nih.gov) 
+Intensity Distribution for peptides is plotted. If iRT is selected, the script will look for peptides from the iRT Biognosys kit. If precursor file is given, it will select iRT precursors with charge 2. If both peptide and precursor input files are given, then only peptides will be plotted.If no iRTs were used, users can provide a list of peptides to plot. Intensity coverage of these peptides is also plotted. CiRT peptide list can be used for eukaryotic datasets: link to Identification of a Set of Conserved Eukaryotic Internal Retention Time Standards for Data-independent Acquisition Mass Spectrometry - PubMed (nih.gov)
 
-
-
-## Cite 
-
-## Support
-
-## release notes 
-
-
-
+### Excel Reports

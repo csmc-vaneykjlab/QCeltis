@@ -675,7 +675,7 @@ def cumulative_freq_graph(protein_level, peptide_level, precursor_level, pt_cv_s
                     var_name="Label",
                     value_name="Cumulative Frequency %")
 
-        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Proteins, Peptides and Precursors under CV% (Across all Samples)", color="Label", line_shape="spline")
+        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Proteins, Peptides and Precursors under CV% (Across all Samples)", color="Label", line_shape="spline", markers=True)
         cv_line.update_xaxes(tickfont_size=6)
         cv_line.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
@@ -688,7 +688,7 @@ def cumulative_freq_graph(protein_level, peptide_level, precursor_level, pt_cv_s
                     var_name="Label",
                     value_name="Cumulative Frequency %")
 
-        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Proteins and Peptides under CV% (Across all Samples)", color="Label", line_shape="spline")
+        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Proteins and Peptides under CV% (Across all Samples)", color="Label", line_shape="spline", markers=True)
         cv_line.update_xaxes(tickfont_size=6)
         cv_line.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
@@ -701,7 +701,7 @@ def cumulative_freq_graph(protein_level, peptide_level, precursor_level, pt_cv_s
                     var_name="Label",
                     value_name="Cumulative Frequency %")
 
-        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Proteins and Precursors under CV% (Across all Samples)", color="Label", line_shape="spline")
+        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Proteins and Precursors under CV% (Across all Samples)", color="Label", line_shape="spline", markers=True)
         cv_line.update_xaxes(tickfont_size=6)
         cv_line.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
@@ -714,28 +714,28 @@ def cumulative_freq_graph(protein_level, peptide_level, precursor_level, pt_cv_s
                     var_name="Label",
                     value_name="Cumulative Frequency %")
 
-        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Peptides and Precursors under CV% (Across all Samples)", color="Label", line_shape="spline")
+        cv_line = px.line(cv_sum, x='CV%', y="Cumulative Frequency %", title="Number of Peptides and Precursors under CV% (Across all Samples)", color="Label", line_shape="spline", markers=True)
         cv_line.update_xaxes(tickfont_size=6)
         cv_line.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
         )
 
     elif protein_level:
-        cv_line = px.line(pt_cv_sum, x='CV%', y="Protein Cumulative Frequency %", title="Number of Proteins under CV% (Across all Samples)", line_shape="spline")
+        cv_line = px.line(pt_cv_sum, x='CV%', y="Protein Cumulative Frequency %", title="Number of Proteins under CV% (Across all Samples)", line_shape="spline", markers=True)
         cv_line.update_xaxes(tickfont_size=6)
         cv_line.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
         )
 
     elif peptide_level:
-        cv_line = px.line(cv_sum, x='CV%', y="Peptide Cumulative Frequency %", title="Number of Peptides under CV% (Across all Samples)", line_shape="spline")
+        cv_line = px.line(cv_sum, x='CV%', y="Peptide Cumulative Frequency %", title="Number of Peptides under CV% (Across all Samples)", line_shape="spline", markers=True)
         cv_line.update_xaxes(tickfont_size=6)
         cv_line.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
         )
 
     elif precursor_level:
-        cv_line = px.line(cv_sum, x='CV%', y="Precursor Cumulative Frequency %", title="Number of Precursors under CV% (Across all Samples)", line_shape="spline")
+        cv_line = px.line(cv_sum, x='CV%', y="Precursor Cumulative Frequency %", title="Number of Precursors under CV% (Across all Samples)", line_shape="spline", markers=True)
         cv_line.update_xaxes(tickfont_size=6)
         cv_line.update_layout(
                 margin=dict(l=20, r=20, t=20, b=20)
@@ -863,7 +863,7 @@ def calculate_idbased_metrics(out_dir, reportname, input_dict, threshold_dict, g
         else:
             miscleavage_report_params = {}
 
-        if threshold_dict['iRT Label']:
+        if threshold_dict['iRT Label'] and irt_plots:
             irt_report_params = selected_peptide_plots(irt_level, filenames, "Peptide", "iRT", threshold_dict['Coverage Threshold'], color_list)
         else:
             irt_report_params = {}
@@ -896,7 +896,7 @@ def calculate_idbased_metrics(out_dir, reportname, input_dict, threshold_dict, g
             pep_grouped_tic.to_excel(peptide_report_writer, index=False, sheet_name='Common Peptide TIC Group CV')
         if threshold_dict['Enzyme']:
             dig_df.to_excel(peptide_report_writer, index=False, sheet_name='Miscleavage Threshold')
-        if threshold_dict['iRT Label']:
+        if threshold_dict['iRT Label'] and irt_plots:
             irt_level.to_excel(peptide_report_writer, index=False, sheet_name='iRT Peptide Intensity')
         if input_dict['Peptide List']:
             selected_pep_df.to_excel(peptide_threshold_dict, index=False, sheet_name='Selected Peptide Intensity')
@@ -981,7 +981,7 @@ def calculate_idbased_metrics(out_dir, reportname, input_dict, threshold_dict, g
             else:
                 miscleavage_report_params = {}
 
-            if threshold_dict['iRT Label']:
+            if threshold_dict['iRT Label'] and irt_plots:
                 irt_report_params = selected_peptide_plots(irt_level, filenames, "Precursor", "iRT", threshold_dict['Coverage Threshold'], color_list)
             else:
                 irt_report_params = {}
@@ -1016,7 +1016,7 @@ def calculate_idbased_metrics(out_dir, reportname, input_dict, threshold_dict, g
         if not input_dict['Peptide Level']:
             if threshold_dict['Enzyme']:
                 dig_df.to_excel(precursor_report_writer, index=False, sheet_name='Miscleavage Threshold')
-            if threshold_dict['iRT Label']:
+            if threshold_dict['iRT Label'] and irt_plots:
                 irt_level.to_excel(precursor_report_writer, index=False, sheet_name='iRT Precursor Intensity')
             if input_dict['Peptide List']:
                 selected_pep_df.to_excel(precursor_report_writer, index=False, sheet_name='Selected Precursor Intensity')

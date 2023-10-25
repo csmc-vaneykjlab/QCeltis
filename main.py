@@ -363,7 +363,7 @@ def main():
 
     logging.info(f"Saving HTML QC Report to {out_dir}/{reportname}.html")
     if all_report_params:
-        env = Environment(loader=FileSystemLoader(str("/common/vegesnam/qcpackage/github/QCPackage/templates"))) #remove hardcoding - added this for now
+        env = Environment(loader=FileSystemLoader(str("./templates")))
         template = env.get_template(str("report_template.html"))
 
         output_from_parsed_template = template.render(all_report_params)
