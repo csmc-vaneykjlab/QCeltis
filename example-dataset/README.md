@@ -1,15 +1,11 @@
 # Using the QCPackage using an example dataset
 
 ## Table of Contents
-1. [Introduction](#introduction)
-2. [Installation](#installation)
-3. [Usage](#Usage)
-4. [Description of Parameters](#description-of-parameters)
-5. [Input File Description](#input-file-description)
-6. [Outputs and explanations](#outputs-and-explanations)
-7. [Cite](#Cite)
-8. [Contributions](#contributions)
-9. [Release Notes](#release-notes)
+1. [Installation](#installation)
+2. [Parameters and Commands](#parameters-and-commands)
+4. [Dataset](#dataset)
+6. [Outputs](#outputs-and-explanations)
+7. [Results](#results-from-qc-analysis)
 
 ## Installation
 QCP can be installed from the command line using `git` and `pip`.
@@ -93,7 +89,7 @@ For the ID-Based + Groupwise Comparison Command, the following outputs will be g
 4. ExampleDataset-QCReport_PrecursorLevel_QC_Report.xlsx
 5. ExampleDataset-QCReport_QC_Status_Report.xlsx (Overall QC PASS/FAIL status is provided based on ID-Based metrics only)
 
-### Detailed Explanation for ID-Free + ID-Based + Groupwise Comparison QC Analysis
+## Results from QC Analysis
 
 ### HTML Report
 
