@@ -27,7 +27,7 @@ Alternatively, the package can be installed directly from PyPI:
 
 ## Parameters and Commands
 
-Parameters (link to parameters in the main readme)
+[Parameters](https://github.com/vegesnam/QCPackage/blob/main/README.md#parameters)
 Input File Descriptions (link to input file descriptions)
 
 To begin with analysis, you can download the mzML files, protein and precursor level files from (example_dataset link). You can provide these as input parameters and execute the following command:
@@ -104,35 +104,52 @@ In the case of the example dataset, both ID-Free and ID-Based tabs will be popul
 
 ##### Total Ion Current
 
-MS1 and MS2 Total Ion Current Values is extracted from spectra within the given <number> mzML files.
+MS1 and MS2 Total Ion Current Values are extracted from spectra within the given 47 mzML files.
 
-![TIC_CV](https://github.com/vegesnam/QCPackage/assets/32958585/960d1ac5-491b-43fc-a0a5-43d91e51f766)
+![TIC_Plot](https://github.com/vegesnam/QCPackage/assets/87665957/bafb01fb-00cd-4a36-8e9e-ab7d33ad4ae5)
 
-![TIC_Outlier](https://github.com/vegesnam/QCPackage/assets/32958585/f0102ca2-5adb-4d56-b443-ec7b4bd09f49)
+If extreme values are found, they are labelled as outliers.
 
-![total_ion_current](https://github.com/vegesnam/QCPackage/assets/32958585/2daa3e5c-e486-4547-bacf-500802184db9)
+![MS1 TIC Outliers](https://github.com/vegesnam/QCPackage/assets/87665957/c3904df1-3c67-4589-b49f-068ba174ccda)
 
-If extreme values are found, they are labelled as outliers. Outliers found in TIC can indicate an issue If groups are provided, TIC CV% is calculated across samples within each group and the tic cv threshold is applied if provided.  If any group doesn’t pass the threshold, this indicates an inconsistent TIC pattern within the samples of the group.
+![MS2 TIC Outliers](https://github.com/vegesnam/QCPackage/assets/87665957/ceb42e10-d10c-48cc-a8f9-91baf64dc8ed)
+
+Here, 3 outliers were found. The following files have been detected as outliers: 
+* 20211018_Seroconversion_DBS_Plate1_DR4_centroid.mzML
+* 20211018_Seroconversion_DBS_Plate6_DR4_centroid.mzML
+* 20211018_Seroconversion_DBS_Plate8_DR2_centroid.mzML
+
+Reason for the 3 outliers 
+
+Groupwise comparison using CV% is performed with MS1 and MS2 TIC values:
+
+![MS1 TIC CV%](https://github.com/vegesnam/QCPackage/assets/87665957/6e6ffe91-a1f1-4e99-816c-4494bb342e6c)
+
+![MS2 TIC CV%](https://github.com/vegesnam/QCPackage/assets/87665957/e6cd281f-79af-4e4a-b69d-878d69772c80)
+
+All groups are under given tic cv threshold, so no issues 
 
 ##### Spectral Ratio
 
-![Spectral_ratio](https://github.com/vegesnam/QCPackage/assets/32958585/79bef057-7082-47d0-9823-8e24879ef853)
+The spectral ratio indicates the count of MS2 Spectra relative to MS1 Spectra in each file. The mass spectrometer consistently tallies both MS1 and MS2 Counts; thus, if there are discrepancies in the numbers, it's not a sample problem but rather an issue with the MS acquisition. If the ratio isn't stable, evaluate the instrument's performance on samples identified as anomalies.
 
-The spectral ratio indicates the count of MS2 Spectra relative to MS1 Spectra in each file.
+![Spectral Ratio](https://github.com/vegesnam/QCPackage/assets/87665957/5184c1ef-6d22-4f8d-82bd-120b44ead9eb)
 
-The mass spectrometer consistently tallies both MS1 and MS2 Counts; thus, if there are discrepancies in the numbers, it's not a sample problem but rather an issue with the MS acquisition. If the ratio isn't stable, evaluate the instrument's performance on samples identified as anomalies.
+Pretty consistent since the values all lay around 50 
 
 ##### Max Basepeak Intensity
 
-![max_basepeak_intensity](https://github.com/vegesnam/QCPackage/assets/32958585/3921d0e6-d8be-4f9a-8f54-3d6f41fee59b)
-
 The base peak intensity is the recorded intensity of the most intense peak from each spectrum in the mzML file. The Max Base Peak Intensity represents the highest recorded base peak intensity in each mzML file.
 
-![Uploading max_basepeak_intensity_outlier_plot.png…]()
+![Max BP Plot](https://github.com/vegesnam/QCPackage/assets/87665957/c9018489-3f43-4a6e-a113-8dfa45d90293)
 
 Max Base Peak Intensity is expected to be consistent across QC samples. Any outliers detected are highlighted in yellow. Outliers detected could point to issues with sample pickup or samples being dried out. Usually correlates with ID-free TIC.
-Note: The outlier here will also be labelled as an outlier in the TIC graph.
 
+![Max BP Outlier](https://github.com/vegesnam/QCPackage/assets/87665957/986eb8ec-1df0-42f8-8bba-17f3fdca9733)
+
+Here, 1 outlier was found. The sample "20211018_Seroconversion_DBS_Plate1_DR3_centroid.mzML" has an extremely high max base peak intensity compared to the other samples. 
+
+Reason
 
 #### ID-Based plots
 
@@ -140,59 +157,63 @@ Note: The outlier here will also be labelled as an outlier in the TIC graph.
 
 Displays the number of proteins and peptides or precursors. When the threshold is provided, any samples not meeting the threshold is flagged as a ‘FAIL’, this could indicate an issue with the sample prep or digestion protocol.
 
-<p align="center">
-  <!-- First Row -->
-  <img src="https://github.com/vegesnam/QCPackage/assets/32958585/5dbd3332-6dba-46e2-93d9-20ea261ca8b2" width="50%" />
-  <img src="https://github.com/vegesnam/QCPackage/assets/32958585/35f1128e-1d24-4951-8b3e-ebc748d03095" width="50%" />
-
-  <!-- Second Row -->
-  <img src="[URL_to_Image3](https://github.com/vegesnam/QCPackage/assets/32958585/1780abe6-b0a4-4f20-a775-0ebaa031b5ea)" width="50%" />
-  <img src="[URL_to_Image4](https://github.com/vegesnam/QCPackage/assets/32958585/2fcd40f4-3b57-4fcd-8909-7405c13f0948)" width="50%" />
-</p>
-
 In this case, even though the threshold is met, the last 3 groups have significantly less proteins and precursors. Further investigation showed a high percentage of missingness in the samples and indicated an issue with sample prep.
 So these plots can be a good way to visualize any varying patterns within samples
 
+Protein Quant 
+
+![Protein Quant](https://github.com/vegesnam/QCPackage/assets/87665957/d1605eeb-6bd8-4942-b7a6-792caf262952)
+
+Precursor Quant 
+
+![image](https://github.com/vegesnam/QCPackage/assets/87665957/7d8128c9-f67f-4b6d-ac09-6b2148eb93d2)
+
+
 ##### CV Plots
-
-![CV_IDbased_Protein](https://github.com/vegesnam/QCPackage/assets/32958585/72cc5220-ca01-49c0-997d-8c1e1bae96c1)
-
-![CV_IDbased_Precursor](https://github.com/vegesnam/QCPackage/assets/32958585/57060297-0e84-48e3-b5ae-6ebc7f26c6d2)
 
 CVs are calculated with intensity values from samples within each group [ Please note: groupwise input must be given ]. Data and CV Thershold: simple explanation.
 
 If inconsistent ( data threshold failure ), then the samples were poorly digested (unless TIC suggests otherwise). If TIC is high but the CV isn't, then digestion issue or if TIC is also low, then the sample didn't get picked up properly.
 [ write better explanations for this ]
 
-##### Common TIC
+![Cumulative CV](https://github.com/vegesnam/QCPackage/assets/87665957/e792951d-97c9-45e4-98ca-5086fe68aa9f)
 
-![IDbased_Common_TIC](https://github.com/vegesnam/QCPackage/assets/32958585/48f71adf-ae7f-471b-8607-2218da6bd0a8)
+![Proteins under CV%](https://github.com/vegesnam/QCPackage/assets/87665957/03a29fa8-d061-4377-9fad-72d15efafce3)
+
+![Precursors under CV%](https://github.com/vegesnam/QCPackage/assets/87665957/0bb211ae-fc08-4858-b9ee-e3af3e6dcae7)
+
+Explain reasons 
+
+##### PCA 
+
+Protein PCA: 
+
+![Protein PCA](https://github.com/vegesnam/QCPackage/assets/87665957/875b8281-6152-4d85-b853-0f81ff8e795c)
+
+Precursor PCA: 
+
+![image](https://github.com/vegesnam/QCPackage/assets/87665957/998f01de-af69-49f1-8bf6-544805dd8eec)
+
+Clustering/Grouping and what was done. 
+
+##### Common TIC
 
 Common Peptide/Precursor TIC is the summed intensity of all the common peptides or precursors found in all samples. If both peptide and precursor files are provided, only common peptide will be calculated.
 
+![CommonTIC](https://github.com/vegesnam/QCPackage/assets/87665957/aff8cec3-bbde-41c2-9ecd-0ffe6875d24f)
+
 If TIC is consistent with other samples here but the TIC is labelled as an outlier in ID-free, then it could be a contamination issue (if TIC is high in id-free)
 
-![IDbased_common_TIC_CV](https://github.com/vegesnam/QCPackage/assets/32958585/e28bb8dd-660c-46f5-8109-1fb63917a6e8)
+![CommonTICCV](https://github.com/vegesnam/QCPackage/assets/87665957/2b02ad88-0922-40b8-9632-1a4e3fc1997a)
 
 CVs are calculated with intensity values from samples within each group.
 
 ##### Miscleavage Plot
 
-![miscleavage_TR](https://github.com/vegesnam/QCPackage/assets/32958585/217d48be-94cf-479c-9c8d-1370f4d6b450)
+![image](https://github.com/vegesnam/QCPackage/assets/87665957/ad7f6047-3754-4590-afba-1d27d5835bb8)
 
 Having a high number of peptides with 0 miscleavages indicates a good digestion protocol. If the samples don’t have enough 0 missed cleaved peptides, (doesn’t meet threshold), then this indicates a digestion issue.
 
-![miscleavage_DR](https://github.com/vegesnam/QCPackage/assets/32958585/98746b87-073c-4f4d-93eb-da77731e7131)
-
 Here, there is a difference in numbers and this is due to the missingness in the last 3 plates (also indicated in the protein and peptide quant) – further indicates that it is a digestion/sampleprep issue.
-
-##### Other Plots:
-
-###### PCA:
-if groups are given, QC Samples from groups are expected to cluster together, if separation is observed, this could indicate an issue with mass spec (if using TR samples) or sampleprep/digestion protocols (if using DR samples) or could be batch effects
-
-###### Irt / Selected Peptide Intensity Distribution + Coverage Summary:
-
-Intensity Distribution for peptides is plotted. If iRT is selected, the script will look for peptides from the iRT Biognosys kit. If precursor file is given, it will select iRT precursors with charge 2. If both peptide and precursor input files are given, then only peptides will be plotted.If no iRTs were used, users can provide a list of peptides to plot. Intensity coverage of these peptides is also plotted. CiRT peptide list can be used for eukaryotic datasets: link to Identification of a Set of Conserved Eukaryotic Internal Retention Time Standards for Data-independent Acquisition Mass Spectrometry - PubMed (nih.gov)
 
 ### Excel Reports
