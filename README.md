@@ -25,17 +25,17 @@ QCeltis a command-line python package that provides users with quality control a
 1) ID-Free: parses input consisting of mzML files and extracts raw data metrics such as: MS1 and MS2 TIC, MS2/MS1 Spectral Ratio, Max Base Peak Intensities. 
 2) ID-Based: parses input from data processed through a search engine, such as Dia-NN or OpenSWATH. The input file contain protein, peptide or precursor-level intensities, or all 3 can be provided. Metrics such as quantification information, intensity CVs, common peptide/precursor TIC, miscleaved peptides count, etc are extracted. 
 
-Refer to the [Input File Description](#input-file-description) section for further details on required input files. 
-Refer to the [Outputs and Explanations](#outputs-and-explanations) section for further details on metrics evaluated and graphical representation of the metrics assessed through QCeltis 
+- Refer to the [Input File Description](#input-file-description) section for further details on required input files. 
+- Refer to the [Outputs and Explanations](#outputs-and-explanations) section for further details on metrics evaluated and graphical representation of the metrics assessed through QCeltis 
 
-<workflow diagram>
+(Manasa : add workflow diagram)
 
 ## Installation
 QCeltis can be installed from the command line using `git` and `pip`.
 
 First, clone the repository from GitHub:
 
-git clone https://github.com/vegesnam/QCPackage.git (change this) 
+git clone https://github.com/vegesnam/QCPackage.git (Manasa: change this) 
 
 Then, navigate to the downloaded directory and install the package using `pip`:
 
@@ -131,7 +131,9 @@ see example: and link
 
 see example: and link
 
-### Sample Grouping File
+### For Batch-wise QC Comparison: 
+
+#### Sample Grouping File
 
 | Column                | Description |
 |--------------------------|------------|
