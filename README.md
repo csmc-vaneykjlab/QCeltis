@@ -108,7 +108,7 @@ A directory containing mzML files needs to be given as input. Please refer https
 
 | Column                | Description |
 |--------------------------|------------|
-| Protein           | A column containing Protein names      |
+| Protein           | A column containing Protein Ids/Names      |
 | < list of samples >             | a list of samples followed by their intensity values     |
 
 see example: and link
@@ -117,7 +117,8 @@ see example: and link
 
 | Column                | Description |
 |--------------------------|------------|
-| Peptides           | A column containing Peptides names      |
+| Protein           | A column containing Protein Ids/Names      |
+| Peptide           | A column containing Peptide Ids      |
 | < list of samples >             | a list of samples followed by their intensity values     |
 
 see example: and link
@@ -126,7 +127,9 @@ see example: and link
 
 | Column                | Description |
 |--------------------------|------------|
-| Precursors           | A column containing Precursors names      |
+| Protein           | A column containing Protein Ids/Names      |
+| Peptide           | A column containing Peptide Ids      |
+| Precursor           | A column containing Precursor Ids      |
 | < list of samples >             | a list of samples followed by their intensity values     |
 
 see example: and link
@@ -172,9 +175,9 @@ see example: and link
 
 For examples of Excel Reports: (Manasa: add links to results from the example dataset) 
 
-### HTML Reports
+### HTML Report
 
-The report is divided into 2 tabs: ID-Free Metrics and ID-Based Metrics. If mzML directory was provided as input, ID-Free Tab will be populated with plots using the Id-Free metrics described below. The Id-Based Tab will contain metrics and results from your Search Engine Results dataset - Protein, Peptide or Precursor Level intensity files.
+The HTML report is generated at the end of the QC analysis, it is divided into 2 tabs: ID-Free Metrics and ID-Based Metrics. If mzML directory was provided as input, ID-Free Tab will be populated with plots using the Id-Free metrics described below. The Id-Based Tab will contain metrics and results from your Search Engine Results dataset - Protein, Peptide or Precursor Level intensity files.
 
 #### ID-Free Metrics Tab
 
