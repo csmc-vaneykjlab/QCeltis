@@ -1,4 +1,4 @@
-# Using the QCPackage using an example dataset
+# Using QCeltis to perform Quality Control using an Example Dataset
 
 ## Table of Contents
 1. [Installation](#installation)
@@ -28,9 +28,9 @@ Alternatively, the package can be installed directly from PyPI:
 ## Parameters and Commands
 
 [Parameters](https://github.com/vegesnam/QCPackage/blob/main/README.md#parameters)
-Input File Descriptions (link to input file descriptions)
+Input File Descriptions (Manasa: link to input file descriptions)
 
-To begin with analysis, you can download the mzML files, protein and precursor level files from (example_dataset link). You can provide these as input parameters and execute the following command:
+To begin with analysis, you can download the mzML files, protein and precursor level files from (Manasa: example_dataset link). You can provide these as input parameters and execute the following command: (Manasa: mention that this is running the package as a command-line tool) 
 
 ID-Free + ID-Based + Groupwise Comparison Command:
 
@@ -61,12 +61,17 @@ python  main.py --outdirectory ./output --reportname ExampleDataset-QCReport
 
 ## Dataset
 
-Dataset description + Groups
+(Manasa: Dataset description + Batches : DBS DR) 
+(How the data was acquired, number of samples + batches, where is it available)
+
+## Inputs 
+
+(Manasa: mzML dir - number of files, protein, precursor and grouping file)
 
 ## Outputs
 
 After the command is executed, the corresponding excel reports and html report are generated in the given output directory.
-Results included here: (link to results)
+Results included here: (Manasa: link to results)
 
 For the ID-Free + ID-Based + Groupwise Comparison Command, the following outputs will be generated:
 
@@ -119,7 +124,7 @@ Here, 3 outliers were found. The following files have been detected as outliers:
 * 20211018_Seroconversion_DBS_Plate6_DR4_centroid.mzML
 * 20211018_Seroconversion_DBS_Plate8_DR2_centroid.mzML
 
-Reason for the 3 outliers 
+(Manasa: Reason for the 3 outliers)  
 
 Groupwise comparison using CV% is performed with MS1 and MS2 TIC values:
 
@@ -127,10 +132,10 @@ Groupwise comparison using CV% is performed with MS1 and MS2 TIC values:
 
 ![MS2 TIC CV%](https://github.com/vegesnam/QCPackage/assets/87665957/e6cd281f-79af-4e4a-b69d-878d69772c80)
 
-All groups are under given tic cv threshold, so no issues 
+(Manasa: All groups are under given tic cv threshold, so no issues) 
 
 ##### Spectral Ratio
-
+(Manasa: fix this)
 The spectral ratio indicates the count of MS2 Spectra relative to MS1 Spectra in each file. The mass spectrometer consistently tallies both MS1 and MS2 Counts; thus, if there are discrepancies in the numbers, it's not a sample problem but rather an issue with the MS acquisition. If the ratio isn't stable, evaluate the instrument's performance on samples identified as anomalies.
 
 ![Spectral Ratio](https://github.com/vegesnam/QCPackage/assets/87665957/5184c1ef-6d22-4f8d-82bd-120b44ead9eb)
@@ -217,3 +222,5 @@ Having a high number of peptides with 0 miscleavages indicates a good digestion 
 Here, there is a difference in numbers and this is due to the missingness in the last 3 plates (also indicated in the protein and peptide quant) – further indicates that it is a digestion/sampleprep issue.
 
 ### Excel Reports
+
+(Manasa: what each excel file contains - sheet names and what the sheets contain) 
