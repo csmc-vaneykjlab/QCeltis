@@ -1,5 +1,5 @@
-# QCPackage
-Initial Code Source for the QC Package
+# QCeltis
+A python package developed for performing quality control analysis on large-scale DIA proteomics datasets. It designed to enable detection of technical variability due to several factors such as sample collection, transportation, storage, preparation, and/or instrument performance, thus helping improve the accuracy of any biological interpretations of large-scale mass spectrometry-based proteomics data. It allows users to monitor QC samples within and across different batches and helps create metrics and plots to not only easily depict outliers, but also to tease out potential causes of these outliers.
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -7,7 +7,7 @@ Initial Code Source for the QC Package
 3. [Usage](#Usage)
 4. [Description of Parameters](#description-of-parameters)
 5. [Input File Description](#input-file-description)
-6. [Outputs and explanations](#outputs-and-explanations)
+6. [Outputs and Explanations](#outputs-and-explanations)
 7. [Cite](#Cite)
 8. [Contributions](#contributions)
 9. [Release Notes](#release-notes)
@@ -15,15 +15,27 @@ Initial Code Source for the QC Package
 ## Introduction
 
 ### Why is Quality Control Required
-The sources of variability in a proteomics experiment that are addressed by QC can be categorized into two groups: biological and technical. Technical variability is derived from sample collection, transportation, storage, preparation, and/or instrument performance. Teasing out the cause of outliers in the category of technical variability can be done by evaluating some data parameters which can vary depending on the mass spectrometer, LC column, instrument cleaning, length of proteolytic digestion, and sample cleanup, and can improve downstream analysis. This is the aim of the QCPackage.
+Quality control is essential in large-scale DIA proteomics projects to minimize variability and ensure the accuracy and reproducibilty of measurements and biological results. Technical variability, stemming from factors like sample handling and MS instrument performance, can be addressed through regular and periodic measurement of QC samples used in the experimental dataset. Teasing out the cause of outliers in the category of technical variation can be done by evaluating some data metrics which vary depending on MS instrument, LC column, instrument cleaning, length of proteolytic digestion, and sample cleanup, and can improve downstream analysis. QCeltis aims to aid in performing comprehensive quality control analysis, further enhancing the reliability of proteomics research results. 
 
+### QCeltis Overview
+
+QCeltis a command-line python package that provides users with quality control assessement along with easy-to-intepret visualizations to help idenitfy issues at sample preparation, digestion and acquisition steps of the MS experiment process. To do so, QCeltis provides a way to perform quality control analysis through 2 primary steps: 
+
+(Manasa: write more about each metric extracted + talk about sample grouping file + what info does ID-free provide and ID-based provide)
+1) ID-Free: parses input consisting of mzML files and extracts raw data metrics such as: MS1 and MS2 TIC, MS2/MS1 Spectral Ratio, Max Base Peak Intensities. 
+2) ID-Based: parses input from data processed through a search engine, such as Dia-NN or OpenSWATH. The input file contain protein, peptide or precursor-level intensities, or all 3 can be provided. Metrics such as quantification information, intensity CVs, common peptide/precursor TIC, miscleaved peptides count, etc are extracted. 
+
+Refer to the [Input File Description](#input-file-description) section for further details on required input files. 
+Refer to the [Outputs and Explanations](#outputs-and-explanations) section for further details on metrics evaluated and graphical representation of the metrics assessed through QCeltis 
+
+<workflow diagram>
 
 ## Installation
-QCP can be installed from the command line using `git` and `pip`.
+QCeltis can be installed from the command line using `git` and `pip`.
 
 First, clone the repository from GitHub:
 
-git clone https://github.com/vegesnam/QCPackage.git
+git clone https://github.com/vegesnam/QCPackage.git (change this) 
 
 Then, navigate to the downloaded directory and install the package using `pip`:
 
@@ -37,6 +49,8 @@ Alternatively, the package can be installed directly from PyPI:
 `pip install -i < pypi instance will go here >`
 
 ## Usage
+
+(Manasa: add usage details if used as a library vs if used as a command-line tool)
 
 ```python
 python  main.py [-h] --outdirectory OUTDIRECTORY --reportname REPORTNAME [--mzml_directory MZML_DIRECTORY]
@@ -80,10 +94,17 @@ python  main.py [-h] --outdirectory OUTDIRECTORY --reportname REPORTNAME [--mzml
 | --irtlabel               | -irt       | Label for iRT peptides present in your peptide intensity file | None          |
 | --coverage_threshold     | -v         | Intensity or retention time coverage % threshold in each sample | False         |
 
-
 ## Input Files Descriptions
 
-### protein_level input file
+### Input for Raw Data quality (ID-Free) Assessment: 
+
+#### mzml_directory
+
+A directory containing mzML files needs to be given as input. Please refer https://github.com/HUPO-PSI/mzML for specifications of the mzML file format. The mzML files, should contain data as spectra, and can be converted from .raw (for data from a Thermo-Fisher instrument) or .wiff (for raw data from a Sciex instrument). The script will only pick the files with .mzML extention from the input directory.
+
+### Input for Search Results (ID-Based) Assessment: 
+
+#### protein_level input file
 
 | Column                | Description |
 |--------------------------|------------|
@@ -92,7 +113,7 @@ python  main.py [-h] --outdirectory OUTDIRECTORY --reportname REPORTNAME [--mzml
 
 see example: and link
 
-### peptide_level input file
+#### peptide_level input file
 
 | Column                | Description |
 |--------------------------|------------|
@@ -101,7 +122,7 @@ see example: and link
 
 see example: and link
 
-### precursor_level input file
+#### precursor_level input file
 
 | Column                | Description |
 |--------------------------|------------|
@@ -110,21 +131,16 @@ see example: and link
 
 see example: and link
 
-### Grouping input file
+### Sample Grouping File
 
 | Column                | Description |
 |--------------------------|------------|
 | Filename           | A column containing file names      |
-| Group            | The group the sample belongs to     |
+| Group            | The batch the sample belongs to     |
 
 see example: and link
 
-### mzml_directory
-
-A directory containing mzML files needs to be given as input. Please refer https://github.com/HUPO-PSI/mzML for specifications of the mzML file format.
-The script will only pick the files with .mzML extention from the input directory.
-
-## Outputs and explanantions
+## Outputs and Explanations
 
 ### ID-Free and ID-Based Metrics:
 
@@ -133,8 +149,8 @@ The script will only pick the files with .mzML extention from the input director
 | MS1 TIC                               | ID-Free  | TIC Values, MS1 + MS2 TIC Graph, Outlier Detection, Threshold FAIL/PASS, TIC CV% across groups                            |
 | MS2 TIC                               | ID-Free  | TIC Values, MS1 + MS2 TIC Graph, Outlier Detection, Threshold FAIL/PASS, TIC CV% across groups                            |
 | MS2/MS1 Spectra                       | ID-Free  | TIC Values, MS2/MS1 Graph, Outlier Detection on MS2/MS1, Threshold FAIL/PASS                                             |
-| Max Basepeak Intensity                | ID-Free  | Max Basepeak Values, Basepeak Intensity Graph + Outlier Detection                                                        |
-| Quant                                 | ID-Based | Protein/Peptide/Precursor Quant + Threshold PASS/FAIL + graph                                                            |
+| Max Base peak Intensity                | ID-Free  | Max Base peak Values, Max Base peak Intensity Graph + Outlier Detection                                                        |
+| Quantification                        | ID-Based | Protein/Peptide/Precursor Quantification + Threshold PASS/FAIL + graph                                                            |
 | Intensity CVs                         | ID-Based | Protein/Peptide/Precursor Overall CV + Cumulative CV% + Groupwise CV % + Cumulative/Groupwise Graphs + Threshold PASS/FAIL (if groupwise) |
 | Common TIC                            | ID-Based | Peptide/Precursor Common TIC values + TIC CV% across groups + graphs for samples + groups + Threshold PASS/FAIL (if groupwise) |
 | 0 Missed Cleavage Percentage          | ID-Based | Missed Cleavage Summary + Threshold PASS/FAIL                                                                           |
@@ -148,16 +164,23 @@ The script will only pick the files with .mzML extention from the input director
 |--------------------|---------------------------------------------------------|
 | ID-Free            | ID-Free Metrics Summary, Group TIC CV                   |
 | Protein Level      | Protein Quant Summary, Groupwise Protein Quant, Protein Level CV, Protein CV Group Summary |
-| Precursor Level    | Precursor Quant Summary, Groupwise Precursor Quant, Precursor Level CV, Precursor CV Group Summary, Common Precursor TIC, Common Precursor TIC Group CV, Miscleavage Threshold, iRT Precursor Intensity |
+| Peptide Level      | Peptide Quant Summary, Groupwise Peptide Quant, Peptide Level CV, Peptide CV Group Summary, Common Peptide TIC, Common Peptide TIC Group CV, Miscleavage Threshold, iRT Peptide Intensity | (Manasa: sheet name for selected peptide intensity)
+| Precursor Level    | Precursor Quant Summary, Groupwise Precursor Quant, Precursor Level CV, Precursor CV Group Summary, Common Precursor TIC, Common Precursor TIC Group CV, Miscleavage Threshold, iRT Precursor Intensity | (Manasa: sheet name for selected peptide intensity)
 | Status Report      | Samplewise QC Metrics, Groupwise QC Metrics             |
+
+For examples of Excel Reports: (Manasa: add links to results from the example dataset) 
 
 ### HTML Reports
 
-#### ID-Free plots
+The report is divided into 2 tabs: ID-Free Metrics and ID-Based Metrics. If mzML directory was provided as input, ID-Free Tab will be populated with plots using the Id-Free metrics described below. The Id-Based Tab will contain metrics and results from your Search Engine Results dataset - Protein, Peptide or Precursor Level intensity files.
+
+#### ID-Free Metrics Tab
+
+QCeltis extracts the following metrics from the provided mzML files and detects samples that are not consistent or are outliers using outlier analysis methods or using user-defined thresholds. 
 
 ##### Total Ion Current
 
-The total ion current (TIC) is the summed intensity across the entire range of masses being detected in each sample. MS1 and MS2 Total Ion Current Values extracted from spectra within the given mzML files. Total Ion Current values from MS1 and MS2 Spectra are expected to be consistent across the QC samples. If extreme values are found, they are labelled as outliers. Outliers found in TIC can indicate an issue If groups are provided, TIC CV% is calculated across samples within each group and the tic cv threshold is applied if provided.  If any group doesn’t pass the threshold, this indicates an inconsistent TIC pattern within the samples of the group.
+The total ion current (TIC) is the summed intensity across the entire range of masses being detected in each sample. MS1 and MS2 Total Ion Current Values extracted from spectra within the given mzML files. Total Ion Current values from MS1 and MS2 Spectra are expected to be consistent across the QC samples. If extreme values are found, they are labelled as outliers. Outliers found in TIC can indicate an issue. If batches are provided, TIC CV% is calculated across samples within each group and the 'tic cv threshold' is applied if provided.  If any group doesn’t pass the threshold, this indicates an inconsistent TIC pattern within the samples of the group.
 
 ![TIC_CV](https://github.com/vegesnam/QCPackage/assets/32958585/960d1ac5-491b-43fc-a0a5-43d91e51f766)
 
@@ -165,7 +188,7 @@ The total ion current (TIC) is the summed intensity across the entire range of m
 
 ![total_ion_current](https://github.com/vegesnam/QCPackage/assets/32958585/2daa3e5c-e486-4547-bacf-500802184db9)
 
-If extreme values are found, they are labelled as outliers. Outliers found in TIC can indicate an issue If groups are provided, TIC CV% is calculated across samples within each group and the tic cv threshold is applied if provided.  If any group doesn’t pass the threshold, this indicates an inconsistent TIC pattern within the samples of the group.
+If extreme values are found, they are labelled as outliers. Outliers found in TIC can indicate an issue. If batches are provided, TIC CV% is calculated across samples within each group and the 'tic cv threshold' is applied if provided.  If any group doesn’t pass the threshold, this indicates an inconsistent TIC pattern within the samples of the group.
 
 ##### Spectral Ratio
 
