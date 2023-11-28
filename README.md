@@ -28,7 +28,7 @@ QCeltis a command-line python package that provides users with quality control a
 - Refer to the [Input File Description](#input-file-description) section for further details on required input files. 
 - Refer to the [Outputs and Explanations](#outputs-and-explanations) section for further details on metrics evaluated and graphical representation of the metrics assessed through QCeltis 
 
-(Manasa : add workflow diagram)
+![image](https://github.com/vegesnam/QCeltis/assets/87665957/fcbac125-f6c5-47fe-a15d-383ac71e0d43)
 
 ## Installation
 QCeltis can be installed from the command line using `git` and `pip`.
