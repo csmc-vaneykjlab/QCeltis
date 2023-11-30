@@ -1,5 +1,5 @@
 # QCeltis
-A python package developed for performing quality control analysis on large-scale DIA proteomics datasets. It designed to enable detection of technical variability due to several factors such as sample collection, transportation, storage, preparation, and/or instrument performance, thus helping improve the accuracy of any biological interpretations of large-scale mass spectrometry-based proteomics data. It allows users to monitor QC samples within and across different batches and helps create metrics and plots to not only easily depict outliers, but also to tease out potential causes of these outliers.
+A python package developed for performing quality control analysis on large-scale DIA proteomics datasets. It was designed to enable detection of technical variability due to several factors such as sample collection, transportation, storage, preparation, and/or instrument performance, thus helping improve the accuracy of any biological interpretations of large-scale mass spectrometry-based proteomics data. It allows users to monitor QC samples within and across different batches and helps create metrics and plots to not only easily depict outliers, but also to tease out potential causes of these outliers.
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -203,19 +203,19 @@ QCeltis extracts the following ID-Free metrics from the provided mzML files and 
 
 ##### Total Ion Current
 
-Total Ion Current Line Graph: 
+<ins>Total Ion Current Line Graph:</ins>
 
 ![TIC Line Graph](https://github.com/vegesnam/QCeltis/assets/87665957/862a19ee-12e0-4fd4-bd55-e3b9305e882d)
 
 MS1 and MS2 Total Ion Current Values are extracted from spectra present in the mzML files and are plotted using a line graph. Total Ion Current values from MS1 and MS2 Spectra are expected to be consistent across the replicate quality control samples. If 'MS1 TIC Threshold' or 'MS2 TIC Threshold' is provided by the user, a dotted line is used to display the threshold in the line graph. Any samples above that threshold are considered as failed samples. Apart from threshold-defined identification of failed samples, outlier analysis is also performed. If extreme values are found across the samples, they are labelled as outliers. 
 
-TIC Outlier Plot: 
+<ins>TIC Outlier Plot:</ins> 
 
 ![MS1 TIC Outlier Plot](https://github.com/vegesnam/QCeltis/assets/87665957/b73575cd-c6da-48cc-9444-8397b7a681c4)
 
 When outliers are identified, a scatter plot of the TIC values is produced, with the outlier highlighted in yellow. Outliers/Failed Samples found using this metric indicate issues with with data acquisition and LC-MS instrument performance such as improper autosampler sample pickup. 
  
-TIC CV% Across Groups Plot: 
+<ins>TIC CV% Across Groups Plot:</ins> 
 
 ![MS1 TIC CV% Plot](https://github.com/vegesnam/QCeltis/assets/87665957/6447f8ed-c446-4772-8693-333eef06d746)
 
@@ -223,7 +223,7 @@ When a grouping file is provided, TIC CV% is calculated across samples within ea
 
 ##### Spectral Ratio
 
-Spectral Ratio Line Graph: 
+<ins>Spectral Ratio Line Graph:</ins> 
 
 ![Spectral Ratio](https://github.com/vegesnam/QCeltis/assets/87665957/911c43df-38d9-4d01-af67-537848dc038c)
 
@@ -231,7 +231,7 @@ The number of MS1 and MS2 spectra are counted from each provided mzML file and t
 
 ##### Max Base Peak Intensity
 
-Max Base Peak Intensity Bar Graph:
+<ins>Max Base Peak Intensity Bar Graph:</ins>
 
 ![Max Base Peak Intensity](https://github.com/vegesnam/QCeltis/assets/87665957/4e8881ee-95a0-4318-96fe-13781fae0e59)
 
@@ -245,15 +245,15 @@ QCeltis extracted the following ID-Based metrics from the provided search engine
 
 Based on the type of search engine result, the number of proteins, peptides or precursors is extracted. Here, examples of number of proteins and precursors identified is provided. 
 
-Quantification Bar Graphs:
+<ins>Quantification Bar Graphs:<ins>
 
-Protein Bar Graph: 
+<ins>Protein Bar Graph:</ins> 
 
 ![Number of Proteins](https://github.com/vegesnam/QCeltis/assets/87665957/009c4de5-cb94-4daf-8bc9-9c33375a96ab)
 
 Number of Proteins identified in each sample is plotted. Here, a 'Protein Threshold = 200' was provided and it is represented using a dotted line. All the samples are considered as "PASS" since the number of proteins is above the provided threshold. If there are any samples that have proteins numbers below the threshold, they are considered as "FAIL" and this indicates issues with sample preparation, digestion protocols, experimental reproducibility
 
-Precursor Bar Graph: 
+<ins>Precursor Bar Graph:</ins> 
 
 ![Number of Precursors](https://github.com/vegesnam/QCeltis/assets/87665957/de40c702-105b-4f33-a7c6-eba1d1fbd2c5)
 
@@ -263,13 +263,13 @@ When a peptide-level input is provided, a bar plot similar to the above is produ
 
 ##### Intensity CV% Plots
 
-Intensity CV% Cumulative Frequency Line Graph:
+<ins>Intensity CV% Cumulative Frequency Line Graph:</ins>
 
 ![CV Cumulative Frequency](https://github.com/vegesnam/QCeltis/assets/87665957/8c341781-5627-467e-aa64-9bf7106df54b)
 
 Using the intensity values provided, CV% (Coefficient of Variation %) is calculated for each protein, peptide or precursor and the CV% cumulative frequency is plotted using a line graph. Here, the protein and precursor CV% cumulative frequency is plotted. Higher CVs indicate greater variation in the intensity measurements across replicate samples stemming from sample preparation, data acquisition or instrument performance. Lower CVs indicate higher reproducibility of protein, peptide or precursor intensities across replicate samples. 
 
-Intensity CV% Bar Graph: 
+<ins>Intensity CV% Bar Graph:</ins> 
 
 ![Protein CV%](https://github.com/vegesnam/QCeltis/assets/87665957/393fe0cc-8e2b-47f1-83c9-c1d058f098f4)
 
@@ -281,11 +281,11 @@ Here, protein and precursor CV% across groups are shown. A similar plot will be 
 
 ##### Common TIC
 
-Common Peptide/Precursor TIC Bar Graph: 
+<ins>Common Peptide/Precursor TIC Bar Graph:</ins> 
 
 ![Common Precursor TIC](https://github.com/vegesnam/QCeltis/assets/87665957/4f74e742-f41a-410b-b725-b8f3d130779d)
 
-Common Peptide/Precursor TIC CV%: 
+<ins>Common Peptide/Precursor TIC CV%:</ins> 
 
 ![Common Precursor TIC CV%](https://github.com/vegesnam/QCeltis/assets/87665957/e10960a0-50b9-4d02-9030-6d86da117177)
 
@@ -296,7 +296,7 @@ CVs are calculated with intensity values from samples within each group.
 
 ##### Miscleavages Plot
 
-Number of No Miscleavages Bar Graph: 
+<ins>Number of No Miscleavages Bar Graph:</ins> 
 
 ![image](https://github.com/vegesnam/QCeltis/assets/87665957/00ef1e60-8540-4b3c-91ed-54e1ab37558f)
 
@@ -311,7 +311,7 @@ When a grouping file is given, a PCA plot is generated using the protein, peptid
 
 If your dataset contains iRT peptides, the 'irtlabel' parameter can be used to plot the intensity distribution of the iRT peptides/precursors (from the iRT Biognosys) across the dataset using a line graph. Apart from the intensity distribution, a coverage summary bar graph is generated, where each bar represents the percentage of samples each iRT peptide/precursor is present in. If the 'Coverage Threshold' is provided by the user, a dotted line is also plotted in the bar graph. Any samples not meeting the threshold are labelled as "FAIL". Low coverage of iRT peptides across the datasets could indicate issues with sample preparation. 
 
-Using the 'peptide_list' parameter, a user-defined list of peptides can be monitored instead of the iRT peptides. A similar intensity distribution line graph and coverage summary bar graphs will be plotted and the 'Coverage Threshold' is applied if it is provided by the user. We recommend monitoring [CiRT peptides](https://www.sciencedirect.com/science/article/pii/S1535947620326335) for eukaryptic datasets. 
+Using the 'peptide_list' parameter, a user-defined list of peptides can be monitored instead of the iRT peptides. A similar intensity distribution line graph and coverage summary bar graphs will be plotted and the 'Coverage Threshold' is applied if it is provided by the user. We recommend monitoring [CiRT peptides](https://www.sciencedirect.com/science/article/pii/S1535947620326335) for eukaryotic datasets. 
 
 ## Cite
 
