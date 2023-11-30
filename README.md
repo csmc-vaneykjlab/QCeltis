@@ -28,7 +28,7 @@ QCeltis a command-line python package that provides users with quality control a
 - Refer to the [Input File Description](#input-file-description) section for further details on required input files. 
 - Refer to the [Outputs and Explanations](#outputs-and-explanations) section for further details on metrics evaluated and graphical representation of the metrics assessed through QCeltis 
 
-![image](https://github.com/vegesnam/QCeltis/assets/87665957/fcbac125-f6c5-47fe-a15d-383ac71e0d43)
+![image](https://github.com/vegesnam/QCeltis/assets/87665957/3d084e98-8f3c-472a-959a-af331ef8947f)
 
 ## Installation
 QCeltis can be installed from the command line using `git` and `pip`.
@@ -46,14 +46,30 @@ pip install -r requirements.txt
 
 Alternatively, the package can be installed directly from PyPI:
 
-`pip install -i < pypi instance will go here >`
+`pip install -i https://test.pypi.org/simple/ qcp-test1==0.1.6` (Manasa: Change this) 
 
 ## Usage
 
-(Manasa: add usage details if used as a library vs if used as a command-line tool)
+If downloaded using github: 
 
 ```python
 python  main.py [-h] --outdirectory OUTDIRECTORY --reportname REPORTNAME [--mzml_directory MZML_DIRECTORY]
+               [--ms1_tic_threshold MS1_TIC_THRESHOLD] [--ms2_tic_threshold MS2_TIC_THRESHOLD]
+               [--ms1_spectra_threshold MS1_SPECTRA_THRESHOLD] [--ms2_spectra_threshold MS2_SPECTRA_THRESHOLD]
+               [--max_basepeak_intensity MAX_BASEPEAK_INTENSITY] [--protein_level PROTEIN_LEVEL]
+               [--peptide_level PEPTIDE_LEVEL] [--precursor_level PRECURSOR_LEVEL]
+               [--grouping_file GROUPING_FILE] [--peptide_list PEPTIDE_LIST]
+               [--protein_threshold PROTEIN_THRESHOLD] [--peptide_threshold PEPTIDE_THRESHOLD]
+               [--precursor_threshold PRECURSOR_THRESHOLD] [--enzyme ENZYME] [--miscleavage_threshold MISCLEAVAGE_THRESHOLD]
+               [--tic_cv_threshold TIC_CV_THRESHOLD] [--cv_percent_threshold CV_PERCENT_THRESHOLD]
+               [--data_percent_threshold DATA_PERCENT_THRESHOLD] [--irt IRTLABEL]
+               [--coverage_threshold COVERAGE_THRESHOLD]
+```
+
+If downloaded as a library through pip install:
+
+```python
+qceltis [-h] --outdirectory OUTDIRECTORY --reportname REPORTNAME [--mzml_directory MZML_DIRECTORY]
                [--ms1_tic_threshold MS1_TIC_THRESHOLD] [--ms2_tic_threshold MS2_TIC_THRESHOLD]
                [--ms1_spectra_threshold MS1_SPECTRA_THRESHOLD] [--ms2_spectra_threshold MS2_SPECTRA_THRESHOLD]
                [--max_basepeak_intensity MAX_BASEPEAK_INTENSITY] [--protein_level PROTEIN_LEVEL]
@@ -88,9 +104,9 @@ python  main.py [-h] --outdirectory OUTDIRECTORY --reportname REPORTNAME [--mzml
 | --precursor_threshold    | -z         | Precursor threshold for each sample              | False         |
 | --enzyme                 | -e         | User input enzyme                                | None          |
 | --miscleavage_threshold  | -c         | Missed cleavage threshold for each sample        | False         |
-| --tic_cv_threshold       | -t         | TIC CV threshold for groupwise QC status         | False         |
-| --cv_percent_threshold   | -s         | Intensity CV threshold                           | False         |
-| --data_percent_threshold | -d         | Data threshold for intensity CV                  | False         |
+| --tic_cv_threshold       | -t         | TIC CV threshold for groupwise QC status         | 40         |
+| --cv_percent_threshold   | -s         | Intensity CV threshold                           | 40         |
+| --data_percent_threshold | -d         | Data threshold for intensity CV                  | 70         |
 | --irtlabel               | -irt       | Label for iRT peptides present in your peptide intensity file | None          |
 | --coverage_threshold     | -v         | Intensity or retention time coverage % threshold in each sample | False         |
 
@@ -161,7 +177,6 @@ see example: and link
 | 0 Missed Cleavage Percentage          | ID-Based | Missed Cleavage Summary + Threshold PASS/FAIL                                                                           |
 | iRT Peptide Intensity Distribution    | ID-Based | Peptide/Precursor Level Intensities Distribution + Graph + Coverage Summary across samples + Threshold PASS/FAIL         |
 | Selected Peptide Intensity Distribution | ID-Based | Peptide/Precursor Level Intensities Distribution + Graph + Coverage Summary across samples + Threshold PASS/FAIL         |
-| RT Coverage Summary Distribution      | ID-Based | if RT files are given, iRT or selected peptide RT distribution + coverage summary + Threshold PASS/FAIL                  |
 
 ### Excel reports
 
@@ -169,114 +184,134 @@ see example: and link
 |--------------------|---------------------------------------------------------|
 | ID-Free            | ID-Free Metrics Summary, Group TIC CV                   |
 | Protein Level      | Protein Quant Summary, Groupwise Protein Quant, Protein Level CV, Protein CV Group Summary |
-| Peptide Level      | Peptide Quant Summary, Groupwise Peptide Quant, Peptide Level CV, Peptide CV Group Summary, Common Peptide TIC, Common Peptide TIC Group CV, Miscleavage Threshold, iRT Peptide Intensity | (Manasa: sheet name for selected peptide intensity)
-| Precursor Level    | Precursor Quant Summary, Groupwise Precursor Quant, Precursor Level CV, Precursor CV Group Summary, Common Precursor TIC, Common Precursor TIC Group CV, Miscleavage Threshold, iRT Precursor Intensity | (Manasa: sheet name for selected peptide intensity)
+| Peptide Level      | Peptide Quant Summary, Groupwise Peptide Quant, Peptide Level CV, Peptide CV Group Summary, Common Peptide TIC, Common Peptide TIC Group CV, Miscleavage Threshold, iRT Peptide Intensity/Selected Peptide Intensity | 
+| Precursor Level    | Precursor Quant Summary, Groupwise Precursor Quant, Precursor Level CV, Precursor CV Group Summary, Common Precursor TIC, Common Precursor TIC Group CV, Miscleavage Threshold, iRT Precursor Intensity/Selected Precursor Intensity | 
 | Status Report      | Samplewise QC Metrics, Groupwise QC Metrics             |
 
-For examples of Excel Reports: (Manasa: add links to results from the example dataset) 
+For examples of Excel Reports: [ID-Free + ID-Based Example Dataset Reports](https://github.com/vegesnam/QCeltis/tree/main/example-dataset/results/IDFree_IDBased_GroupComparison_QCResult)
+(Manasa: change this once the repo is changed)
 
 ### HTML Report
 
-The HTML report is generated at the end of the QC analysis, it is divided into 2 tabs: ID-Free Metrics and ID-Based Metrics. If mzML directory was provided as input, ID-Free Tab will be populated with plots using the Id-Free metrics described below. The Id-Based Tab will contain metrics and results from your Search Engine Results dataset - Protein, Peptide or Precursor Level intensity files.
+The HTML report is generated at the end of the QCeltis analysis. The report is divided into 2 tabs: ID-Free Metrics and ID-Based Metrics. If mzML directory is provided as input, ID-Free Tab will be populated with plots using the Id-Free metrics. The Id-Based Tab will contain metrics and results from your Search Engine Results dataset - Protein, Peptide or Precursor Level intensity files.
+
+Note: If grouping file is provided, additional groupwise plots are produced within the report. The colors within each graph will represent the groups provided. 
 
 #### ID-Free Metrics Tab
 
-QCeltis extracts the following metrics from the provided mzML files and detects samples that are not consistent or are outliers using outlier analysis methods or using user-defined thresholds. 
+QCeltis extracts the following ID-Free metrics from the provided mzML files and detects samples that are not consistent across the dataset or are outliers using outlier analysis methods and user-defined thresholds. 
 
 ##### Total Ion Current
 
-The total ion current (TIC) is the summed intensity across the entire range of masses being detected in each sample. MS1 and MS2 Total Ion Current Values extracted from spectra within the given mzML files. Total Ion Current values from MS1 and MS2 Spectra are expected to be consistent across the QC samples. If extreme values are found, they are labelled as outliers. Outliers found in TIC can indicate an issue. If batches are provided, TIC CV% is calculated across samples within each group and the 'tic cv threshold' is applied if provided.  If any group doesn’t pass the threshold, this indicates an inconsistent TIC pattern within the samples of the group.
+Total Ion Current Line Graph: 
 
-![TIC_CV](https://github.com/vegesnam/QCPackage/assets/32958585/960d1ac5-491b-43fc-a0a5-43d91e51f766)
+![TIC Line Graph](https://github.com/vegesnam/QCeltis/assets/87665957/862a19ee-12e0-4fd4-bd55-e3b9305e882d)
 
-![TIC_Outlier](https://github.com/vegesnam/QCPackage/assets/32958585/f0102ca2-5adb-4d56-b443-ec7b4bd09f49)
+MS1 and MS2 Total Ion Current Values are extracted from spectra present in the mzML files and are plotted using a line graph. Total Ion Current values from MS1 and MS2 Spectra are expected to be consistent across the replicate quality control samples. If 'MS1 TIC Threshold' or 'MS2 TIC Threshold' is provided by the user, a dotted line is used to display the threshold in the line graph. Any samples above that threshold are considered as failed samples. Apart from threshold-defined identification of failed samples, outlier analysis is also performed. If extreme values are found across the samples, they are labelled as outliers. 
 
-![total_ion_current](https://github.com/vegesnam/QCPackage/assets/32958585/2daa3e5c-e486-4547-bacf-500802184db9)
+TIC Outlier Plot: 
 
-If extreme values are found, they are labelled as outliers. Outliers found in TIC can indicate an issue. If batches are provided, TIC CV% is calculated across samples within each group and the 'tic cv threshold' is applied if provided.  If any group doesn’t pass the threshold, this indicates an inconsistent TIC pattern within the samples of the group.
+![MS1 TIC Outlier Plot](https://github.com/vegesnam/QCeltis/assets/87665957/b73575cd-c6da-48cc-9444-8397b7a681c4)
+
+When outliers are identified, a scatter plot of the TIC values is produced, with the outlier highlighted in yellow. Outliers/Failed Samples found using this metric indicate issues with with data acquisition and LC-MS instrument performance such as improper autosampler sample pickup. 
+ 
+TIC CV% Across Groups Plot: 
+
+![MS1 TIC CV% Plot](https://github.com/vegesnam/QCeltis/assets/87665957/6447f8ed-c446-4772-8693-333eef06d746)
+
+When a grouping file is provided, TIC CV% is calculated across samples within each provided group and the 'TIC CV Threshold' is applied. If any group doesn't pass the threshold, the group is labelled as a 'FAIL' and this indicates an inconsistent TIC pattern within the samples of the group. 
 
 ##### Spectral Ratio
 
-![Spectral_ratio](https://github.com/vegesnam/QCPackage/assets/32958585/79bef057-7082-47d0-9823-8e24879ef853)
+Spectral Ratio Line Graph: 
 
-The spectral ratio indicates the count of MS2 Spectra relative to MS1 Spectra in each file.
+![Spectral Ratio](https://github.com/vegesnam/QCeltis/assets/87665957/911c43df-38d9-4d01-af67-537848dc038c)
 
-The mass spectrometer consistently tallies both MS1 and MS2 Counts; thus, if there are discrepancies in the numbers, it's not a sample problem but rather an issue with the MS acquisition. If the ratio isn't stable, evaluate the instrument's performance on samples identified as anomalies.
+The number of MS1 and MS2 spectra are counted from each provided mzML file and the MS2-to-MS1 spectral ratio is calculated. Consistent and expected numbers of spectra across samples indicates stable instrument performance. Outlier analysis is performed to check for any extreme values and identify outliers. If outliers are identified, a scatter plot (similar to the above TIC Outlier Plot) is generated, with the outliers highlighted in yellow. Outliers/Failed Samples found using this metric indicate issues with with LC-MS instrument performance or experiment protocol changes. 
 
-##### Max Basepeak Intensity
+##### Max Base Peak Intensity
 
-![max_basepeak_intensity](https://github.com/vegesnam/QCPackage/assets/32958585/3921d0e6-d8be-4f9a-8f54-3d6f41fee59b)
+Max Base Peak Intensity Bar Graph:
 
-The base peak intensity is the recorded intensity of the most intense peak from each spectrum in the mzML file. The Max Base Peak Intensity represents the highest recorded base peak intensity in each mzML file.
+![Max Base Peak Intensity](https://github.com/vegesnam/QCeltis/assets/87665957/4e8881ee-95a0-4318-96fe-13781fae0e59)
 
-![Uploading max_basepeak_intensity_outlier_plot.png…]()
+When the provided mzML files have base peak intensity information, the maximum base peak intensity is extracted from the files and plotted as a bar graph. The Max Base Peak Intensity represents the highest recorded base peak intensity in each mzML file. If 'Max Base Peak Intensity Threshold' is provided by the user, a dotted line is used to display the threshold in the line graph. Any samples above that threshold are considered as failed samples. Apart from threshold-defined identification of failed samples, outlier analysis is also performed. If extreme values are found across the samples, they are labelled as outliers through outlier analysis. If outliers are identified, a scatter plot (similar to the above TIC Outlier Plot) is generated, with the outliers highlighted in yellow. Outliers/Failed Samples found using this metric indicate issues with with data acquisition or LC-MS instrument performance. Outliers identified within this metric usually correlate with outliers identified within the MS1 or MS2 TIC metrics.  
 
-Max Base Peak Intensity is expected to be consistent across QC samples. Any outliers detected are highlighted in yellow. Outliers detected could point to issues with sample pickup or samples being dried out. Usually correlates with ID-free TIC.
-Note: The outlier here will also be labelled as an outlier in the TIC graph.
+#### ID-Based Metrics Tab 
 
-
-#### ID-Based plots
+QCeltis extracted the following ID-Based metrics from the provided search engine results, applies user-defined thresholds and performs groupwise comparison if the grouping file is provided. Depending on the type of search engine input, different plots are generated. 
 
 ##### Quantification Plots
 
-Displays the number of proteins and peptides or precursors. When the threshold is provided, any samples not meeting the threshold is flagged as a ‘FAIL’, this could indicate an issue with the sample prep or digestion protocol.
+Based on the type of search engine result, the number of proteins, peptides or precursors is extracted. Here, examples of number of proteins and precursors identified is provided. 
 
-<p align="center">
-  <!-- First Row -->
-  <img src="https://github.com/vegesnam/QCPackage/assets/32958585/5dbd3332-6dba-46e2-93d9-20ea261ca8b2" width="50%" />
-  <img src="https://github.com/vegesnam/QCPackage/assets/32958585/35f1128e-1d24-4951-8b3e-ebc748d03095" width="50%" />
+Quantification Bar Graphs:
 
-  <!-- Second Row -->
-  <img src="[URL_to_Image3](https://github.com/vegesnam/QCPackage/assets/32958585/1780abe6-b0a4-4f20-a775-0ebaa031b5ea)" width="50%" />
-  <img src="[URL_to_Image4](https://github.com/vegesnam/QCPackage/assets/32958585/2fcd40f4-3b57-4fcd-8909-7405c13f0948)" width="50%" />
-</p>
+Protein Bar Graph: 
 
-In this case, even though the threshold is met, the last 3 groups have significantly less proteins and precursors. Further investigation showed a high percentage of missingness in the samples and indicated an issue with sample prep.
-So these plots can be a good way to visualize any varying patterns within samples
+![Number of Proteins](https://github.com/vegesnam/QCeltis/assets/87665957/009c4de5-cb94-4daf-8bc9-9c33375a96ab)
 
-##### CV Plots
+Number of Proteins identified in each sample is plotted. Here, a 'Protein Threshold = 200' was provided and it is represented using a dotted line. All the samples are considered as "PASS" since the number of proteins is above the provided threshold. If there are any samples that have proteins numbers below the threshold, they are considered as "FAIL" and this indicates issues with sample preparation, digestion protocols, experimental reproducibility
 
-![CV_IDbased_Protein](https://github.com/vegesnam/QCPackage/assets/32958585/72cc5220-ca01-49c0-997d-8c1e1bae96c1)
+Precursor Bar Graph: 
 
-![CV_IDbased_Precursor](https://github.com/vegesnam/QCPackage/assets/32958585/57060297-0e84-48e3-b5ae-6ebc7f26c6d2)
+![Number of Precursors](https://github.com/vegesnam/QCeltis/assets/87665957/de40c702-105b-4f33-a7c6-eba1d1fbd2c5)
 
-CVs are calculated with intensity values from samples within each group [ Please note: groupwise input must be given ]. Data and CV Thershold: simple explanation.
+Number of Precursors identified in each sample is plotted. Here, a 'Precursor Threshold = 3000' was provided and it is represented using a dotted line. All the samples are considered as "PASS" since the number of precursors is above the provided threshold. If there are any samples that have precursors numbers below the threshold, they are considered as "FAIL" and this indicates issues with sample preparation, digestion protocols, experimental reproducibility. 
 
-If inconsistent ( data threshold failure ), then the samples were poorly digested (unless TIC suggests otherwise). If TIC is high but the CV isn't, then digestion issue or if TIC is also low, then the sample didn't get picked up properly.
-[ write better explanations for this ]
+When a peptide-level input is provided, a bar plot similar to the above is produced. 
+
+##### Intensity CV% Plots
+
+Intensity CV% Cumulative Frequency Line Graph:
+
+![CV Cumulative Frequency](https://github.com/vegesnam/QCeltis/assets/87665957/8c341781-5627-467e-aa64-9bf7106df54b)
+
+Using the intensity values provided, CV% (Coefficient of Variation %) is calculated for each protein, peptide or precursor and the CV% cumulative frequency is plotted using a line graph. Here, the protein and precursor CV% cumulative frequency is plotted. Higher CVs indicate greater variation in the intensity measurements across replicate samples stemming from sample preparation, data acquisition or instrument performance. Lower CVs indicate higher reproducibility of protein, peptide or precursor intensities across replicate samples. 
+
+Intensity CV% Bar Graph: 
+
+![Protein CV%](https://github.com/vegesnam/QCeltis/assets/87665957/393fe0cc-8e2b-47f1-83c9-c1d058f098f4)
+
+![Precursor CV%](https://github.com/vegesnam/QCeltis/assets/87665957/a09a7943-d8b2-462b-91c3-7cad97a157cf)
+
+When a grouping file is provided, CV% is calculated across samples within each provided group and a bar graph is generated. Each bar represents the percentage of proteins, peptide or precursors under the 'CV Percent Threshold' (By default, cv percent threshold is set to 40%, this can be changed by the user). This provides information about the consistency and reproducibility of intensity values within each provided group (batch/plate). Groupwise CV% helps identify batch/plate specific trends and patterns. A 'Data Percent Threshold' (By default, data percent threshold is set to 70%, this can be changed by the user) is applied and any groups not passing this threshold are labelled as "FAIL". 
+
+Here, protein and precursor CV% across groups are shown. A similar plot will be generated for peptides as well (when peptide-level input is provided). 
 
 ##### Common TIC
 
-![IDbased_Common_TIC](https://github.com/vegesnam/QCPackage/assets/32958585/48f71adf-ae7f-471b-8607-2218da6bd0a8)
+Common Peptide/Precursor TIC Bar Graph: 
+
+![Common Precursor TIC](https://github.com/vegesnam/QCeltis/assets/87665957/4f74e742-f41a-410b-b725-b8f3d130779d)
+
+Common Peptide/Precursor TIC CV%: 
+
+![Common Precursor TIC CV%](https://github.com/vegesnam/QCeltis/assets/87665957/e10960a0-50b9-4d02-9030-6d86da117177)
 
 Common Peptide/Precursor TIC is the summed intensity of all the common peptides or precursors found in all samples. If both peptide and precursor files are provided, only common peptide will be calculated.
 
 If TIC is consistent with other samples here but the TIC is labelled as an outlier in ID-free, then it could be a contamination issue (if TIC is high in id-free)
-
-![IDbased_common_TIC_CV](https://github.com/vegesnam/QCPackage/assets/32958585/e28bb8dd-660c-46f5-8109-1fb63917a6e8)
-
 CVs are calculated with intensity values from samples within each group.
 
-##### Miscleavage Plot
+##### Miscleavages Plot
 
-![miscleavage_TR](https://github.com/vegesnam/QCPackage/assets/32958585/217d48be-94cf-479c-9c8d-1370f4d6b450)
+Number of No Miscleavages Bar Graph: 
 
-Having a high number of peptides with 0 miscleavages indicates a good digestion protocol. If the samples don’t have enough 0 missed cleaved peptides, (doesn’t meet threshold), then this indicates a digestion issue.
+![image](https://github.com/vegesnam/QCeltis/assets/87665957/00ef1e60-8540-4b3c-91ed-54e1ab37558f)
 
-![miscleavage_DR](https://github.com/vegesnam/QCPackage/assets/32958585/98746b87-073c-4f4d-93eb-da77731e7131)
-
-Here, there is a difference in numbers and this is due to the missingness in the last 3 plates (also indicated in the protein and peptide quant) – further indicates that it is a digestion/sampleprep issue.
+The number of miscleavages present in each peptide is calculated and the number of peptides with no miscleavages in each sample is plotted in a bar graph. If the 'Miscleavage Threshold' is provided, a dotted line is plotted across the bars. Any samples not passing the threshold are labelled as "FAIL". Having a high number of peptides with 0 miscleavages indicates a good digestion protocol. Any samples not meeting the threshold point to the inefficiency of the enzymetic digestion during the sample preparation step. 
 
 ##### Other Plots:
 
 ###### PCA:
-if groups are given, QC Samples from groups are expected to cluster together, if separation is observed, this could indicate an issue with mass spec (if using TR samples) or sampleprep/digestion protocols (if using DR samples) or could be batch effects
+When a grouping file is given, a PCA plot is generated using the protein, peptide or precursor intensity values. Replicate quality control samples are expected to cluster together, if separation is observed among the provided groups, this could indicate possible batch effects across the dataset.  
 
-###### Irt / Selected Peptide Intensity Distribution + Coverage Summary:
+###### iRT / Selected Peptide Intensity Distribution + Coverage Summary:
 
-Intensity Distribution for peptides is plotted. If iRT is selected, the script will look for peptides from the iRT Biognosys kit. If precursor file is given, it will select iRT precursors with charge 2. If both peptide and precursor input files are given, then only peptides will be plotted.If no iRTs were used, users can provide a list of peptides to plot. Intensity coverage of these peptides is also plotted. CiRT peptide list can be used for eukaryotic datasets: link to Identification of a Set of Conserved Eukaryotic Internal Retention Time Standards for Data-independent Acquisition Mass Spectrometry - PubMed (nih.gov) 
+If your dataset contains iRT peptides, the 'irtlabel' parameter can be used to plot the intensity distribution of the iRT peptides/precursors (from the iRT Biognosys) across the dataset using a line graph. Apart from the intensity distribution, a coverage summary bar graph is generated, where each bar represents the percentage of samples each iRT peptide/precursor is present in. If the 'Coverage Threshold' is provided by the user, a dotted line is also plotted in the bar graph. Any samples not meeting the threshold are labelled as "FAIL". Low coverage of iRT peptides across the datasets could indicate issues with sample preparation. 
 
-
+Using the 'peptide_list' parameter, a user-defined list of peptides can be monitored instead of the iRT peptides. A similar intensity distribution line graph and coverage summary bar graphs will be plotted and the 'Coverage Threshold' is applied if it is provided by the user. We recommend monitoring [CiRT peptides](https://www.sciencedirect.com/science/article/pii/S1535947620326335) for eukaryptic datasets. 
 
 ## Cite
 
