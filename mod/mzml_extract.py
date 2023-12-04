@@ -353,7 +353,7 @@ def tic_plots(mzml_df, tic_cv, ms1_tic_threshold, ms2_tic_threshold, tic_cv_thre
         ms1_outliers_filenames = ", ".join(ms1_outliers)
         tic_report_params['tic_ms1_outlier_description'] = f"{mzml_df['MS1 TIC Outliers'].tolist().count(1)} outliers were found. The following files have been detected as outliers: {ms1_outliers_filenames}"
 
-        tic_ms1_outlier = px.scatter(mzml_df, x='Filename', y='MS1 TIC', color='MS1 TIC Outliers')
+        tic_ms1_outlier = px.scatter(mzml_df, x='Filename', y='MS1 TIC', title="MS1 TIC Outliers", color='MS1 TIC Outliers')
         tic_ms1_outlier.update_layout(title={'font': {'size': 9}})
         tic_ms1_outlier.update_xaxes(tickfont_size=6)
         tic_ms1_outlier.update_layout(
@@ -369,7 +369,7 @@ def tic_plots(mzml_df, tic_cv, ms1_tic_threshold, ms2_tic_threshold, tic_cv_thre
         ms2_outliers_filenames = ", ".join(ms2_outliers)
         tic_report_params['tic_ms2_outlier_description'] = f"{mzml_df['MS2 TIC Outliers'].tolist().count(1)} outliers were found. The following files have been detected as outliers: {ms2_outliers_filenames}"
 
-        tic_ms2_outlier = px.scatter(mzml_df, x='Filename', y='MS2 TIC', color='MS2 TIC Outliers')
+        tic_ms2_outlier = px.scatter(mzml_df, x='Filename', y='MS2 TIC', title="MS2 TIC Outliers", color='MS2 TIC Outliers')
         tic_ms2_outlier.update_layout(title={'font': {'size': 9}})
         tic_ms2_outlier.update_xaxes(tickfont_size=6)
         tic_ms2_outlier.update_layout(
@@ -423,7 +423,7 @@ def spectral_plot(mzml_df):
 
     df = mzml_df[['Filename','MS2/MS1 Spectra', 'MS2/MS1 Spectra Outliers']]
 
-    count_line = px.line(df, x='Filename', y="MS2/MS1 Spectra", title="MS2/MS1 Spectra Count", line_shape="spline", markers=True)
+    count_line = px.line(df, x='Filename', y="MS2/MS1 Spectra", title="MS2/MS1 Spectral Ratio", line_shape="spline", markers=True)
     count_line.update_xaxes(tickfont_size=6)
     count_line.update_layout(title={'font': {'size': 9}})
     count_line.update_layout(
@@ -433,14 +433,14 @@ def spectral_plot(mzml_df):
     spectral_count = plotly.io.to_html(count_line, include_plotlyjs=False, full_html=False, default_width='900px', default_height='450px')
     spectra_report_params = {'ms2_ms1_spectral_ratio': True,
                             'ms2_ms1_spectral_ratio_plot': spectral_count,
-                            'ms2_ms1_spectral_ratio_description': 'MS2/MS1 Spectra Count Ratio extracted from given mzML files'}
+                            'ms2_ms1_spectral_ratio_description': 'MS2/MS1 Spectral Count Ratio extracted from given mzML files'}
 
     if not list(set(mzml_df['MS2/MS1 Spectra Outliers'].tolist())) == [0]:
         spectra_outliers = mzml_df[mzml_df['MS2/MS1 Spectra Outliers'] == 1]['Filename'].tolist()
         spectra_outliers_filenames = ", ".join(spectra_outliers)
         spectra_report_params['ms2_ms1_spectral_ratio_outlier_description'] = f"{mzml_df['MS2/MS1 Spectra Outliers'].tolist().count(1)} outliers were found. The following files have been detected as outliers: {spectra_outliers_filenames}"
 
-        ms2_ms1_spectral_ratio_outlier = px.scatter(mzml_df, x='Filename', y='MS2/MS1 Spectra', color='MS2/MS1 Spectra Outliers')
+        ms2_ms1_spectral_ratio_outlier = px.scatter(mzml_df, x='Filename', y='MS2/MS1 Spectra', title="MS2/MS1 Spectra Outliers", color='MS2/MS1 Spectra Outliers')
         ms2_ms1_spectral_ratio_outlier.update_xaxes(tickfont_size=6)
         ms2_ms1_spectral_ratio_outlier.update_layout(title={'font': {'size': 9}})
         ms2_ms1_spectral_ratio_outlier.update_layout(
@@ -458,9 +458,9 @@ def basepeak_graph(mzml_df, max_basepeak_intensity_threshold, groups, groupwise_
     if groupwise_comparison:
         mzml_df['Group'] = mzml_df['Filename'].apply(groupname, args=[groups,])
         mzml_df = mzml_df.sort_values('Group')
-        bp_bar = px.bar(mzml_df, x='Filename', y="Max Basepeak Intensity", title="Max Basepeak Intensity", color="Group", color_discrete_sequence=color_list)
+        bp_bar = px.bar(mzml_df, x='Filename', y="Max Basepeak Intensity", title="Max Base Peak Intensity", color="Group", color_discrete_sequence=color_list)
     else:
-        bp_bar = px.bar(mzml_df, x='Filename', y="Max Basepeak Intensity", title="Max Basepeak Intensity")
+        bp_bar = px.bar(mzml_df, x='Filename', y="Max Basepeak Intensity", title="Max Base Peak Intensity")
 
     bp_bar.update_layout(title={'font': {'size': 9}})
     bp_bar.update_xaxes(tickfont_size=6)
@@ -469,7 +469,7 @@ def basepeak_graph(mzml_df, max_basepeak_intensity_threshold, groups, groupwise_
     )
 
     if max_basepeak_intensity_threshold:
-        bp_bar.add_hline(y=max_basepeak_intensity_threshold, line_dash="dot", annotation_text=f"Max Basepeak Intensity Threshold = {max_basepeak_intensity_threshold}")
+        bp_bar.add_hline(y=max_basepeak_intensity_threshold, line_dash="dot", annotation_text=f"Max Base Peak Intensity Threshold = {max_basepeak_intensity_threshold}")
 
     bp_plot = plotly.io.to_html(bp_bar, include_plotlyjs=False, full_html=False, default_width='900px', default_height='450px')
 
@@ -481,7 +481,7 @@ def basepeak_graph(mzml_df, max_basepeak_intensity_threshold, groups, groupwise_
         bp_outliers_filenames = ", ".join(bp_outliers)
         basepeak_report_params['max_basepeak_intensity_outlier_description'] = f"{mzml_df['Max Basepeak Intensity Outliers'].tolist().count(1)} outliers were found. The following files have been detected as outliers: {bp_outliers_filenames}"
 
-        max_basepeak_intensity_outlier = px.scatter(mzml_df, x='Filename', y='Max Basepeak Intensity', color='Max Basepeak Intensity Outliers')
+        max_basepeak_intensity_outlier = px.scatter(mzml_df, x='Filename', y='Max Basepeak Intensity', title="Max Base Peak Intensity Outliers", color='Max Basepeak Intensity Outliers')
         max_basepeak_intensity_outlier.update_layout(title={'font': {'size': 9}})
         max_basepeak_intensity_outlier.update_xaxes(tickfont_size=6)
         max_basepeak_intensity_outlier.update_layout(

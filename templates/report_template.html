@@ -119,7 +119,7 @@ h1, h2, h3, h4, h5, h6 {
 <div id="introduction" name="introduction">
       <h3>Introduction</h3>
 
-      <p>Welcome to your [QCPName] Quality Control Analysis Report! We are pleased to present to you a visual QC summary of your dataset. Representing high-dimensional omics data using plots helps us view large amounts of information at once to identifying patterns and trends across your samples and datasets. The "[QCP Name]" package monitors metrics based on the input datasets provided. For any concerns about or suggestions to improve this report, let the team know at <a href="mailto:GroupHeartBioinformaticsSupport@cshs.org">GroupHeartBioinformaticsSupport@cshs.org</a>, and we will consider your feedback. We are happy to support your computational needs.</p>
+      <p>Welcome to your QCeltis Quality Control Analysis Report! We are pleased to present to you a visual QC summary of your dataset. Representing high-dimensional omics data using plots helps us view large amounts of information at once to identifying patterns and trends across your samples and datasets. The QCeltis package monitors metrics based on the input datasets provided. For any concerns about or suggestions to improve this report, let the team know at <a href="mailto:GroupHeartBioinformaticsSupport@cshs.org">GroupHeartBioinformaticsSupport@cshs.org</a>, and we will consider your feedback. We are happy to support your computational needs.</p>
       <p>The report is divided into 2 tabs:
         <ul>
           <li> ID-Free - When a mzML directory is provided as input, ID-Free Tab is populated with plots from ID-Free parameters extracted from your mzML files.</li>
@@ -133,7 +133,7 @@ h1, h2, h3, h4, h5, h6 {
   <div id="introduction" name="introduction">
       <h4> ID-Free Metrics </h4>
 
-      <p> The following ID-Free metrics have been extracted from mzML files. Provided thresholds have been applied and outlier analysis has been performed. If no outliers were found, outlier plots will not be plotted. </p>
+      <p> The following ID-Free metrics have been extracted from the provided mzML files. Given thresholds have been applied and outlier analysis has been performed. If no outliers were found, outlier plots will not be plotted. If a grouping file was provided, additional groupwise plots will be included. </p>
 
   </div>
 
@@ -155,7 +155,7 @@ h1, h2, h3, h4, h5, h6 {
 
                                     {% if tic_ms1_outlier_plot %}
 
-                                        <p> MS1 TIC is expected to be consistent across QC samples. Any outliers detected are highlighted in yellow. Outliers detected could point to issues with sample pickup or samples being dried out. Please check the specific samples listed below. </p>
+                                        <p> MS1 TIC is expected to be consistent across replicate quality control samples. Any outliers detected are highlighted in yellow. Outliers detected could point to issues with data acquisition and LC-MS instrument performance such as improper autosampler sample pickup. Please check the specific samples listed below. </p>
                                         {{ tic_ms1_outlier_plot | safe }}
 
                                         <p> {{ tic_ms1_outlier_description }} </p>
@@ -164,7 +164,7 @@ h1, h2, h3, h4, h5, h6 {
 
                                     {% if tic_ms2_outlier_plot %}
 
-                                        <p> MS2 TIC is expected to be consistent across QC samples. Any outliers detected are highlighted in yellow. Outliers detected could point to issues with sample pickup or samples being dried out. Please check the specific samples listed below. </p>
+                                        <p> MS2 TIC is expected to be consistent across replicate quality control samples. Any outliers detected are highlighted in yellow. Outliers detected could point to issues with data acquisition and LC-MS instrument performance such as improper autosampler sample pickup. Please check the specific samples listed below. </p>
 
                                         {{ tic_ms2_outlier_plot | safe }}
 
@@ -212,7 +212,7 @@ h1, h2, h3, h4, h5, h6 {
 
                                 {% if ms2_ms1_spectral_ratio_outlier_plot %}
 
-                                    <p> MS2/MS1 Spectra Ratio is expected to be consistent across QC samples. Any outliers detected are highlighted in yellow. Outliers detected point to an issue with the mass spectrometry instrument performance. Please check experiment protocols for your instrument. </p>
+                                    <p> MS2/MS1 Spectra Ratio is expected to be consistent across replicate quality control samples. Any outliers detected are highlighted in yellow. Outliers detected point to an issue with the mass spectrometry instrument performance. Please check experiment protocols for your instrument. </p>
 
                                     {{ ms2_ms1_spectral_ratio_outlier_plot | safe }}
 
@@ -237,7 +237,7 @@ h1, h2, h3, h4, h5, h6 {
 
                                 {% if max_basepeak_intensity_outlier_plot %}
 
-                                    <p> Max Base Peak Intensity is expected to be consistent across QC samples. Any outliers detected are highlighted in yellow. Outliers detected could point to issues with sample pickup or samples being dried out. Please check the specific samples listed below. </p>
+                                    <p> Max Base Peak Intensity is expected to be consistent across replicate quality control samples. Any outliers detected are highlighted in yellow. Outliers detected could point to issues with data acquisition or instrument performance such as sample pickup or samples being dried out. Please check the specific samples listed below. </p>
 
                                     {{ max_basepeak_intensity_outlier_plot | safe }}
 
@@ -353,7 +353,7 @@ h1, h2, h3, h4, h5, h6 {
   <div id="id_based_introduction" name="id_based_introduction">
       <h4> ID-Based Metrics </h4>
 
-      <p> The following metrics have been calculated and derived from the input search results that were provided. Given input thresholds have been applied and if grouping file was provided, groupwise comparison has also been performed. </p>
+      <p> The following ID-Based metrics have been calculated and derived from the input search results that were provided. Given input thresholds have been applied and if grouping file was provided, additional groupwise plots will be included. </p>
 
   </div>
 
@@ -539,7 +539,7 @@ h1, h2, h3, h4, h5, h6 {
 
                         {% if peptide_file or precursor_file %}
                         <div id="percent_miscleavage" name="percent_miscleavage">
-<h4> Percent Miscleavage </h4>
+<h4> No Miscleavages Percentage </h4>
 <p> {{ percent_miscleavage_description }} </p>
 
                                 {% if percent_miscleavage_plot %}

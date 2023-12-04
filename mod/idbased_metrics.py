@@ -449,7 +449,7 @@ def get_quant_plot(quant_df, threshold, level, groupwise_comparison, groups, col
         quant_report_params = {'protein_file': True,
                             'protein_quant_plot': quant_div}
         if threshold:
-            quant_report_params['protein_quant_description'] =  "Number of proteins identified from each sample. Any sample not meeting the threshold could indicate an issue within sample preparation or digestion protocols."
+            quant_report_params['protein_quant_description'] =  "Number of proteins identified from each sample. Any sample not meeting the threshold could indicate an issue within sample preparation, digestion protocols or experimental reproducibility."
         else:
             quant_report_params['protein_quant_description'] = "Number of proteins identified from each sample."
 
@@ -458,7 +458,7 @@ def get_quant_plot(quant_df, threshold, level, groupwise_comparison, groups, col
                             'peptide_quant_plot': quant_div}
 
         if threshold:
-            quant_report_params['peptide_quant_description'] =  "Number of peptides identified from each sample. Any sample not meeting the threshold could indicate an issue within sample preparation or digestion protocols."
+            quant_report_params['peptide_quant_description'] =  "Number of peptides identified from each sample. Any sample not meeting the threshold could indicate an issue within sample preparation, digestion protocols or experimental reproducibility."
         else:
             quant_report_params['peptide_quant_description'] = "Number of peptides identified from each sample."
 
@@ -467,7 +467,7 @@ def get_quant_plot(quant_df, threshold, level, groupwise_comparison, groups, col
                             'precursor_quant_plot': quant_div}
 
         if threshold:
-            quant_report_params['precursor_quant_description'] =  "Number of precursors identified from each sample. Any sample not meeting the threshold could indicate an issue within sample preparation or digestion protocols."
+            quant_report_params['precursor_quant_description'] =  "Number of precursors identified from each sample. Any sample not meeting the threshold could indicate an issue within sample preparation, digestion protocols or experimental reproducibility."
         else:
             quant_report_params['precursor_quant_description'] = "Number of precursors identified from each sample."
 
@@ -480,7 +480,7 @@ def intensity_cv_graphs(cv_sum, grouped_cv, level, groupwise_comparison, cv_perc
 
     grouped_cv[feature_column] = (grouped_cv[feature_col_name]/grouped_cv[f'{level} Number'])*100
 
-    grouped_cv_graph = px.bar(grouped_cv, x='Group', y=feature_column, title=f"Number of {level}s Identified under {cv_percent_threshold}% CV", color='Group', color_discrete_sequence=color_list)
+    grouped_cv_graph = px.bar(grouped_cv, x='Group', y=feature_column, title=f"Percentage of {level}s Identified under {cv_percent_threshold}% CV", color='Group', color_discrete_sequence=color_list)
     grouped_cv_graph.add_hline(y=data_percent_threshold, line_dash="dot", annotation_text=f"Data Percent Threshold = {data_percent_threshold}")
     grouped_cv_graph.update_xaxes(tickfont_size=6)
     grouped_cv_graph.update_layout(
@@ -492,17 +492,17 @@ def intensity_cv_graphs(cv_sum, grouped_cv, level, groupwise_comparison, cv_perc
     if level == "Protein":
         intensity_cv_report_params = {'protein_file': True,
                             'percentage_proteins_undercv_plot': grouped_cv_plot,
-                            'percentage_proteins_undercv_description': f"Intensity CV% across samples within each group is calculated. Threshold is set to {data_percent_threshold}% of proteins under {cv_percent_threshold} CV%" }
+                            'percentage_proteins_undercv_description': f"Intensity CV% across samples within each group is calculated. Threshold is set to {data_percent_threshold}% of proteins under {cv_percent_threshold} CV%. This provides information about the consistency and reproducibility of intensity values within each provided group. Any groups not meeting the threshold indicate batch or plate-specific issues that need to be looked into." }
 
     if level == "Peptide":
         intensity_cv_report_params = {'peptide_file': True,
                             'percentage_peptides_undercv_plot': grouped_cv_plot,
-                            'percentage_peptides_undercv_description': f"Intensity CV% across samples within each group is calculated. Threshold is set to {data_percent_threshold}% of peptides under {cv_percent_threshold} CV%" }
+                            'percentage_peptides_undercv_description': f"Intensity CV% across samples within each group is calculated. Threshold is set to {data_percent_threshold}% of peptides under {cv_percent_threshold} CV%. This provides information about the consistency and reproducibility of intensity values within each provided group. Any groups not meeting the threshold indicate batch or plate-specific issues that need to be looked into." }
 
     if level == "Precursor":
         intensity_cv_report_params = {'precursor_file': True,
                             'percentage_precursors_undercv_plot': grouped_cv_plot,
-                            'percentage_precursors_undercv_description': f"Intensity CV% across samples within each group is calculated. Threshold is set to {data_percent_threshold}% of precursors under {cv_percent_threshold} CV%" }
+                            'percentage_precursors_undercv_description': f"Intensity CV% across samples within each group is calculated. Threshold is set to {data_percent_threshold}% of precursors under {cv_percent_threshold} CV%. This provides information about the consistency and reproducibility of intensity values within each provided group. Any groups not meeting the threshold indicate batch or plate-specific issues that need to be looked into." }
 
     return intensity_cv_report_params
 
@@ -745,7 +745,7 @@ def cumulative_freq_graph(protein_level, peptide_level, precursor_level, pt_cv_s
     cumfreq_cv_line = plotly.io.to_html(cv_line, include_plotlyjs=True, full_html=False, default_width='900px', default_height='450px')
 
     cumfreq_report_params = {'cumulative_frequency_plot': cumfreq_cv_line,
-                             'cumulative_frequency_description': "Cumulative Frequency % of calculated CV% across all samples"}
+                             'cumulative_frequency_description': "Cumulative Frequency % of calculated CV% of intensity values across all samples. This reveals the degree of variability across the dataset, higher CVs indicate greater variation that could be stemming from sample preparation, data acquisition or instrument performance. Lower CVs indicate higher reproducibility of protein, peptide or precursor intensities across replicate samples."}
 
     return cumfreq_report_params
 
