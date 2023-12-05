@@ -1,5 +1,5 @@
 # QCeltis
-A python package developed for performing quality control analysis on large-scale DIA proteomics datasets. It was designed to enable detection of technical variability due to several factors such as sample collection, transportation, storage, preparation, and/or instrument performance, thus helping improve the accuracy of any biological interpretations of large-scale mass spectrometry-based proteomics data. It allows users to monitor QC samples within and across different batches and helps create metrics and plots to not only easily depict outliers, but also to tease out potential causes of these outliers.
+A python package developed for performing quality control analysis on large-scale DIA proteomics datasets. It was designed to enable detection of technical variability due to several factors such as sample collection, transportation, storage, preparation, and/or instrument performance, thus helping improve the accuracy of any biological interpretations of large-scale mass spectrometry-based proteomics data. It allows users to monitor quality control (QC) samples within and across different batches and helps create metrics and plots to not only easily depict outliers, but also to tease out potential causes of these outliers.
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -22,20 +22,38 @@ Quality control is essential in large-scale DIA proteomics projects to minimize 
 QCeltis a command-line python package that provides users with quality control assessement along with easy-to-intepret visualizations to help idenitfy issues at sample preparation, digestion and acquisition steps of the MS experiment process. To do so, QCeltis provides a way to perform quality control analysis through 2 primary steps: 
 
 (Manasa: write more about each metric extracted + talk about sample grouping file + what info does ID-free provide and ID-based provide)
-1) ID-Free: parses input consisting of mzML files and extracts raw data metrics such as: MS1 and MS2 TIC, MS2/MS1 Spectral Ratio, Max Base Peak Intensities. 
-2) ID-Based: parses input from data processed through a search engine, such as Dia-NN or OpenSWATH. The input file contain protein, peptide or precursor-level intensities, or all 3 can be provided. Metrics such as quantification information, intensity CVs, common peptide/precursor TIC, miscleaved peptides count, etc are extracted. 
+1) ID-Free: parses input consisting of mzML files and extracts raw data metrics such as: MS1 and MS2 TIC, MS2/MS1 Spectral Ratio, Max Base Peak Intensities. During this step, the script applies user-defined thresholds, if given and outlier analysis to identify "bad" quality control samples that are not consistent with the rest of the dataset. 
+2) ID-Based: parses input from data processed through a search engine, such as Dia-NN or OpenSWATH. The input file contain protein, peptide or precursor-level intensities, or all 3 can be provided. Metrics such as quantification information, intensity CVs, common peptide/precursor TIC, miscleaved peptides count, etc are extracted and user-defined thresholds are applied to identify "bad" samples.
+
+After extracting ID-Free and ID-Based metrics and identifying outliers, the script provides samplewise "PASS/FAIL" labels which are reported in the output Excel Reports. Additionally, a sample grouping file can be provided by the user which is used to perform groupwise (either plates or batches) quality control analysis across the provided quality control samples. Additional plots and reports are generated when the grouping file is provided and a groupwise "PASS/FAIL" label is reported in the outputs. 
 
 - Refer to the [Input File Description](#input-file-description) section for further details on required input files. 
 - Refer to the [Outputs and Explanations](#outputs-and-explanations) section for further details on metrics evaluated and graphical representation of the metrics assessed through QCeltis 
 
 ![image](https://github.com/vegesnam/QCeltis/assets/87665957/3d084e98-8f3c-472a-959a-af331ef8947f)
 
+#### Metrics: 
+
+| Metric                                | Category | Explanation                                                                                                           |
+|---------------------------------------|----------|--------------------------------------------------------------------------------------------------------------------------|
+| MS1 TIC                               | ID-Free  | Total Ion Current extracted from MS1 Spectra. MS1 TIC values are expected to be consistent across replicate quality control samples, inconsistencies could point to issues with data acquisition and improper LC-MS instrument performance.                            |                        
+| MS2 TIC                               | ID-Free  | Total Ion Current extracted from MS2 Spectra. MS2 TIC values are expected to be consistent across replicate quality control samples, inconsistencies could point to issues with data acquisition and improper LC-MS instrument performance.                            |
+| MS2/MS1 Spectral Ratio                | ID-Free  | The ratio of MS2-to-MS2 Spectra provides insights into the depth of proteome coverage and fragmentation efficiency. Consistent or expected numbers of spectra across samples indicates stable instrument performance, any significant deviations can indicate issues with the MS instrument and deviation from the experimental protocol.                         |
+| Max Base peak Intensity               | ID-Free  | Represents the highest base peak intensity in each replicate sample. Extreme maximum base peak intensities within samples can indicate issues with the data acquisition and LC-MS instrument performance.                     |
+| Quantification                        | ID-Based | The number of identified proteins, peptides and precursors is a fundamental metric for assessing the data quality from the experiment. Inconsistent numbers across replicate samples points to issues with sample preparation, digestion protocols, experimental reproducibility, and data acquisition                                                        |
+| Intensity CVs                         | ID-Based | Coefficient of Variation (CV%) across the dataset or within provided groups reveals the degree of variability. Higher CVs indicate greater variation in the intensity measurements across replicate samples stemming from sample preparation, data acquisition or instrument performance. |
+| PCA                                   | ID-Based | PCA plots can reveal the percentage of variability of provided replicate sample intensities and potential batch effects across the provided batches or plates. |
+| Common TIC                            | ID-Based | TIC values from common peptides or precursors across the replicate samples aids in assessing the reproducibility. Variations in TIC for common peptides or precursors can highlight potential sources of variation, such as sample preparation or contamination issues. |
+| 0 Missed Cleavage Percentage          | ID-Based | Used to assess the efficiency and specificity of the enzymatic digestion during the sample preparation step.                                           |
+| iRT Peptide Intensity Distribution    | ID-Based | iRT (Indexed Retention Time) peptides can be used as a reference for retention time normalization and calibration in MS proteomics. Monitoring the intensities and presence of these iRT peptides can reveal any sample preparation or data acquisition issues.           |
+| Selected Peptide Intensity Distribution | ID-Based | Monitoring the intensities and presence of user-defined peptides can reveal any sample preparation or data acquisition issues.         |
+
 ## Installation
 QCeltis can be installed from the command line using `git` and `pip`.
 
 First, clone the repository from GitHub:
 
-git clone https://github.com/vegesnam/QCPackage.git (Manasa: change this) 
+git clone https://github.com/csmc-vaneykjlab/QCeltis.git
 
 Then, navigate to the downloaded directory and install the package using `pip`:
 
