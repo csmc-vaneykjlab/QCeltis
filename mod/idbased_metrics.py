@@ -655,12 +655,13 @@ def selected_peptide_plots(df_level, filenames, level, level2, coverage_threshol
     if level2 == "iRT":
         selected_peptide_report_params = {'irt_intensity_plot': int_dist,
                                           'irt_intensity_coverage_plot': cov_plot,
-                                          'irt_intensity_description': 'iRT Intensity Distribution',
+                                          'irt_intensity_description': 'iRT intensity distribution across all provided samples. The intensity values are expected to be consistent across replicate quality control samples. High intensity values for specific samples could indicate double-spiking of iRTs, low intensity values could indicate issues with proper sample preparation.',
+                                          'irt_coverage_description': f'iRT {level}s Coverage across all samples. Each bar represents the percentage of samples that each iRT {level} is present in.',
                                           'irt_plots': True}
     else:
         selected_peptide_report_params = {'selected_peptide_intensity_plot': int_dist,
                                           'selected_peptide_intensity_coverage_plot': cov_plot,
-                                          'selected_peptide_intensity_description': 'User-Given Peptides Intensity Distribution',
+                                          'selected_peptide_intensity_description': 'User-Given intensity distribution across all provided samples.',
                                           'peptide_list': True}
 
     return selected_peptide_report_params

@@ -17,7 +17,7 @@ start_time = time.time()
 
 def main():
 
-    logging.basicConfig(filename="qc_script.log", level=logging.INFO)
+    logging.basicConfig(filename="qceltis.log", level=logging.INFO)
 
     parser = argparse.ArgumentParser(formatter_class=RawTextHelpFormatter)
 
