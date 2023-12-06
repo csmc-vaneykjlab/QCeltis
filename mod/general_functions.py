@@ -23,13 +23,42 @@ color_list = [
 
 #-------------------------------------------------------------------------- FUNCTIONS ---------------------------------------------------------------------------
 
+# This function checks if a given file path exists in the file system.
+# It takes one argument, 'filepath', which is expected to be a string representing the path to a file.
+# If the file path does not exist, it raises a FileNotFoundError with a message including the provided path.
+# This is useful for validating file paths before attempting to access files.
 def check_path(filepath):
+    """
+    Checks if the specified file path exists.
+
+    Args:
+    filepath (str): The path to the file that needs to be verified.
+
+    Raises:
+    FileNotFoundError: If the specified file path does not exist.
+    
+    Returns:
+    None: Returns nothing if the file path exists.
+    """
     if not os.path.exists(str(filepath)):
         raise FileNotFoundError(f"{filepath} doesn't exist, please specify another output path")
     return None
 
 def check_file(txtfile, level):
+    """
+    Verifies the format and content of a provided text file based on the specified analysis level.
 
+    Args:
+    txtfile (str): Path to the text file to be checked.
+    level (str): The analysis level, which determines the required columns in the file.
+
+    Raises:
+    SystemExit: If the file is not in the expected format or lacks required columns, an error is logged, and the program exits.
+
+    Note:
+    This function checks for tab-delimitation and the presence of specific columns based on the 'level' argument.
+    It also ensures there are enough samples for analysis.
+    """
     #adding a check if the input file is tab delimited or not.
     if not is_tab_delimited(txtfile):
         print(f"The {txtfile} is not tab delimited, Please check the input")
@@ -98,6 +127,19 @@ def check_file(txtfile, level):
     return None
 
 def check_grouping_file(txtfile, grouping_file):
+    """
+    Verifies the format and content of the grouping file.
+
+    Args:
+    txtfile (str): Path to the main text file used for reference.
+    grouping_file (str): Path to the grouping file to be checked.
+
+    Raises:
+    SystemExit: Exits the program if the grouping file is not in the expected format or lacks required columns.
+
+    Note:
+    This function checks for tab-delimitation, the presence of 'Filename' and 'Group' columns, and ensures that all samples in the grouping file are listed in the main file.
+    """
 
     logging.info(f"Checking provided grouping file: {grouping_file}")
 
@@ -151,6 +193,22 @@ def check_grouping_file(txtfile, grouping_file):
     return ", ".join(groups)
 
 def check_samples(mzml_dir, protein_level, peptide_level, precursor_level, grouping_file):
+    """
+    Checks consistency of filenames across multiple input sources.
+
+    Args:
+    mzml_dir (str): Directory containing mzML files.
+    protein_level (str): Path to the protein-level data file.
+    peptide_level (str): Path to the peptide-level data file.
+    precursor_level (str): Path to the precursor-level data file.
+    grouping_file (str): Path to the grouping file.
+
+    Raises:
+    SystemExit: If filenames across input files are inconsistent, an error message is logged, and the program exits.
+
+    Note:
+    This function aggregates filenames from different sources and checks for consistency across all inputs.
+    """
 
     filename_lists = []
 
@@ -207,6 +265,15 @@ def check_samples(mzml_dir, protein_level, peptide_level, precursor_level, group
     return None
 
 def get_grouping_dict(grouping_file):
+    """
+    Creates a dictionary mapping groups to their corresponding filenames.
+
+    Args:
+    grouping_file (str): Path to the grouping file.
+
+    Returns:
+    dict: A dictionary where keys are group names and values are lists of filenames belonging to each group.
+    """
 
     df = pd.read_csv(grouping_file, sep="\t")
 
@@ -224,48 +291,126 @@ def get_grouping_dict(grouping_file):
 cv = lambda x: np.std(x, ddof=1) / np.mean(x) * 100
 
 def cv_status(row, thres):
+    """
+    Determines the pass/fail status based on the coefficient of variation.
+
+    Args:
+    row (float): The calculated CV value.
+    thres (float): Threshold for the CV.
+
+    Returns:
+    str: "PASS" if CV is below the threshold, otherwise "FAIL".
+    """
+
     if row > thres:
         return "FAIL"
     else:
         return "PASS"
 
 def check_threshold(row, threshold):
+    """
+    Evaluates if a given value meets a specified threshold.
+
+    Args:
+    row (float): The value to be checked.
+    threshold (float): The threshold to compare against.
+
+    Returns:
+    str: "FAIL" if the value is below the threshold, otherwise "PASS".
+    """
     if threshold > float(row):
         return "FAIL"
     else:
         return "PASS"
 
 def groupname(filename, groups):
+    """
+    Finds the group name for a given filename.
 
+    Args:
+    filename (str): The filename to be checked.
+    groups (dict): Dictionary mapping groups to their filenames.
+
+    Returns:
+    str: The name of the group the filename belongs to.
+    """
     for group in groups:
         if filename in groups[group]:
             return group
 
 def quant_status(number, threshold):
+    """
+    Determines if a numeric value meets a specified quantitative threshold.
+
+    Args:
+    number (float): The numeric value to be checked.
+    threshold (float): The threshold to compare against.
+
+    Returns:
+    str: "PASS" if the number is equal to or greater than the threshold, otherwise "FAIL".
+    """
     if number >= threshold:
         return "PASS"
     else:
         return "FAIL"
 
 def transpose_DF(input_DF):
+    """
+    Transposes a DataFrame and resets the index.
+
+    Args:
+    input_DF (DataFrame): The DataFrame to be transposed.
+
+    Returns:
+    DataFrame: The transposed DataFrame with the index reset.
+    """
     input_DF_T = input_DF.T
     input_DF_T.index.name = 'newhead'
     input_DF_T.reset_index(inplace=True)
     return (input_DF_T)
 
 def perc_qc(row, perc_thres):
+    """
+    Evaluates if a percentage value meets a specific threshold.
+
+    Args:
+    row (float): The percentage value to be evaluated.
+    perc_thres (float): The threshold percentage.
+
+    Returns:
+    str: "FAIL" if the value is below the threshold, otherwise "PASS".
+    """
     if float(row) < perc_thres:
         return "FAIL"
     else:
         return "PASS"
 
 def label_outlier(value, outliers):
-        if value in outliers:
-            return 1
-        else:
-            return 0
+    """
+    Labels a value as an outlier.
+
+    Args:
+    value: The value to be checked.
+    outliers (list): A list of outlier values.
+
+    Returns:
+    int: 1 if the value is an outlier, otherwise 0.
+    """
+    if value in outliers:
+        return 1
+    else:
+        return 0
 
 def get_outlier_and_cv_status(series):
+    """
+    Determines the status based on outlier and CV threshold values.
+
+    Args:
+    series (iterable): Contains the outlier flag and CV status.
+
+    Returns:
+    str: "FAIL" if any condition fails, otherwise "PASS".
+    """
     outlier = series[0]
     threshold = series[1]
 
@@ -277,13 +422,30 @@ def get_outlier_and_cv_status(series):
         return "PASS"
 
 def only_outlier_status(outlier_value):
+    """
+    Determines if a value is an outlier.
+
+    Args:
+    outlier_value (int): The outlier flag value.
+
+    Returns:
+    str: "FAIL" if the value is an outlier, otherwise "PASS".
+    """
     if outlier_value == 1:
         return "FAIL"
     else:
         return "PASS"
 
 def get_series_status(series):
+    """
+    Determines the overall status from a series of pass/fail conditions.
 
+    Args:
+    series (iterable): Contains multiple status values.
+
+    Returns:
+    str: "FAIL" if any status is "FAIL", otherwise "PASS".
+    """
     if series[0] == "FAIL":
         return "FAIL"
     elif series[1] == "FAIL":
@@ -292,7 +454,16 @@ def get_series_status(series):
         return "PASS"
 
 def get_overall_qc_status(series, cols_len):
+    """
+    Computes the overall QC status based on multiple metrics.
 
+    Args:
+    series (iterable): Series of individual status values.
+    cols_len (int): Total number of metrics.
+
+    Returns:
+    pd.Series: A series containing the overall status and the failure count.
+    """
     status_list = []
     for i in range(cols_len):
         status_list.append(series[i])
@@ -305,6 +476,16 @@ def get_overall_qc_status(series, cols_len):
 
 #adding a function to help check the range of the input values
 def int_range(min_value, max_value):
+    """
+    Creates a type checker function for argparse that validates if a value is within a specified range.
+
+    Args:
+    min_value (int): The minimum acceptable value.
+    max_value (int): The maximum acceptable value.
+
+    Returns:
+    Function: A function that checks if a value is within the specified range.
+    """
     def _type_checker(value):
         ivalue = int(value)
         if ivalue < min_value or ivalue > max_value:
@@ -314,6 +495,15 @@ def int_range(min_value, max_value):
 
 #adding a function to help check if the file is tab delimited or not.
 def is_tab_delimited(filename):
+    """
+    Checks if the given file is tab-delimited.
+
+    Args:
+    filename (str): The file to be checked.
+
+    Returns:
+    bool: True if the file is tab-delimited, False otherwise.
+    """
     with open(filename, 'r') as file:
         first_line = file.readline()
         #print(first_line)
@@ -322,6 +512,15 @@ def is_tab_delimited(filename):
 
 #adding a function to help check for duplicate values in the input file
 def check_duplicates(*args):
+    """
+    Checks for duplicate values in the provided arguments.
+
+    Args:
+    *args: Variable length argument list to check for duplicates.
+
+    Returns:
+    list or bool: List of duplicates if present, otherwise False.
+    """
     counts = Counter(args)
     duplicates = [item for item, count in counts.items() if count > 1]
     if duplicates == [False]:

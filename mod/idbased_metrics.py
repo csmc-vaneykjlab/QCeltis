@@ -40,9 +40,23 @@ enzyme_info =  {'asp-n':{'terminus' : 'N' , 'cleave' : ['D'], 'exceptions' : []}
 combined_pat = r'|'.join(('\[.*?\]', '\(.*?\)','\{.*?\}'))
 
 #------------------------------------------------------------------------- FUNCTIONS ---------------------------------------------------------------------------------
+''' Calculate miscleavages for a peptide sequence, based on enzyme selected by user. Considerations to exclude exceptions to the cleavage sites are made. If no end cleavage site found, add 1000 to the original MC_score as punishment'''
 
 def calc_miscleavage(each_peptide, enzyme):
-    ''' Calculate miscleavages for a peptide sequence, based on enzyme selected by user. Considerations to exclude exceptions to the cleavage sites are made. If no end cleavage site found, add 1000 to the original MC_score as punishment'''
+    """
+    Calculates the miscleavage score for a peptide sequence based on a specified enzyme.
+
+    Args:
+    each_peptide (str): The peptide sequence to be analyzed.
+    enzyme (str): The enzyme used for determining the miscleavage sites.
+
+    Returns:
+    int: The miscleavage score for the peptide sequence.
+
+    Note:
+    The function considers exceptions to cleavage sites and penalizes sequences lacking an end cleavage site.
+    """
+
     cleavage_score = 0
     FOUND = False
     cleave_site = set(enzyme_info[enzyme]['cleave'])
@@ -88,7 +102,20 @@ def calc_miscleavage(each_peptide, enzyme):
     return(cleavage_score)
 
 def get_quant(df, filenames, threshold, level, groupwise_comparison, groups):
+    """
+    Generates quantitative data and group status based on a threshold.
 
+    Args:
+    df (DataFrame): The DataFrame containing the data.
+    filenames (list): List of filenames to be considered.
+    threshold (int/float): The threshold for quantitative analysis.
+    level (str): The analysis level (e.g., Protein, Peptide).
+    groupwise_comparison (bool): Flag to perform group-wise comparison.
+    groups (dict): A dictionary mapping groups to filenames.
+
+    Returns:
+    tuple: A tuple containing the quant DataFrame and group status DataFrame.
+    """
     #getting quant df
     quant = pd.DataFrame(df[filenames].count())
     quant = quant.reset_index()
@@ -127,6 +154,22 @@ def get_quant(df, filenames, threshold, level, groupwise_comparison, groups):
     return (quant, group_status_df)
 
 def intensity_cvs(df, intensity_cv_threshold, data_percent_threshold, filenames, level, groupwise_comparison, groups):
+
+    """
+    Analyzes the coefficient of variation (CV) for intensity data and performs group-wise comparisons.
+
+    Args:
+    df (DataFrame): The DataFrame containing intensity data.
+    intensity_cv_threshold (float): The threshold for CV.
+    data_percent_threshold (float): The data percentage threshold for CV analysis.
+    filenames (list): List of filenames to be analyzed.
+    level (str): The analysis level (e.g., Protein, Peptide).
+    groupwise_comparison (bool): Flag to perform group-wise CV analysis.
+    groups (dict): A dictionary mapping groups to filenames.
+
+    Returns:
+    tuple: A tuple containing the overall CV DataFrame, CV summary, and group-wise CV DataFrame.
+    """
 
     overall_cv_df = df
     overall_cv_df['Overall Average'] = overall_cv_df[filenames].mean(axis=1)
@@ -183,6 +226,20 @@ def intensity_cvs(df, intensity_cv_threshold, data_percent_threshold, filenames,
     return (overall_cv_df, cv_sum, grouped_df)
 
 def miscleavage(pep_level, enzyme, miscleavage_threshold, filenames, groups, groupwise_comparison):
+    """
+    Analyzes miscleavage in peptides based on enzyme specificity and calculates their distribution.
+
+    Args:
+    pep_level (DataFrame): DataFrame containing peptide-level information.
+    enzyme (str): The enzyme used for digestion.
+    miscleavage_threshold (float): Threshold for miscleavage analysis.
+    filenames (list): List of filenames to consider in the analysis.
+    groups (dict): Dictionary mapping groups to filenames for group-wise analysis.
+    groupwise_comparison (bool): Flag indicating if group-wise comparison should be performed.
+
+    Returns:
+    tuple: Returns two DataFrames - one with miscleavage information and another with group-wise miscleavage QC status.
+    """
 
     peptide_level = pep_level[['Peptide'] + filenames]
     peptide_level.fillna(0, inplace=True)
@@ -264,6 +321,21 @@ def miscleavage(pep_level, enzyme, miscleavage_threshold, filenames, groups, gro
 
 def common_tic(df_level, level, tic_cv_threshold, filenames, groups, groupwise_comparison):
 
+    """
+    Analyzes Total Ion Chromatogram (TIC) across multiple files and performs group-wise comparison if specified.
+
+    Args:
+    df_level (DataFrame): DataFrame containing either peptide or precursor level information.
+    level (str): Analysis level ('Peptide' or 'Precursor').
+    tic_cv_threshold (float): Threshold for coefficient of variation (CV) in TIC analysis.
+    filenames (list): List of filenames to consider in the analysis.
+    groups (dict): Dictionary mapping groups to filenames for group-wise analysis.
+    groupwise_comparison (bool): Flag indicating if group-wise comparison should be performed.
+
+    Returns:
+    tuple: Returns two DataFrames - one with TIC information and another with group-wise TIC QC status.
+    """
+
     if level == "Peptide":
         df = df_level[['Peptide'] + filenames]
     elif level == "Precursor":
@@ -303,6 +375,22 @@ def common_tic(df_level, level, tic_cv_threshold, filenames, groups, groupwise_c
     return (df_tic, group_df)
 
 def selected_peps(df_level, level, coverage_threshold, filenames, irtlabel, peptide_list, peptide_list_df):
+
+    """
+    Analyzes selected peptides for coverage and iRT QC, considering provided peptide list.
+
+    Args:
+    df_level (DataFrame): DataFrame containing peptide or precursor level information.
+    level (str): Analysis level ('Peptide' or 'Precursor').
+    coverage_threshold (float): Threshold for coverage analysis.
+    filenames (list): List of filenames to consider in the analysis.
+    irtlabel (str): Label for iRT peptides.
+    peptide_list (list): List of specific peptides for analysis.
+    peptide_list_df (DataFrame): DataFrame containing the list of specific peptides.
+
+    Returns:
+    tuple: Returns DataFrames for iRT analysis, iRT plots flag, and selected peptide analysis.
+    """
 
     #iRT kit
     irt_peptides = ["LGGNEQVTR","GAGSSEPVTGLDAK","VEATFGVDESNAK","YILAGVENSK","TPVISGGPYEYR","TPVITGAPYEYR","DGLDAASYYAPVR","ADVTPADFSEWSK","GTFIIDPGGVIR","GTFIIDPAAVIR","LFLQFGAQGSPFLK"]
@@ -364,6 +452,20 @@ def selected_peps(df_level, level, coverage_threshold, filenames, irtlabel, pept
 
 def get_sample_df(protein_level, peptide_level, precursor_level, pt_sample_df, pep_sample_df, pre_sample_df, threshold_dict, groupwise_comparison, groups):
 
+    """
+    Creates a combined sample DataFrame based on the available data levels and thresholds.
+
+    Args:
+    protein_level, peptide_level, precursor_level (bool): Flags indicating the presence of each data level.
+    pt_sample_df, pep_sample_df, pre_sample_df (DataFrame): DataFrames for protein, peptide, and precursor levels.
+    threshold_dict (dict): Dictionary containing threshold values for each level.
+    groupwise_comparison (bool): Flag for group-wise comparison.
+    groups (dict): Dictionary mapping groups to filenames.
+
+    Returns:
+    DataFrame: A combined DataFrame based on the specified data levels and thresholds.
+    """
+
     if protein_level and peptide_level and precursor_level and threshold_dict['Protein Threshold'] and threshold_dict['Peptide Threshold'] and threshold_dict['Precursor Threshold']:
         overall_sample_df = pd.merge(pt_sample_df, pep_sample_df, on="Filename")
         overall_sample_df = pd.merge(overall_sample_df, pre_sample_df, on="Filename")
@@ -394,6 +496,17 @@ def get_sample_df(protein_level, peptide_level, precursor_level, pt_sample_df, p
     return overall_sample_df
 
 def get_overall_df(protein_level, peptide_level, precursor_level, pt_group_df, pep_group_df, pre_group_df):
+
+    """
+    Combines group DataFrames for different levels (protein, peptide, precursor) based on availability.
+
+    Args:
+    protein_level, peptide_level, precursor_level (bool): Flags indicating the presence of each data level.
+    pt_group_df, pep_group_df, pre_group_df (DataFrame): Group DataFrames for each level.
+
+    Returns:
+    DataFrame: A combined group DataFrame based on the specified data levels.
+    """
 
     if protein_level and peptide_level and precursor_level:
         overall_group_df = pd.merge(pt_group_df, pep_group_df, on="Group")
@@ -427,6 +540,21 @@ def get_overall_df(protein_level, peptide_level, precursor_level, pt_group_df, p
 #---------------------------------------------------------------------- GRAPH FUNCTIONS -----------------------------------------------------------------------------
 
 def get_quant_plot(quant_df, threshold, level, groupwise_comparison, groups, color_list):
+
+    """
+    Generates a plot for quantitative analysis of identified levels (protein/peptide/precursor).
+
+    Args:
+    quant_df (DataFrame): DataFrame containing quantitative data.
+    threshold (float): Threshold value for the quantitative analysis.
+    level (str): The level of analysis ('Protein', 'Peptide', 'Precursor').
+    groupwise_comparison (bool): Flag for performing group-wise comparison.
+    groups (dict): Dictionary mapping groups for comparison.
+    color_list (list): List of colors for plotting.
+
+    Returns:
+    dict: A dictionary with parameters for reporting and plotting the quantitative analysis.
+    """
 
     #getting protein quant graph
     if groupwise_comparison:
@@ -475,6 +603,22 @@ def get_quant_plot(quant_df, threshold, level, groupwise_comparison, groups, col
 
 def intensity_cv_graphs(cv_sum, grouped_cv, level, groupwise_comparison, cv_percent_threshold, data_percent_threshold, color_list):
 
+    """
+    Creates graphs for intensity coefficient of variation (CV) analysis.
+
+    Args:
+    cv_sum (DataFrame): Summary DataFrame for CV analysis.
+    grouped_cv (DataFrame): Grouped data for CV analysis.
+    level (str): The level of analysis ('Protein', 'Peptide', 'Precursor').
+    groupwise_comparison (bool): Flag indicating if group-wise comparison is enabled.
+    cv_percent_threshold (float): Threshold for CV percentage.
+    data_percent_threshold (float): Threshold for the percentage of data under the CV.
+    color_list (list): List of colors for plotting.
+
+    Returns:
+    dict: A dictionary containing parameters for reporting and plotting intensity CV analysis.
+    """
+
     feature_col_name = f"{level} CV% < {cv_percent_threshold}"
     feature_column = f"% {level} under CV% < {cv_percent_threshold}"
 
@@ -507,6 +651,19 @@ def intensity_cv_graphs(cv_sum, grouped_cv, level, groupwise_comparison, cv_perc
     return intensity_cv_report_params
 
 def pca_plot(df_level, level,filenames, groups, color_list): #call it only if groupwise is given
+    """
+    Generates a PCA plot for different levels of data.
+
+    Args:
+    df_level (DataFrame): DataFrame containing data for PCA analysis.
+    level (str): The level of analysis (Protein, Peptide, Precursor).
+    filenames (list): List of filenames used in the analysis.
+    groups (dict): Dictionary mapping groups for the analysis.
+    color_list (list): List of colors for plotting.
+
+    Returns:
+    dict: Dictionary containing PCA plot and description for reporting.
+    """
 
     #keeping only required columns and filling NAs with 0
     df = df_level[[level]+filenames]
@@ -552,6 +709,22 @@ def pca_plot(df_level, level,filenames, groups, color_list): #call it only if gr
     return pca_report_params
 
 def common_tic_plot(df_tic, group_tic, level, tic_cv_threshold, groupwise_comparison, groups, color_list):
+
+    """
+    Creates a Total Ion Current (TIC) plot for the specified analysis level.
+
+    Args:
+    df_tic (DataFrame): DataFrame containing TIC data.
+    group_tic (DataFrame): Group-wise TIC data.
+    level (str): Analysis level ('Peptide' or 'Precursor').
+    tic_cv_threshold (float): Threshold for TIC coefficient of variation.
+    groupwise_comparison (bool): Indicates if group-wise comparison is to be done.
+    groups (dict): Dictionary mapping groups for analysis.
+    color_list (list): List of colors for plotting.
+
+    Returns:
+    dict: Dictionary containing TIC plot and description for reporting.
+    """
 
     if groupwise_comparison:
         df_tic['Group'] = df_tic['Filename'].apply(groupname, args=[groups, ])
@@ -600,6 +773,20 @@ def common_tic_plot(df_tic, group_tic, level, tic_cv_threshold, groupwise_compar
     return common_tic_report_params
 
 def miscleavage_plot(dig_df, miscleavage_threshold, groupwise_comparison, groups, color_list):
+
+    """
+    Generates a plot showing the percentage of no missed cleavages.
+
+    Args:
+    dig_df (DataFrame): DataFrame containing miscleavage data.
+    miscleavage_threshold (float): Threshold for miscleavage analysis.
+    groupwise_comparison (bool): Indicates if group-wise comparison is to be done.
+    groups (dict): Dictionary mapping groups for analysis.
+    color_list (list): List of colors for plotting.
+
+    Returns:
+    dict: Dictionary containing miscleavage plot and description for reporting.
+    """
 
     if groupwise_comparison:
         dig_df['Group'] = dig_df['Filename'].apply(groupname, args=[groups, ])
@@ -668,6 +855,17 @@ def selected_peptide_plots(df_level, filenames, level, level2, coverage_threshol
 
 def cumulative_freq_graph(protein_level, peptide_level, precursor_level, pt_cv_sum, pep_cv_sum, pre_cv_sum):
 
+    """
+    Creates a cumulative frequency graph for CV% across different levels.
+
+    Args:
+    protein_level, peptide_level, precursor_level (bool): Indicators for the presence of each level.
+    pt_cv_sum, pep_cv_sum, pre_cv_sum (DataFrame): DataFrames containing CV summary for each level.
+
+    Returns:
+    dict: Dictionary containing cumulative frequency plot and description for reporting.
+    """
+    
     if protein_level and peptide_level and precursor_level:
         df = pd.merge(pt_cv_sum, pep_cv_sum, on="CV%")
         df = pd.merge(df, pre_cv_sum, on="CV%")

@@ -20,6 +20,15 @@ from mod.general_functions import cv, cv_status, check_threshold, groupname, lab
 
 def get_mzml_list(mzml_dir):
 
+    """
+    Retrieves a list of .mzML files from the specified directory.
+
+    Args:
+    mzml_dir (str): Directory containing mzML files.
+
+    Returns:
+    list: List of paths to mzML files in the specified directory.
+    """
     mzml_list = os.listdir(mzml_dir)
 
     final_mzml_list = []
@@ -37,6 +46,17 @@ def get_mzml_list(mzml_dir):
     return final_mzml_list
 
 def mzml_extract(mzml_path, mzml_data):
+
+    """
+    Extracts data from an mzML file and appends it to a provided list.
+
+    Args:
+    mzml_path (str): Path to the mzML file.
+    mzml_data (list): List to which extracted data is appended.
+
+    Returns:
+    list: Updated list with data extracted from the mzML file.
+    """
 
     logging.info(f"Extracting file: {mzml_path}")
 
@@ -99,6 +119,16 @@ def mzml_extract(mzml_path, mzml_data):
 
 def get_mzml_info_dataframe(mzml_list):
 
+    """
+    Processes a list of mzML files in parallel and compiles extracted data into a DataFrame.
+
+    Args:
+    mzml_list (list): List of mzML file paths.
+
+    Returns:
+    DataFrame: DataFrame containing compiled data from all mzML files.
+    """
+
     mzml_data = []
     threads = []
 
@@ -119,6 +149,17 @@ def get_mzml_info_dataframe(mzml_list):
 
 def apply_idfree_thresholds(mzml_df, mzml_threshold_dict):
 
+    """
+    Applies specified thresholds to mzML data and updates the DataFrame with QC status.
+
+    Args:
+    mzml_df (DataFrame): DataFrame containing mzML data.
+    mzml_threshold_dict (dict): Dictionary containing threshold values for various metrics.
+
+    Returns:
+    DataFrame: Updated mzML DataFrame with added columns for QC status based on thresholds.
+    """
+
     if mzml_threshold_dict['MS1 TIC Threshold'] and 'MS1 TIC' in mzml_df.columns.tolist():
         mzml_df[f"MS1TIC QC Threshold = {mzml_threshold_dict['MS1 TIC Threshold']}"] = mzml_df['MS1 TIC'].apply(check_threshold, args=[mzml_threshold_dict['MS1 TIC Threshold'],])
 
@@ -138,6 +179,15 @@ def apply_idfree_thresholds(mzml_df, mzml_threshold_dict):
 
 def check_normality(data):
 
+    """
+    Performs a Shapiro-Wilk test to check the normality of the provided data.
+
+    Args:
+    data (list/array): Data to be tested for normality.
+
+    Returns:
+    str: Returns "z-score" if data is normally distributed; "iqr" otherwise.
+    """
     stat, p_value = shapiro(data)
     alpha = 0.05
 
@@ -147,6 +197,18 @@ def check_normality(data):
         return "iqr"
 
 def zscore_outliers(df, colname, zscore_threshold = 2):
+
+    """
+    Identifies outliers in a DataFrame column based on z-score.
+
+    Args:
+    df (DataFrame): DataFrame containing the data.
+    colname (str): Name of the column to check for outliers.
+    zscore_threshold (float, optional): The z-score threshold to identify outliers. Default is 2.
+
+    Returns:
+    tuple: Updated DataFrame with outliers marked and the number of outliers found.
+    """
 
     #calculating mean and standard deviation of the data
     mean = df[colname].mean()
@@ -166,6 +228,17 @@ def zscore_outliers(df, colname, zscore_threshold = 2):
 
 def iqr_outliers(df, colname):
 
+    """
+    Identifies outliers in a DataFrame column based on the Interquartile Range (IQR).
+
+    Args:
+    df (DataFrame): DataFrame containing the data.
+    colname (str): Name of the column to check for outliers.
+
+    Returns:
+    tuple: Updated DataFrame with outliers marked and the number of outliers found.
+    """
+
     #calculating quantiles
     q1=df[colname].quantile(0.25)
     q3=df[colname].quantile(0.75)
@@ -181,6 +254,17 @@ def iqr_outliers(df, colname):
     return (df, len(outliers))
 
 def outlier_detection(mzml_df, zscore_threshold = 2):
+
+    """
+    Detects outliers in mzML data using either z-score or IQR methods based on data distribution.
+
+    Args:
+    mzml_df (DataFrame): DataFrame containing mzML data.
+    zscore_threshold (float, optional): Z-score threshold for outlier detection. Default is 2.
+
+    Returns:
+    DataFrame: mzML DataFrame updated with outlier detection results.
+    """
 
     idfree_metrics = ['MS1 TIC', 'MS2 TIC', 'MS2/MS1 Spectra', 'Max Basepeak Intensity']
 
@@ -216,6 +300,18 @@ def outlier_detection(mzml_df, zscore_threshold = 2):
 
 def calculate_tic_cv(mzml_df, groups, tic_cv_threshold):
 
+    """
+    Calculates the Coefficient of Variation (CV%) for MS1 and MS2 TIC values across different groups.
+
+    Args:
+    mzml_df (DataFrame): DataFrame containing mzML data.
+    groups (dict): Dictionary mapping groups to filenames.
+    tic_cv_threshold (float): Threshold for the TIC CV%.
+
+    Returns:
+    DataFrame: DataFrame containing CV% for MS1 and MS2 TIC values.
+    """
+
     tic_cv = mzml_df[['Filename','MS1 TIC','MS2 TIC']]
 
     group_cv = {}
@@ -237,6 +333,19 @@ def calculate_tic_cv(mzml_df, groups, tic_cv_threshold):
     return tic_cv
 
 def get_sample_qc(mzml_df, mzml_threshold_dict, groupwise_comparison, groups):
+
+    """
+    Applies QC status checks to mzML data based on thresholds and outlier detection.
+
+    Args:
+    mzml_df (DataFrame): DataFrame containing mzML data.
+    mzml_threshold_dict (dict): Dictionary containing QC thresholds.
+    groupwise_comparison (bool): Indicates if group-wise comparison is being used.
+    groups (dict): Dictionary mapping groups for analysis.
+
+    Returns:
+    DataFrame: Updated mzML DataFrame with sample QC status.
+    """
 
     if 'MS1 TIC' in mzml_df.columns.tolist():
         if mzml_threshold_dict['MS1 TIC Threshold']:
@@ -278,6 +387,18 @@ def get_sample_qc(mzml_df, mzml_threshold_dict, groupwise_comparison, groups):
     return mzml_df
 
 def get_idfree_grouped_df(mzml_sample_df, tic_cv, tic_cv_threshold, groups):
+    """
+    Compiles a grouped DataFrame for ID-free data, merging TIC CV% and sample QC status.
+
+    Args:
+    mzml_sample_df (DataFrame): DataFrame containing sample QC status.
+    tic_cv (DataFrame): DataFrame containing TIC CV% data.
+    tic_cv_threshold (float): Threshold for TIC CV%.
+    groups (dict): Dictionary mapping groups to filenames.
+
+    Returns:
+    DataFrame: Compiled DataFrame with grouped QC status for ID-free data.
+    """
 
     tic_group_df = tic_cv[['Group',f'MS1 TIC CV% Threshold = {int(tic_cv_threshold)}', f'MS2 TIC CV% Threshold = {int(tic_cv_threshold)}']]
     idfree_status_params = ['MS1 TIC Sample QC Status', 'MS2 TIC Sample QC Status', 'MS1 Spectra QC Status', 'MS2 Spectra QC Status', 'Max Basepeak Intensity QC Status']
