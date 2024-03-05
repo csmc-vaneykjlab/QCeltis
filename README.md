@@ -21,7 +21,6 @@ Quality control is essential in large-scale DIA proteomics projects to minimize 
 
 QCeltis a command-line python package that provides users with quality control assessement along with easy-to-intepret visualizations to help idenitfy issues at sample preparation, digestion and acquisition steps of the MS experiment process. To do so, QCeltis provides a way to perform quality control analysis through 2 primary steps: 
 
-(Manasa: write more about each metric extracted + talk about sample grouping file + what info does ID-free provide and ID-based provide)
 1) ID-Free: parses input consisting of mzML files and extracts raw data metrics such as: MS1 and MS2 TIC, MS2/MS1 Spectral Ratio, Max Base Peak Intensities. During this step, the script applies user-defined thresholds, if given and outlier analysis to identify "bad" quality control samples that are not consistent with the rest of the dataset. 
 2) ID-Based: parses input from data processed through a search engine, such as Dia-NN or OpenSWATH. The input file contain protein, peptide or precursor-level intensities, or all 3 can be provided. Metrics such as quantification information, intensity CVs, common peptide/precursor TIC, miscleaved peptides count, etc are extracted and user-defined thresholds are applied to identify "bad" samples.
 
