@@ -469,15 +469,23 @@ def get_sample_df(protein_level, peptide_level, precursor_level, pt_sample_df, p
     if protein_level and peptide_level and precursor_level and threshold_dict['Protein Threshold'] and threshold_dict['Peptide Threshold'] and threshold_dict['Precursor Threshold']:
         overall_sample_df = pd.merge(pt_sample_df, pep_sample_df, on="Filename")
         overall_sample_df = pd.merge(overall_sample_df, pre_sample_df, on="Filename")
+        overall_sample_df = overall_sample_df.sort_values('Filename')
+        return overall_sample_df
 
     elif protein_level and peptide_level and threshold_dict['Protein Threshold'] and threshold_dict['Peptide Threshold']:
         overall_sample_df = pd.merge(pt_sample_df, pep_sample_df, on="Filename")
+        overall_sample_df = overall_sample_df.sort_values('Filename')
+        return overall_sample_df
 
     elif protein_level and precursor_level and threshold_dict['Protein Threshold'] and threshold_dict['Precursor Threshold']:
         overall_sample_df = pd.merge(pt_sample_df, pre_sample_df, on="Filename")
+        overall_sample_df = overall_sample_df.sort_values('Filename')
+        return overall_sample_df
 
     elif peptide_level and precursor_level and threshold_dict['Peptide Threshold'] and threshold_dict['Precursor Threshold']:
         overall_sample_df = pd.merge(pep_sample_df, pre_sample_df, on="Filename")
+        overall_sample_df = overall_sample_df.sort_values('Filename')
+        return overall_sample_df
 
     elif protein_level and threshold_dict['Protein Threshold']:
         pt_sample_df = pt_sample_df.sort_values('Filename')
@@ -490,10 +498,6 @@ def get_sample_df(protein_level, peptide_level, precursor_level, pt_sample_df, p
     elif precursor_level and threshold_dict['Precursor Threshold']:
         pre_sample_df = pre_sample_df.sort_values('Filename')
         return pre_sample_df
-
-    overall_sample_df = overall_sample_df.sort_values('Filename')
-
-    return overall_sample_df
 
 def get_overall_df(protein_level, peptide_level, precursor_level, pt_group_df, pep_group_df, pre_group_df):
 

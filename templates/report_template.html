@@ -143,9 +143,9 @@ h1, h2, h3, h4, h5, h6 {
                             <div id="total_ion_current" name="total_ion_current">
                               <h4> Total Ion Current </h4>
 
-                                    {{ tic_plot | safe }}
-
                                     <p> {{ tic_ms_plot_description }} </p>
+
+                                    {{ tic_plot | safe }}
 
                                     {% if tic_ms1_outlier_plot or tic_ms2_outlier_plot %}
 
@@ -155,18 +155,21 @@ h1, h2, h3, h4, h5, h6 {
 
                                     {% if tic_ms1_outlier_plot %}
 
+                                        <p> MS1 TIC is expected to be consistent across replicate quality control samples. Any outliers detected are highlighted in yellow. Outliers detected could point to issues with data acquisition and LC-MS instrument performance such as improper autosampler sample pickup. Please check the specific samples listed below. </p>
+
                                         {{ tic_ms1_outlier_plot | safe }}
 
-                                        <p> MS1 TIC is expected to be consistent across replicate quality control samples. Any outliers detected are highlighted in yellow. Outliers detected could point to issues with data acquisition and LC-MS instrument performance such as improper autosampler sample pickup. Please check the specific samples listed below. </p>
                                         <p> {{ tic_ms1_outlier_description }} </p>
 
                                     {% endif %}
 
                                     {% if tic_ms2_outlier_plot %}
+                                    
+                                        <p> MS2 TIC is expected to be consistent across replicate quality control samples. Any outliers detected are highlighted in yellow. Outliers detected could point to issues with data acquisition and LC-MS instrument performance such as improper autosampler sample pickup. Please check the specific samples listed below. </p>
 
                                         {{ tic_ms2_outlier_plot | safe }}
-
-                                        <p> MS2 TIC is expected to be consistent across replicate quality control samples. Any outliers detected are highlighted in yellow. Outliers detected could point to issues with data acquisition and LC-MS instrument performance such as improper autosampler sample pickup. Please check the specific samples listed below. </p>
+                                        
+                                        
                                         <p> {{ tic_ms2_outlier_description }} </p>
 
                                     {% endif %}
@@ -205,18 +208,20 @@ h1, h2, h3, h4, h5, h6 {
                               <h4> Spectral Ratio </h4>
 
                                 {% if ms2_ms1_spectral_ratio_plot %}
+                                
+                                <p> The number of spectra recorded in each mzML file is extracted. The spectral ratio represents the number of MS2 Spectra over the number of MS1 Spectra found in each file. </p>
 
                                     {{ ms2_ms1_spectral_ratio_plot | safe }}
-
-                                    <p> The number of spectra recorded in each mzML file is extracted. The spectral ratio represents the number of MS2 Spectra over the number of MS1 Spectra found in each file. </p>
 
                                 {% endif %}
 
                                 {% if ms2_ms1_spectral_ratio_outlier_plot %}
+                                
+                                    <h5> Spectral Ratio Outliers </h5>
+                                    
+                                    <p> MS2/MS1 Spectra Ratio is expected to be consistent across replicate quality control samples. Any outliers detected are highlighted in yellow. Outliers detected point to an issue with the mass spectrometry instrument performance. Please check experiment protocols for your instrument. </p>
 
                                     {{ ms2_ms1_spectral_ratio_outlier_plot | safe }}
-
-                                    <p> MS2/MS1 Spectra Ratio is expected to be consistent across replicate quality control samples. Any outliers detected are highlighted in yellow. Outliers detected point to an issue with the mass spectrometry instrument performance. Please check experiment protocols for your instrument. </p>
 
                                     <p> {{ ms2_ms1_spectral_ratio_outlier_description }}</p>
 
@@ -238,10 +243,12 @@ h1, h2, h3, h4, h5, h6 {
                                 {% endif %}
 
                                 {% if max_basepeak_intensity_outlier_plot %}
+                                
+                                <h5> Max Base Peak Intensity Outliers </h5>
+                                
+                                <p> Max Base Peak Intensity is expected to be consistent across replicate quality control samples. Any outliers detected are highlighted in yellow. Outliers detected could point to issues with data acquisition or instrument performance such as sample pickup or samples being dried out. Please check the specific samples listed below. </p>
 
                                     {{ max_basepeak_intensity_outlier_plot | safe }}
-
-                                    <p> Max Base Peak Intensity is expected to be consistent across replicate quality control samples. Any outliers detected are highlighted in yellow. Outliers detected could point to issues with data acquisition or instrument performance such as sample pickup or samples being dried out. Please check the specific samples listed below. </p>
 
                                     <p> {{ max_basepeak_intensity_outlier_description }} </p>
 
@@ -368,8 +375,10 @@ h1, h2, h3, h4, h5, h6 {
 <h4> Protein Quantification </h4>
 
                                 {% if protein_quant_plot %}
-                                    {{ protein_quant_plot | safe }}
+                                    
                                     <p> {{ protein_quant_description }} </p>
+                                    {{ protein_quant_plot | safe }}
+                                    
                                 {% endif %}
 
 </div>
@@ -380,8 +389,9 @@ h1, h2, h3, h4, h5, h6 {
 <h4> Peptide Quantification </h4>
 
                                 {% if peptide_quant_plot %}
-                                    {{ peptide_quant_plot | safe }}
+                                    
                                     <p> {{ peptide_quant_description }} </p>
+                                    {{ peptide_quant_plot | safe }}
 
                                 {% endif %}
 
@@ -394,8 +404,9 @@ h1, h2, h3, h4, h5, h6 {
 <h4> Precursor Quantification </h4>
 
                                 {% if precursor_quant_plot %}
+                                    
+                                    <p> {{ precursor_quant_description }} </p>
                                     {{ precursor_quant_plot | safe }}
-                                <p> {{ precursor_quant_description }} </p>
 
                                 {% endif %}
 
@@ -409,8 +420,8 @@ h1, h2, h3, h4, h5, h6 {
                           <h4> Intensity CV% Cumulative Frequency </h4>
 
                                 {% if cumulative_frequency_plot %}
-                                    {{ cumulative_frequency_plot | safe }}
                                     <p> {{ cumulative_frequency_description }} </p>
+                                    {{ cumulative_frequency_plot | safe }}
 
                                 {% endif %}
 
@@ -422,8 +433,8 @@ h1, h2, h3, h4, h5, h6 {
 <h4> Percentage of Proteins Under CV% </h4>
 
                                 {% if percentage_proteins_undercv_plot %}
-                                    {{ percentage_proteins_undercv_plot | safe }}
                                     <p> {{ percentage_proteins_undercv_description }} </p>
+                                    {{ percentage_proteins_undercv_plot | safe }}
 
                                 {% endif %}
 
@@ -436,8 +447,8 @@ h1, h2, h3, h4, h5, h6 {
 <h4> Percentage of Peptides Under CV% </h4>
 
                                 {% if percentage_peptides_undercv_plot %}
-                                    {{ percentage_peptides_undercv_plot | safe }}
                                     <p> {{ percentage_peptides_undercv_description }} </p>
+                                    {{ percentage_peptides_undercv_plot | safe }}
 
                                 {% endif %}
 
@@ -450,8 +461,8 @@ h1, h2, h3, h4, h5, h6 {
 <h4> Percentage of Precursors Under CV% </h4>
 
                                 {% if percentage_precursors_undercv_plot %}
-                                    {{ percentage_precursors_undercv_plot | safe }}
                                     <p> {{ percentage_precursors_undercv_description }} </p>
+                                    {{ percentage_precursors_undercv_plot | safe }}
                                 {% endif %}
 
 </div>
@@ -465,10 +476,10 @@ h1, h2, h3, h4, h5, h6 {
 
 
                                 {% if protein_pca_plot %}
+                                     <p> {{ protein_pca_description }} </p>
                                     {{ protein_pca_plot | safe }}
                                 {% endif %}
 
-                                <p> {{ protein_pca_description }} </p>
 
                         </div>
                         {% endif %}
@@ -478,10 +489,11 @@ h1, h2, h3, h4, h5, h6 {
 <h4> PCA for Peptide Intensities </h4>
 
                                 {% if peptide_pca_plot %}
+                                    <p> {{ peptide_pca_description }} </p>
                                     {{ peptide_pca_plot | safe }}
                                 {% endif %}
 
-                                <p> {{ peptide_pca_description }} </p>
+                                
 
                         </div>
                         {% endif %}
@@ -492,10 +504,9 @@ h1, h2, h3, h4, h5, h6 {
 
 
                                 {% if precursor_pca_plot %}
+                                     <p> {{ precursor_pca_description }} </p>
                                     {{ precursor_pca_plot | safe }}
                                 {% endif %}
-
-                                <p> {{ precursor_pca_description }} </p>
 
                         </div>
                         {% endif %}
@@ -507,18 +518,16 @@ h1, h2, h3, h4, h5, h6 {
 <h4> Common Peptide TIC </h4>
 
                                 {% if common_peptide_tic_plot %}
+                                    <p> {{ common_peptide_tic_description }} </p>
                                     {{ common_peptide_tic_plot | safe }}
                                 {% endif %}
-
-                                <p> {{ common_peptide_tic_description }} </p>
 
 
                             {% if groupwise_comparison %}
                                 <h4> Common Peptide TIC Group CV% </h4>
-
+                                <p> {{ common_peptide_tic_group_cv_description }} </p>
                                 {{ common_peptide_tic_group_cv | safe }}
 
-                                <p> {{ common_peptide_tic_group_cv_description }} </p>
                             {% endif %}
 
                         </div>
@@ -529,10 +538,9 @@ h1, h2, h3, h4, h5, h6 {
 <h4> Common Precursor TIC </h4>
 
                                 {% if common_precursor_tic_plot %}
+                                     <p> {{ common_precursor_tic_description }} </p>
                                     {{ common_precursor_tic_plot | safe }}
                                 {% endif %}
-
-                                <p> {{ common_precursor_tic_description }} </p>
 
 
                             {% if groupwise_comparison %}
@@ -554,10 +562,9 @@ h1, h2, h3, h4, h5, h6 {
 
 
                                 {% if percent_miscleavage_plot %}
+                                     <p> {{ percent_miscleavage_description }} </p>
                                     {{ percent_miscleavage_plot | safe }}
                                 {% endif %}
-
-                                <p> {{ percent_miscleavage_description }} </p>
 
                         </div>
                         {% endif %}
@@ -569,14 +576,14 @@ h1, h2, h3, h4, h5, h6 {
 <h4> iRT Intensity Distribution </h4>
 
                                 {% if irt_intensity_plot %}
+                                     <p> {{ irt_intensity_description }} </p>
                                     {{ irt_intensity_plot | safe }}
-                                    <p> {{ irt_intensity_description }} </p>
 
                                 {% endif %}
 
                                 {% if irt_intensity_coverage_plot %}
-                                    {{ irt_intensity_coverage_plot | safe }}
                                     <p> {{ irt_coverage_description }} </p>
+                                    {{ irt_intensity_coverage_plot | safe }}
                                 {% endif %}
 
 </div>
@@ -587,6 +594,8 @@ h1, h2, h3, h4, h5, h6 {
 
 <h4> Selected Peptide Distribution </h4>
 
+                                 <p> {{ selected_peptide_intensity_description }} </p>
+
                                 {% if selected_peptide_intensity_plot %}
                                     {{ selected_peptide_intensity_plot | safe }}
                                 {% endif %}
@@ -595,7 +604,6 @@ h1, h2, h3, h4, h5, h6 {
                                     {{ selected_peptide_intensity_coverage_plot | safe }}
                                 {% endif %}
 
-                                <p> {{ selected_peptide_intensity_description }} </p>
 </div>
                         {% endif %}
 

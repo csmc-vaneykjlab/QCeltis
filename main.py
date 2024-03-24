@@ -11,13 +11,11 @@ from mod.idbased_metrics import calculate_idbased_metrics
 from mod.general_functions import check_path, check_file, check_grouping_file, get_grouping_dict, check_samples, int_range, check_duplicates, get_overall_qc_status, groupname
 
 import warnings
-warnings.simplefilter(action='ignore', category=FutureWarning)
+warnings.simplefilter('ignore')
 
 start_time = time.time()
 
 def main():
-
-    logging.basicConfig(filename="qceltis.log", level=logging.INFO)
 
     parser = argparse.ArgumentParser(formatter_class=RawTextHelpFormatter)
 
@@ -26,7 +24,6 @@ def main():
     parser.add_argument('-r', '--reportname', type=str, required=True, help='[Required] Report Name for HTML and Excel Reports')
 
     #id-free metrics - mzml extraction
-    #ADD - checks for thresholds (like range check, type check etc)
     parser.add_argument('-m', '--mzml_directory', type=str, default=False, help='[Optional] Path to directory where mzML files are present')
     parser.add_argument('-t1', '--ms1_tic_threshold', type=float, default=False, help='[Optional] MS1 TIC Threshold')
     parser.add_argument('-t2', '--ms2_tic_threshold', type=float, default=False, help='[Optional] MS2 TIC Threshold')
@@ -72,6 +69,8 @@ def main():
 
     out_dir = str(args.outdirectory)
     reportname = str(args.reportname)
+
+    logging.basicConfig(filename=f"{reportname}_QCeltis.log", level=logging.INFO)
 
     mzml_dir = args.mzml_directory
     ms1_tic_threshold = float(args.ms1_tic_threshold)
@@ -138,10 +137,6 @@ def main():
 
         check_file(protein_level, "Protein")
 
-        if grouping_file:
-            groups = check_grouping_file(protein_level, grouping_file)
-            logging.info(f"{grouping_file} will be used for comparing samples across the following groups: {groups}")
-
         if protein_threshold:
             logging.info(f"Protein Threshold: {protein_threshold} will be applied")
         else:
@@ -160,6 +155,26 @@ def main():
         else:
             logging.info("Protein Intensities over data percentage will not be calculated, no data percent threshold is provided")
 
+        if grouping_file:
+
+            if not protein_threshold: 
+                logging.error("ERROR: Grouping File was provided. For groupwise comparison, please provide protein threshold value using --protein_threshold.")
+                print("ERROR: Grouping File was provided. For groupwise comparison, please provide protein threshold value using --protein_threshold.")
+                sys.exit(1)
+
+            if not cv_percent_threshold:
+                logging.error("ERROR: Grouping File was provided. For groupwise comparison, please provide cv percent threshold value using --cv_percent_threshold.")
+                print("ERROR: Grouping File was provided. For groupwise comparison, please provide cv percent threshold value using --cv_percent_threshold.")
+                sys.exit(1)
+
+            if not data_percent_threshold: 
+                logging.error("ERROR: Grouping File was provided. For groupwise comparison, please provide data percent threshold using --data_threshold.")
+                print("ERROR: Grouping File was provided. For groupwise comparison, please provide data percent threshold using --data_threshold.")
+                sys.exit(1)
+
+            groups = check_grouping_file(protein_level, grouping_file)
+            logging.info(f"{grouping_file} will be used for comparing samples across the following groups: {groups}")
+
     else:
         logging.info("Protein Level file not provided, protein level metrics will not be calculated \n")
 
@@ -168,14 +183,6 @@ def main():
 
         logging.info("--------------------------------------------- Checking Peptide Intensity File --------------------------------------------- ")
         check_file(peptide_level, "Peptide")
-
-        if grouping_file:
-            groups = check_grouping_file(peptide_level, grouping_file)
-            logging.info(f"{grouping_file} will be used for comparing samples across the following groups: {groups}")
-
-            if not tic_cv_threshold:
-                logging.error("ERROR: TIC CV threshold is not provided, no peptide TIC comparison between groups can be performed. Please provide TIC CV threshold")
-                sys.exit(1)
 
         if protein_threshold:
             logging.info(f"Peptide Threshold: {peptide_threshold} will be applied")
@@ -203,6 +210,31 @@ def main():
         else:
             logging.info(f"Enzyme not provided, missed cleavage percentage will not be calculated")
 
+        if grouping_file:
+
+            if not tic_cv_threshold:
+                logging.error("ERROR: TIC CV threshold is not provided, no peptide TIC comparison between groups can be performed. Please provide TIC CV threshold")
+                print("ERROR: TIC CV threshold is not provided, no peptide TIC comparison between groups can be performed. Please provide TIC CV threshold")
+                sys.exit(1)
+
+            if not peptide_threshold: 
+                logging.error("ERROR: Grouping File was provided. For groupwise comparison, please provide peptide threshold value using --peptide_threshold.")
+                print("ERROR: Grouping File was provided. For groupwise comparison, please provide peptide threshold value using --peptide_threshold.")
+                sys.exit(1)
+
+            if not cv_percent_threshold:
+                logging.error("ERROR: Grouping File was provided. For groupwise comparison, please provide cv percent threshold value using --cv_percent_threshold.")
+                print("ERROR: Grouping File was provided. For groupwise comparison, please provide cv percent threshold value using --cv_percent_threshold.")
+                sys.exit(1)
+
+            if not data_percent_threshold: 
+                logging.error("ERROR: Grouping File was provided. For groupwise comparison, please data percent threshold using --data_threshold.")
+                print("ERROR: Grouping File was provided. For groupwise comparison, please data percent threshold using --data_threshold.")
+                sys.exit(1)
+
+            groups = check_grouping_file(peptide_level, grouping_file)
+            logging.info(f"{grouping_file} will be used for comparing samples across the following groups: {groups}")
+
     else:
         logging.info("Peptide Level file not provided, peptide level metrics will not be calculated")
 
@@ -212,13 +244,6 @@ def main():
         logging.info("--------------------------------------------- Checking Precursor Intensity File --------------------------------------------- ")
         check_file(precursor_level, "precursor")
 
-        if grouping_file:
-            groups = check_grouping_file(precursor_level, grouping_file)
-            logging.info(f"{grouping_file} will be used for comparing samples across the following groups: {groups}")
-
-            if not tic_cv_threshold:
-                logging.error("ERROR: TIC CV threshold is not provided, no precursor TIC comparison between groups can be performed. Please provide TIC CV threshold")
-                sys.exit(1)
 
         if precursor_threshold:
             logging.info(f"Precursor Threshold: {precursor_threshold} will be applied")
@@ -249,7 +274,26 @@ def main():
         if grouping_file:
             if not tic_cv_threshold:
                 logging.error("ERROR: TIC CV threshold is not provided, no precursor TIC comparison between groups can be performed. Please provide TIC CV threshold")
+                print("ERROR: TIC CV threshold is not provided, no precursor TIC comparison between groups can be performed. Please provide TIC CV threshold")
                 sys.exit(1)
+
+            if not precursor_threshold: 
+                logging.error("ERROR: Grouping File was provided. For groupwise comparison, please provide precursor threshold value using --precursor_threshold.")
+                print("ERROR: Grouping File was provided. For groupwise comparison, please provide precursor threshold value using --precursor_threshold.")
+                sys.exit(1)
+
+            if not cv_percent_threshold:
+                logging.error("ERROR: Grouping File was provided. For groupwise comparison, please provide cv percent threshold value using --cv_percent_threshold.")
+                print("ERROR: Grouping File was provided. For groupwise comparison, please provide cv percent threshold value using --cv_percent_threshold.")
+                sys.exit(1)
+
+            if not data_percent_threshold: 
+                logging.error("ERROR: Grouping File was provided. For groupwise comparison, please data percent threshold using --data_threshold.")
+                print("ERROR: Grouping File was provided. For groupwise comparison, please data percent threshold using --data_threshold.")
+                sys.exit(1)
+
+            groups = check_grouping_file(precursor_level, grouping_file)
+            logging.info(f"{grouping_file} will be used for comparing samples across the following groups: {groups}")
 
     else:
         logging.info("Precursor Level file not provided, precursor level metrics will not be calculated")
@@ -339,13 +383,18 @@ def main():
         grouped_df[['Overall QC Status','QC Fail Score']] = grouped_df[status_cols].apply(get_overall_qc_status, args=[len(status_cols)], axis=1)
 
 
-    logging.info(f"Saving Overall QC Report to {out_dir}/{reportname}_QC_Status_Report.xlsx")
-    #saving dataframes to excel document
-    writer = pd.ExcelWriter(f"{out_dir}/{reportname}_QC_Status_Report.xlsx", engine='xlsxwriter')
-    sample_df.to_excel(writer, index=False, sheet_name="Samplewise QC Metrics")
-    if groupwise_comparison:
-        grouped_df.to_excel(writer, index=False, sheet_name='Groupwise QC Metrics')
-    writer.save()
+    if isinstance(sample_df, pd.DataFrame):
+
+        logging.info(f"Saving Overall QC Report to {out_dir}/{reportname}_QC_Status_Report.xlsx")
+        #saving dataframes to excel document
+        writer = pd.ExcelWriter(f"{out_dir}/{reportname}_QC_Status_Report.xlsx", engine='xlsxwriter')
+        sample_df.to_excel(writer, index=False, sheet_name="Samplewise QC Metrics")
+        if groupwise_comparison:
+            grouped_df.to_excel(writer, index=False, sheet_name='Groupwise QC Metrics')
+        writer.save()
+
+    else:
+        logging.info(f"Overall QC Report not generated since thresholds were not provided.")
 
     #creating report
     all_report_params = {}
