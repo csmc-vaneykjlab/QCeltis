@@ -144,7 +144,7 @@ A directory containing mzML files needs to be given as input. Please refer https
 | Protein           | A column containing Protein Ids/Names      |
 | < list of samples >             | a list of samples followed by their intensity values     |
 
-see example: example-dataset/protein_level.txt
+see example: https://github.com/csmc-vaneykjlab/QCeltis/blob/main/example-dataset/protein_level.txt
 
 #### peptide_level input file
 
@@ -163,7 +163,7 @@ see example: example-dataset/protein_level.txt
 | Precursor           | A column containing Precursor Ids      |
 | < list of samples >             | a list of samples followed by their intensity values     |
 
-see example: example-dataset/precursor_level.txt
+see example: https://github.com/csmc-vaneykjlab/QCeltis/blob/main/example-dataset/precursor_level.txt
 
 ### For Batch-wise QC Comparison: 
 
@@ -174,7 +174,7 @@ see example: example-dataset/precursor_level.txt
 | Filename           | A column containing file names      |
 | Group            | The batch the sample belongs to     |
 
-see example: example-dataset/grouping_file.txt
+see example: https://github.com/csmc-vaneykjlab/QCeltis/blob/main/example-dataset/grouping_file.txt
 
 ## Outputs and Explanations
 
