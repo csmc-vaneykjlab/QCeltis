@@ -144,7 +144,7 @@ A directory containing mzML files needs to be given as input. Please refer https
 | Protein           | A column containing Protein Ids/Names      |
 | < list of samples >             | a list of samples followed by their intensity values     |
 
-see example: and link
+see example: example-dataset/protein_level.txt
 
 #### peptide_level input file
 
@@ -153,8 +153,6 @@ see example: and link
 | Protein           | A column containing Protein Ids/Names      |
 | Peptide           | A column containing Peptide Ids      |
 | < list of samples >             | a list of samples followed by their intensity values     |
-
-see example: and link
 
 #### precursor_level input file
 
@@ -165,7 +163,7 @@ see example: and link
 | Precursor           | A column containing Precursor Ids      |
 | < list of samples >             | a list of samples followed by their intensity values     |
 
-see example: and link
+see example: example-dataset/precursor_level.txt
 
 ### For Batch-wise QC Comparison: 
 
@@ -176,7 +174,7 @@ see example: and link
 | Filename           | A column containing file names      |
 | Group            | The batch the sample belongs to     |
 
-see example: and link
+see example: example-dataset/grouping_file.txt
 
 ## Outputs and Explanations
 
@@ -333,5 +331,7 @@ Using the 'peptide_list' parameter, a user-defined list of peptides can be monit
 ## Cite
 
 ## Support
+
+If you encounter any bugs or issues, please help us improve TEAQ by creating a new issue at: (https://github.com/csmc-vaneykjlab/QCeltis/issues)[https://github.com/csmc-vaneykjlab/QCeltis/issues]. For any other queries, email us at GroupHeartBioinformaticsSupport@cshs.org.
 
 ## release notes
