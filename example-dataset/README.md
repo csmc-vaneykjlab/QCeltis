@@ -27,10 +27,10 @@ Alternatively, the package can be installed directly from PyPI:
 
 ## Parameters and Commands
 
-[Parameters](https://github.com/vegesnam/QCPackage/blob/main/README.md#parameters)
-Input File Descriptions (Manasa: link to input file descriptions)
+Click for [Parameters](https://github.com/vegesnam/QCPackage/blob/main/README.md#parameters)
+Click for [Input File Descriptions](https://github.com/csmc-vaneykjlab/QCeltis/tree/main?tab=readme-ov-file#input-file-description)
 
-To begin with analysis, you can download the mzML files, protein and precursor level files from (Manasa: example_dataset link). You can provide these as input parameters and execute the following command: (Manasa: mention that this is running the package as a command-line tool) 
+To begin with analysis, you can download the mzML files, protein and precursor level files from [here](https://github.com/csmc-vaneykjlab/QCeltis/tree/main/example-dataset). You can provide these as input parameters and execute the following command via command-line: 
 
 ID-Free + ID-Based + Groupwise Comparison Command:
 
