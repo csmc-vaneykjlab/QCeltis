@@ -332,6 +332,6 @@ Using the 'peptide_list' parameter, a user-defined list of peptides can be monit
 
 ## Support
 
-If you encounter any bugs or issues, please help us improve TEAQ by creating a new issue at: https://github.com/csmc-vaneykjlab/QCeltis/issues. For any other queries, email us at GroupHeartBioinformaticsSupport@cshs.org.
+If you encounter any bugs or issues, please help us improve QCeltis by creating a new issue at: https://github.com/csmc-vaneykjlab/QCeltis/issues. For any other queries, email us at GroupHeartBioinformaticsSupport@cshs.org.
 
 ## release notes
