@@ -115,6 +115,8 @@ In the case of the example dataset, both ID-Free and ID-Based tabs will be popul
 
 MS1 and MS2 Total Ion Current values are extracted from spectra within the given 47 mzML files.
 
+<ins>TIC Plot</ins>:
+
 ![TIC Plot](https://github.com/csmc-vaneykjlab/QCeltis/assets/87665957/a9d88777-eb00-40c0-b659-b2e0810b3834)
 
 If extreme values are found, they are labelled as outliers.
@@ -129,6 +131,8 @@ Here, 3 outliers were found. The following files have been detected as outliers:
 * 20211018_Seroconversion_DBS_Plate8_DR2_centroid.mzML
 
 These 3 outlier samples were rerun. 
+
+<ins>TIC CV% Plot</ins>:
 
 Groupwise comparison using CV% is performed with MS1 and MS2 TIC values:
 
@@ -164,11 +168,11 @@ Here, 1 outlier was found. The sample "20211018_Seroconversion_DBS_Plate1_DR3_ce
 
 Number of proteins, peptides and precursors found in each sample are displayed using a bar plot. When the threshold is provided, any samples not meeting the threshold is flagged as a ‘FAIL’, this could indicate an issue with the sample preparation or digestion protocol. These plots are a good way to visualize any varying patterns within samples and detect sample preparation or digestion issues. 
 
-Protein Quant:
+<ins>Protein Quant</ins>:
 
 ![Protein Quant](https://github.com/vegesnam/QCPackage/assets/87665957/d1605eeb-6bd8-4942-b7a6-792caf262952)
 
-Precursor Quant:
+<ins>Precursor Quant</ins>:
 
 ![image](https://github.com/vegesnam/QCPackage/assets/87665957/7d8128c9-f67f-4b6d-ac09-6b2148eb93d2)
 
@@ -177,19 +181,19 @@ Precursor Quant:
 
 Using the protein, peptide or precursor intensity values provided, coefficient of variation (CV) percent values are calculated across the entire dataset and across samples within each group, in this case, within each plate.  
 
-Cumulative CV% Plot:
+<ins>Cumulative CV% Plot</ins>:
 
 Cumulative frequency percentage of calculated CV% of intensity values across all samples is plotted. This plot reveals the degree of variability across the dataset, higher CVs indicate greater variation that could be stemming from sample preparation, data acquisition or instrument performance. Lower CVs indicate higher reproducibility of protein, peptide or precursor intensities across replicate samples.
 
 ![Cumulative CV](https://github.com/vegesnam/QCPackage/assets/87665957/e792951d-97c9-45e4-98ca-5086fe68aa9f)
 
-Percentage of Proteins under CV%: 
+<ins>Percentage of Proteins under CV%</ins>: 
 
 Percent of proteins under the provided CV threshold is plotted. A data threshold, which represents the minimum percent of proteins under CV threshold, is applied and any groups not meeting the threshold are marked as "FAIL"
 
 ![Proteins under CV%](https://github.com/vegesnam/QCPackage/assets/87665957/03a29fa8-d061-4377-9fad-72d15efafce3)
 
-Percentage of Precursors under CV%:
+<ins>Percentage of Precursors under CV%</ins>:
 
 Percent of precursors under the provided CV threshold is plotted. A data threshold, which represents the minimum percent of precursors under CV threshold, is applied and any groups not meeting the threshold are marked as "FAIL"
 
@@ -201,11 +205,11 @@ Here, in this example, all the groups have passed the intensity CV and data thre
 
 Protein, peptide or precursor intensities are used to perform principal component analysis across provided groups. Any clustering observed across replicate samples can be an indication of batch effects. 
 
-Protein PCA: 
+<ins>Protein PCA</ins>: 
 
 ![Protein PCA](https://github.com/vegesnam/QCPackage/assets/87665957/875b8281-6152-4d85-b853-0f81ff8e795c)
 
-Precursor PCA: 
+<ins>Precursor PCA</ins>: 
 
 ![image](https://github.com/vegesnam/QCPackage/assets/87665957/998f01de-af69-49f1-8bf6-544805dd8eec)
 
@@ -213,11 +217,11 @@ Precursor PCA:
 
 Common Peptide/Precursor TIC is the summed intensity of all the common peptides or precursors found in all samples. If both peptide and precursor files are provided, only common peptide will be calculated.
 
-Common Precursor TIC: 
+<ins>Common Precursor TIC</ins>: 
 
 ![CommonTIC](https://github.com/vegesnam/QCPackage/assets/87665957/aff8cec3-bbde-41c2-9ecd-0ffe6875d24f)
 
-Common Precursor TIC CV%:
+<ins>Common Precursor TIC CV%</ins>:
 
 CVs are calculated with intensity values from common precursors across the samples within each group. All groups within the TIC CV threshold are considered to have passed.
 
@@ -233,4 +237,7 @@ Number of peptides with 0 miscleavages are plotted from each sample. Having a hi
 
 ### Excel Reports
 
-1. 
+1. ExampleDataset-QCReport_ID-Free_QC_Report.xlsx: contains id-free metric summary and groupwise TIC CV% calculations. 
+2. ExampleDataset-QCReport_ProteinLevel_QC_Report.xlsx: contains protein-level id-based metrics summary, such as quant summary and groupwise CV% calculations.
+3. ExampleDataset-QCReport_PrecursorLevel_QC_Report.xlsx: contains precursor-level id-based metrics summary, such as quant summary, CV% calculations, common precursor TIC and miscleavage summary.
+4. ExampleDataset-QCReport_QC_Status_Report.xlsx: contains combined overall QC PASS/FAIL status from id-free and id-based metrics for each sample and group 
