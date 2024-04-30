@@ -391,7 +391,7 @@ def main():
         sample_df.to_excel(writer, index=False, sheet_name="Samplewise QC Metrics")
         if groupwise_comparison:
             grouped_df.to_excel(writer, index=False, sheet_name='Groupwise QC Metrics')
-        writer.save()
+        writer.close()
 
     else:
         logging.info(f"Overall QC Report not generated since thresholds were not provided.")
