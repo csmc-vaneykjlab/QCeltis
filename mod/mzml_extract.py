@@ -673,7 +673,7 @@ def calculate_idfree_metrics(out_dir, reportname, mzml_dir, groupwise_comparison
     mzml_df.to_excel(writer, index=False, sheet_name="ID-Free Metrics Summary")
     if groupwise_comparison:
         tic_cv.to_excel(writer, index=False, sheet_name='Group TIC CV')
-    writer.save()
+    writer.close()
 
     idfree_report_parameters = create_graphs(mzml_df, tic_cv, groupwise_comparison, groups, mzml_threshold_dict)
 
