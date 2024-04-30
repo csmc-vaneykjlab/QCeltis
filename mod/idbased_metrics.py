@@ -995,7 +995,7 @@ def calculate_idbased_metrics(out_dir, reportname, input_dict, threshold_dict, g
         pt_level_cv.to_excel(protein_report_writer, index=False, sheet_name='Protein Level CV')
         if groupwise_comparison:
             pt_grouped_cv.to_excel(protein_report_writer, index=False, sheet_name='Protein CV Group Summary')
-        protein_report_writer.save()
+        protein_report_writer.close()
 
         #getting protein overall sample dataframe
         if threshold_dict["Protein Threshold"]:
@@ -1103,7 +1103,7 @@ def calculate_idbased_metrics(out_dir, reportname, input_dict, threshold_dict, g
             irt_level.to_excel(peptide_report_writer, index=False, sheet_name='iRT Peptide Intensity')
         if input_dict['Peptide List']:
             selected_pep_df.to_excel(peptide_threshold_dict, index=False, sheet_name='Selected Peptide Intensity')
-        peptide_report_writer.save()
+        peptide_report_writer.close()
 
         #getting peptide group overall dataframe
         if groupwise_comparison:
@@ -1224,7 +1224,7 @@ def calculate_idbased_metrics(out_dir, reportname, input_dict, threshold_dict, g
             if input_dict['Peptide List']:
                 selected_pep_df.to_excel(precursor_report_writer, index=False, sheet_name='Selected Precursor Intensity')
 
-        precursor_report_writer.save()
+        precursor_report_writer.close()
 
         if groupwise_comparison:
             if not input_dict['Peptide Level']:
