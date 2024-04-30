@@ -22,7 +22,7 @@ cd QCeltis
 pip install -r requirements.txt
 ~~~
 
-Alternatively, the package can be installed directly from PyPI:
+Alternatively, the package can be installed directly from [PyPI](https://pypi.org/project/qceltis/):
 
 `pip install qceltis`
 
