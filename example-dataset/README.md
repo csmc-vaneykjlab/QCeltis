@@ -9,7 +9,7 @@
 6. [Results](#results-from-qc-analysis)
 
 ## Installation
-QCeltis can be installed from the command line using `git` and `pip`.
+QCeltis can be installed from the command line using `git` and `pip`. QCeltis requires python 3.9 or higher to run. 
 
 First, clone the repository from GitHub:
 
@@ -18,13 +18,13 @@ git clone [https://github.com/vegesnam/QCPackage.git](https://github.com/csmc-va
 Then, navigate to the downloaded directory and install the package using `pip`:
 
 ~~~bash
-cd qcp
+cd QCeltis
 pip install -r requirements.txt
 ~~~
 
 Alternatively, the package can be installed directly from PyPI:
 
-`pip install -i < pypi instance will go here >`
+`pip install qceltis`
 
 ## Dataset
 
