@@ -328,4 +328,10 @@ Using the '--peptide_list' parameter, a user-defined list of peptides can be mon
 
 If you encounter any bugs or issues, please help us improve QCeltis by creating a new issue at: https://github.com/csmc-vaneykjlab/QCeltis/issues. For any other queries, email us at GroupHeartBioinformaticsSupport@cshs.org.
 
-## release notes
+## Release Notes
+
+Version 0.0.1
+ - Initial version released.
+
+## License
+QCeltis © 2024 by Jennifer Van Eyk is licensed under [MIT License](https://github.com/csmc-vaneykjlab/QCeltis/blob/main/LICENSE.txt).
