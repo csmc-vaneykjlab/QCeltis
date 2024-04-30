@@ -57,7 +57,7 @@ git clone https://github.com/csmc-vaneykjlab/QCeltis.git
 Then, navigate to the downloaded directory and install the package using `pip`:
 
 ~~~bash
-cd qcp
+cd QCeltis
 pip install -r requirements.txt
 ~~~
 
