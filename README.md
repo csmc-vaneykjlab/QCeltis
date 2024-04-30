@@ -48,22 +48,32 @@ After extracting ID-Free and ID-Based metrics and identifying outliers, the scri
 | Selected Peptide Intensity Distribution | ID-Based | Monitoring the intensities and presence of user-defined peptides can reveal any sample preparation or data acquisition issues.         |
 
 ## Installation
-QCeltis can be installed from the command line using `git` and `pip`. It requires python 3.9 or higher to run. 
+QCeltis can be installed directly from [PyPI](https://pypi.org/project/qceltis/) using `pip` as follows. 
+
+~~~bash
+pip install qceltis
+~~~
+Alternatively, if you would like the development version from github. You can perform the below steps to use the source. 
 
 First, clone the repository from GitHub:
 
+~~~bash
 git clone https://github.com/csmc-vaneykjlab/QCeltis.git
+~~~
 
-Then, navigate to the downloaded directory and install the package using `pip`:
+Then, navigate to the downloaded directory and install the package requirements using `pip`:
 
 ~~~bash
 cd QCeltis
 pip install -r requirements.txt
 ~~~
 
-Alternatively, the package can be installed directly from [PyPI](https://pypi.org/project/qceltis/):
+Check your installation:
+~~~bash
+python3 main.py --help
+~~~
 
-`pip install qceltis`
+
 
 ## Usage
 
