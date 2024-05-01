@@ -340,8 +340,11 @@ If you encounter any bugs or issues, please help us improve QCeltis by creating 
 
 ## Release Notes
 
-Version 0.0.1
- - Initial version released.
+Version 0.1.2
+- Initial version released 
+- Can be installed through pip 
+- Analyzes raw data from .mzML files (id-free) and search engine results (id-based)
+- Generates an overall QC report 
 
 ## License
 QCeltis © 2024 by Jennifer Van Eyk is licensed under [MIT License](https://github.com/csmc-vaneykjlab/QCeltis/blob/main/LICENSE.txt).
