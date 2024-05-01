@@ -61,7 +61,7 @@ First, clone the repository from GitHub:
 git clone https://github.com/csmc-vaneykjlab/QCeltis.git
 ~~~
 
-Then, navigate to the downloaded directory and install the package requirements using `pip`:
+Then, navigate to the downloaded directory and install the package requirements using `pip`, create a [virtual environment](https://www.geeksforgeeks.org/creating-python-virtual-environment-windows-linux/) to avoid conflicts:
 
 ~~~bash
 cd QCeltis
