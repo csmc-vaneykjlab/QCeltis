@@ -224,19 +224,19 @@ QCeltis extracts the following ID-Free metrics from the provided mzML files and 
 
 <ins>Log Total Ion Current Line Graph:</ins>
 
-![TIC Line Graph](https://github.com/vegesnam/QCeltis/assets/87665957/862a19ee-12e0-4fd4-bd55-e3b9305e882d)
+![TIC Line Graph](<img width="707" alt="image" src="https://github.com/user-attachments/assets/290b7ab3-a5bc-41d3-ade0-4199d863e226" />)
 
 Log2 MS1 and MS2 Total Ion Current Values are extracted from spectra present in the mzML files and are plotted using a line graph. Total Ion Current values from MS1 and MS2 Spectra are expected to be consistent across the replicate quality control samples. If 'MS1 TIC Threshold' or 'MS2 TIC Threshold' is provided by the user, a dotted line is used to display the threshold in the line graph. Any samples above that threshold are considered as failed samples. Apart from threshold-defined identification of failed samples, outlier analysis is also performed. If extreme values are found across the samples, they are labelled as outliers. 
 
 <ins>TIC Outlier Plot:</ins> 
 
-![MS1 TIC Outlier Plot](https://github.com/vegesnam/QCeltis/assets/87665957/b73575cd-c6da-48cc-9444-8397b7a681c4)
+![MS1 TIC Outlier Plot](<img width="743" alt="image" src="https://github.com/user-attachments/assets/de06e43d-8a0b-4299-836d-9ae58ef063bb" />)
 
-When outliers are identified, a scatter plot of the TIC values is produced, with the outlier highlighted in yellow. Outliers/Failed Samples found using this metric indicate issues with with data acquisition and LC-MS instrument performance such as improper autosampler sample pickup. 
+When outliers are identified, a scatter plot of the TIC values is produced, with the outlier highlighted in yellow. The upper and lower limit ranges from the IQR outlier analysis are highlighted as red dotted lines. Outliers/Failed Samples found using this metric indicate issues with with data acquisition and LC-MS instrument performance such as improper autosampler sample pickup. 
  
 <ins>TIC CV% Across Groups Plot:</ins> 
 
-![MS1 TIC CV% Plot](https://github.com/vegesnam/QCeltis/assets/87665957/6447f8ed-c446-4772-8693-333eef06d746)
+![MS1 TIC CV% Plot](<img width="738" alt="image" src="https://github.com/user-attachments/assets/b9183f91-35fe-4aa4-804f-222aca1c20ef" />)
 
 When a grouping file is provided, TIC CV% is calculated across samples within each provided group and the 'TIC CV Threshold' is applied. If any group isn't within the threshold, the group is labelled as a 'FAIL' and this indicates an inconsistent TIC pattern within the samples of the group. 
 
@@ -252,7 +252,7 @@ The number of MS1 and MS2 spectra are counted from each provided mzML file and t
 
 <ins>Max Base Peak Intensity Bar Graph:</ins>
 
-![Max Base Peak Intensity](https://github.com/vegesnam/QCeltis/assets/87665957/4e8881ee-95a0-4318-96fe-13781fae0e59)
+![Max Base Peak Intensity](<img width="734" alt="image" src="https://github.com/user-attachments/assets/db4eddb5-b441-4dd0-b5a9-8c3813dcf423" />)
 
 When the provided mzML files have base peak intensity information, the maximum base peak intensity is extracted from the files and plotted as a bar graph. The Max Base Peak Intensity represents the highest recorded base peak intensity in each mzML file. If 'Max Base Peak Intensity Threshold' is provided by the user, a dotted line is used to display the threshold in the line graph. Any samples above that threshold are considered as failed samples. Apart from threshold-defined identification of failed samples, outlier analysis is also performed. If extreme values are found across the samples, they are labelled as outliers through outlier analysis. If outliers are identified, a scatter plot (similar to the above TIC Outlier Plot) is generated, with the outliers highlighted in yellow. Outliers/Failed Samples found using this metric indicate issues with with data acquisition or LC-MS instrument performance. Outliers identified within this metric usually correlate with outliers identified within the MS1 or MS2 TIC metrics.  
 
