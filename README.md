@@ -21,8 +21,8 @@ Quality control is essential in large-scale DIA proteomics projects to minimize 
 
 QCeltis a command-line python package that provides users with quality control assessement along with easy-to-intepret visualizations to help idenitfy issues at sample preparation, digestion and acquisition steps of the MS experiment process. To do so, QCeltis provides a way to perform quality control analysis through 2 primary steps: 
 
-1) ID-Free: parses input consisting of mzML files and extracts raw data metrics such as: MS1 and MS2 TIC, MS2/MS1 Spectral Ratio, Max Base Peak Intensities. During this step, the script applies user-defined thresholds, if given and outlier analysis to identify "bad" quality control samples that are not consistent with the rest of the dataset. 
-2) ID-Based: parses input from data processed through a search engine, such as Dia-NN or OpenSWATH. The input file contain protein, peptide or precursor-level intensities, or all 3 can be provided. Metrics such as quantification information, intensity CVs, common peptide/precursor TIC, miscleaved peptides count, etc are extracted and user-defined thresholds are applied to identify "bad" samples.
+1) ID-Free: parses input consisting of mzML files and extracts raw data metrics such as: Log MS1 and MS2 TIC, MS2/MS1 Spectral Ratio, Log Max Base Peak Intensities. During this step, the script applies user-defined thresholds (if provided) and performs outlier analysis to identify "bad" quality control samples that are not consistent with the rest of the dataset. 
+2) ID-Based: parses input from data processed through a search engine, such as Dia-NN or OpenSWATH. The input file contains protein, peptide or precursor-level intensities, or all 3 can be provided. Metrics such as quantification information, intensity CVs, common peptide/precursor TIC, miscleaved peptides count, etc are extracted and user-defined thresholds are applied to identify "bad" samples.
 
 After extracting ID-Free and ID-Based metrics and identifying outliers, the script provides samplewise "PASS/FAIL" labels which are reported in the output Excel Reports. Additionally, a sample grouping file can be provided by the user which is used to perform groupwise (either plates or batches) quality control analysis across the provided quality control samples. Additional plots and reports are generated when the grouping file is provided and a groupwise "PASS/FAIL" label is reported in the outputs. 
 
@@ -35,10 +35,10 @@ After extracting ID-Free and ID-Based metrics and identifying outliers, the scri
 
 | Metric                                | Category | Explanation                                                                                                           |
 |---------------------------------------|----------|--------------------------------------------------------------------------------------------------------------------------|
-| MS1 TIC                               | ID-Free  | Total Ion Current extracted from MS1 Spectra. MS1 TIC values are expected to be consistent across replicate quality control samples, inconsistencies could point to issues with data acquisition and improper LC-MS instrument performance.                            |                        
-| MS2 TIC                               | ID-Free  | Total Ion Current extracted from MS2 Spectra. MS2 TIC values are expected to be consistent across replicate quality control samples, inconsistencies could point to issues with data acquisition and improper LC-MS instrument performance.                            |
+| Log MS1 TIC                               | ID-Free  | Log2 Transformed Total Ion Current extracted from MS1 Spectra. MS1 TIC values are expected to be consistent across replicate quality control samples, inconsistencies could point to issues with data acquisition and improper LC-MS instrument performance.                            |                        
+| Log MS2 TIC                               | ID-Free  | Log2 Transformed Total Ion Current extracted from MS2 Spectra. MS2 TIC values are expected to be consistent across replicate quality control samples, inconsistencies could point to issues with data acquisition and improper LC-MS instrument performance.                            |
 | MS2/MS1 Spectral Ratio                | ID-Free  | The ratio of MS2-to-MS2 Spectra provides insights into the depth of proteome coverage and fragmentation efficiency. Consistent or expected numbers of spectra across samples indicates stable instrument performance, any significant deviations can indicate issues with the MS instrument and deviation from the experimental protocol.                         |
-| Max Base peak Intensity               | ID-Free  | Represents the highest base peak intensity in each replicate sample. Extreme maximum base peak intensities within samples can indicate issues with the data acquisition and LC-MS instrument performance.                     |
+| Log Max Base peak Intensity               | ID-Free  | Represents the Log2 Transformed highest base peak intensity in each replicate sample. Extreme maximum base peak intensities within samples can indicate issues with the data acquisition and LC-MS instrument performance.                     |
 | Quantification                        | ID-Based | The number of identified proteins, peptides and precursors is a fundamental metric for assessing the data quality from the experiment. Inconsistent numbers across replicate samples points to issues with sample preparation, digestion protocols, experimental reproducibility, and data acquisition                                                        |
 | Intensity CVs                         | ID-Based | Coefficient of Variation (CV%) across the dataset or within provided groups reveals the degree of variability. Higher CVs indicate greater variation in the intensity measurements across replicate samples stemming from sample preparation, data acquisition or instrument performance. |
 | PCA                                   | ID-Based | PCA plots can reveal the percentage of variability of provided replicate sample intensities and potential batch effects across the provided batches or plates. |
@@ -120,7 +120,8 @@ qceltis [-h] --outdirectory OUTDIRECTORY --reportname REPORTNAME [--mzml_directo
 | --ms2_tic_threshold      | -t2        | MS2 TIC threshold                                | False         |
 | --ms1_spectra_threshold  | -s1        | MS1 spectra threshold                            | False         |
 | --ms2_spectra_threshold  | -s2        | MS2 spectra threshold                            | False         |
-| --max_basepeak_intensity | -bp        | Maximum base peak intensity threshold             | False         |
+| --max_basepeak_intensity | -bp        | Maximum base peak intensity threshold            | False         |
+| ----iqr_sensitivity      | -i         | Sensitivity for the IQR outlier detection range  | 1.5           |
 | --protein_level          | -pt        | Path to protein intensity file                   | None          |
 | --peptide_level          | -pep       | Path to peptide intensity file                   | None          |
 | --precursor_level        | -pre       | Path to precursor intensity file                 | None          |
@@ -186,10 +187,10 @@ A directory containing mzML files needs to be given as input. Please refer https
 
 | Metric                                | Category | Expected Output                                                                                                           |
 |---------------------------------------|----------|--------------------------------------------------------------------------------------------------------------------------|
-| MS1 TIC                               | ID-Free  | TIC Values, MS1 + MS2 TIC Graph, Outlier Detection, Threshold FAIL/PASS, TIC CV% across groups                            |
-| MS2 TIC                               | ID-Free  | TIC Values, MS1 + MS2 TIC Graph, Outlier Detection, Threshold FAIL/PASS, TIC CV% across groups                            |
-| MS2/MS1 Spectra                       | ID-Free  | TIC Values, MS2/MS1 Graph, Outlier Detection on MS2/MS1, Threshold FAIL/PASS                                             |
-| Max Base peak Intensity                | ID-Free  | Max Base peak Values, Max Base peak Intensity Graph + Outlier Detection                                                        |
+| Log MS1 TIC                               | ID-Free  | Log TIC Values, Log MS1 + MS2 TIC Graph, Outlier Detection, Threshold FAIL/PASS, TIC CV% across groups                            |
+| Log MS2 TIC                               | ID-Free  | Log TIC Values, Log MS1 + MS2 TIC Graph, Outlier Detection, Threshold FAIL/PASS, TIC CV% across groups                            |
+| MS2/MS1 Spectra                       | ID-Free  | Spectral Counts, MS2/MS1 Graph, Outlier Detection on MS2/MS1, Threshold FAIL/PASS                                             |
+| Log Max Base peak Intensity                | ID-Free  | Log Max Base peak Values, Log Max Base peak Intensity Graph + Outlier Detection                                                        |
 | Quantification                        | ID-Based | Protein/Peptide/Precursor Quantification + Threshold PASS/FAIL + graph                                                            |
 | Intensity CVs                         | ID-Based | Protein/Peptide/Precursor Overall CV + Cumulative CV% + Groupwise CV % + Cumulative/Groupwise Graphs + Threshold PASS/FAIL (if groupwise) |
 | Common TIC                            | ID-Based | Peptide/Precursor Common TIC values + TIC CV% across groups + graphs for samples + groups + Threshold PASS/FAIL (if groupwise) |
@@ -208,7 +209,6 @@ A directory containing mzML files needs to be given as input. Please refer https
 | Status Report      | Samplewise QC Metrics, Groupwise QC Metrics             |
 
 For examples of Excel Reports: [ID-Free + ID-Based Example Dataset Reports](https://github.com/vegesnam/QCeltis/tree/main/example-dataset/results/IDFree_IDBased_GroupComparison_QCResult)
-(Manasa: change this once the repo is changed)
 
 ### HTML Report
 
@@ -222,11 +222,11 @@ QCeltis extracts the following ID-Free metrics from the provided mzML files and 
 
 #### Total Ion Current
 
-<ins>Total Ion Current Line Graph:</ins>
+<ins>Log Total Ion Current Line Graph:</ins>
 
 ![TIC Line Graph](https://github.com/vegesnam/QCeltis/assets/87665957/862a19ee-12e0-4fd4-bd55-e3b9305e882d)
 
-MS1 and MS2 Total Ion Current Values are extracted from spectra present in the mzML files and are plotted using a line graph. Total Ion Current values from MS1 and MS2 Spectra are expected to be consistent across the replicate quality control samples. If 'MS1 TIC Threshold' or 'MS2 TIC Threshold' is provided by the user, a dotted line is used to display the threshold in the line graph. Any samples above that threshold are considered as failed samples. Apart from threshold-defined identification of failed samples, outlier analysis is also performed. If extreme values are found across the samples, they are labelled as outliers. 
+Log2 MS1 and MS2 Total Ion Current Values are extracted from spectra present in the mzML files and are plotted using a line graph. Total Ion Current values from MS1 and MS2 Spectra are expected to be consistent across the replicate quality control samples. If 'MS1 TIC Threshold' or 'MS2 TIC Threshold' is provided by the user, a dotted line is used to display the threshold in the line graph. Any samples above that threshold are considered as failed samples. Apart from threshold-defined identification of failed samples, outlier analysis is also performed. If extreme values are found across the samples, they are labelled as outliers. 
 
 <ins>TIC Outlier Plot:</ins> 
 
