@@ -224,7 +224,7 @@ QCeltis extracts the following ID-Free metrics from the provided mzML files and 
 
 <ins>Log Total Ion Current Line Graph:</ins>
 
-![Log Total Ion Current Line](https://github.com/user-attachments/assets/290b7ab3-a5bc-41d3-ade0-4199d863e226))
+![Log Total Ion Current Line](https://github.com/user-attachments/assets/290b7ab3-a5bc-41d3-ade0-4199d863e226)
 
 Log2 MS1 and MS2 Total Ion Current Values are extracted from spectra present in the mzML files and are plotted using a line graph. Total Ion Current values from MS1 and MS2 Spectra are expected to be consistent across the replicate quality control samples. If 'MS1 TIC Threshold' or 'MS2 TIC Threshold' is provided by the user, a dotted line is used to display the threshold in the line graph. Any samples above that threshold are considered as failed samples. Apart from threshold-defined identification of failed samples, outlier analysis is also performed. If extreme values are found across the samples, they are labelled as outliers. 
 
