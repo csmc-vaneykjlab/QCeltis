@@ -224,19 +224,19 @@ QCeltis extracts the following ID-Free metrics from the provided mzML files and 
 
 <ins>Log Total Ion Current Line Graph:</ins>
 
-<img width="707" alt="image" src="https://github.com/user-attachments/assets/290b7ab3-a5bc-41d3-ade0-4199d863e226" />
+<img width="760" alt="image" src="https://github.com/user-attachments/assets/290b7ab3-a5bc-41d3-ade0-4199d863e226" />
 
 Log2 MS1 and MS2 Total Ion Current Values are extracted from spectra present in the mzML files and are plotted using a line graph. Total Ion Current values from MS1 and MS2 Spectra are expected to be consistent across the replicate quality control samples. If 'MS1 TIC Threshold' or 'MS2 TIC Threshold' is provided by the user, a dotted line is used to display the threshold in the line graph. Any samples above that threshold are considered as failed samples. Apart from threshold-defined identification of failed samples, outlier analysis is also performed. If extreme values are found across the samples, they are labelled as outliers. 
 
 <ins>TIC Outlier Plot:</ins> 
 
-<img width="743" alt="image" src="https://github.com/user-attachments/assets/de06e43d-8a0b-4299-836d-9ae58ef063bb" />
+<img width="760" alt="image" src="https://github.com/user-attachments/assets/de06e43d-8a0b-4299-836d-9ae58ef063bb" />
 
 When outliers are identified, a scatter plot of the TIC values is produced, with the outlier highlighted in yellow. The upper and lower limit ranges from the IQR outlier analysis are highlighted as red dotted lines. Outliers/Failed Samples found using this metric indicate issues with with data acquisition and LC-MS instrument performance such as improper autosampler sample pickup. 
  
 <ins>TIC CV% Across Groups Plot:</ins> 
 
-<img width="738" alt="image" src="https://github.com/user-attachments/assets/b9183f91-35fe-4aa4-804f-222aca1c20ef" />
+<img width="760" alt="image" src="https://github.com/user-attachments/assets/b9183f91-35fe-4aa4-804f-222aca1c20ef" />
 
 When a grouping file is provided, TIC CV% is calculated across samples within each provided group and the 'TIC CV Threshold' is applied. If any group isn't within the threshold, the group is labelled as a 'FAIL' and this indicates an inconsistent TIC pattern within the samples of the group. 
 
