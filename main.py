@@ -11,7 +11,7 @@ from mod.idbased_metrics import calculate_idbased_metrics
 from mod.general_functions import check_path, check_file, check_grouping_file, get_grouping_dict, check_samples, int_range, check_duplicates, get_overall_qc_status, groupname
 
 import warnings
-warnings.simplefilter('ignore')
+warnings.filterwarnings("ignore")
 
 start_time = time.time()
 
@@ -30,6 +30,7 @@ def main():
     parser.add_argument('-s1', '--ms1_spectra_threshold', type=float, default=False, help='[Optional] MS2 Spectra Threshold')
     parser.add_argument('-s2', '--ms2_spectra_threshold', type=float, default=False, help='[Optional] MS2 Spectra Threshold')
     parser.add_argument('-bp', '--max_basepeak_intensity', type=float, default=False, help='[Optional] Maximum Basepeak Intensity Threshold')
+    parser.add_argument('-i', '--iqr_sensitivity', type=float, default=1.5, help='Sensitivity for the IQR outlier detection range, default=1.5')
 
     #id-based inputs
     parser.add_argument('-pt', '--protein_level', type=str, default=False, help='[Optional] Path to Protein Intensity File')
@@ -56,12 +57,12 @@ def main():
         'TrypsinP\tcleaves at C terminus of K,R. \tNo exception\n'+
         'CNBr\t\tcleaves at C terminus of M. \tNo exceptions\n'+
         'Arg-C\t\tcleaves at C terminus of R. \tException: RP\n')
-    parser.add_argument('-c', '--miscleavage_threshold', type=int_range(0, 100), default=False, help='[Optional] 0% Missed Cleavage Threshold for each sample')
-    parser.add_argument('-t', '--tic_cv_threshold', type=int_range(0, 100), default=40, help='[Optional] TIC CV Threshold for groupwise QC status - Percentage between 0 and 100 - will only be used if grouping file is provided')
-    parser.add_argument('-s', '--cv_percent_threshold', type=int_range(0, 100), default=40, help='[Optional] Intensity CV Threshold - Percentage between 0 and 100')
+    parser.add_argument('-c', '--miscleavage_threshold', type=int_range(0, 100), default=False, help='[Optional] 0%% Missed Cleavage Threshold for each sample')
+    parser.add_argument('-t', '--tic_cv_threshold', type=int_range(0, 100), default=30, help='[Optional] TIC CV Threshold for groupwise QC status - Percentage between 0 and 100 - will only be used if grouping file is provided')
+    parser.add_argument('-s', '--cv_percent_threshold', type=int_range(0, 100), default=30, help='[Optional] Intensity CV Threshold - Percentage between 0 and 100')
     parser.add_argument('-d', '--data_percent_threshold', type=int_range(0, 100), default=70, help='[Optional] Data Threshold for Intensity CV - will only be used if platewise comparison is selected')
-    parser.add_argument('-irt', '--irtlabel', default=False, type=str, help='[Optional] If iRT peptides are present in your peptide intensity file, please provide how the iRT proteins are labelled in your dataset')
-    parser.add_argument('-v', '--coverage_threshold', type=int_range(0, 100), default=False, help='[Optional] Intensity or Retention Time Coverage % Threshold in each sample')
+    parser.add_argument('-irt', '--irtlabel', default=False, type=str, help='[Optional] If iRT peptides (Biognosys iRT Kit) are present in your peptide intensity file, please provide how the iRT proteins are labelled in your dataset')
+    parser.add_argument('-v', '--coverage_threshold', type=int_range(0, 100), default=False, help='[Optional] Intensity or Retention Time Coverage %% Threshold in each sample')
 
     args = parser.parse_args()
 
@@ -78,6 +79,7 @@ def main():
     ms1_spectra_threshold = int(args.ms1_spectra_threshold)
     ms2_spectra_threshold = int(args.ms2_spectra_threshold)
     max_basepeak_intensity_threshold = float(args.max_basepeak_intensity)
+    iqr_sensitivity = float(args.iqr_sensitivity)
 
     protein_level = args.protein_level
     peptide_level = args.peptide_level
@@ -95,6 +97,11 @@ def main():
     data_percent_threshold = float(args.data_percent_threshold)
     irtlabel = args.irtlabel
     coverage_threshold = float(args.coverage_threshold)
+
+    #defaults - to check if custom thresholds have been set 
+    tic_cv_threshold_default = 30
+    cv_percent_threshold_default = 30 
+
 
     # ------------------------------------------- CHECKING INPUTS AND THRESHOLDS -----------------------------------
     logging.info("----------------------------- CHECKING PROVIDED INPUTS AND THRESHOLDS -----------------------------\n")
@@ -127,6 +134,10 @@ def main():
             if not tic_cv_threshold:
                 logging.error("ERROR: TIC CV threshold is not provided, no MS1 and MS2 TIC comparison between groups can be performed. Please provide TIC CV threshold")
                 sys.exit(1)
+            if tic_cv_threshold:
+                logging.info(f"TIC CV Threshold: {cv_percent_threshold} will be applied for performing MS1 and MS2 TIC comparison between groups")
+                if tic_cv_threshold_default != tic_cv_threshold:
+                    logging.warning(f"WARNING: Custom threshold for TIC CV% threshold has been set. Recommended TIC CV% threshold for most datasets: {tic_cv_threshold_default}")
 
     else:
         logging.info("mzML directory not provided, no id-free metrics will be calculated")
@@ -144,6 +155,9 @@ def main():
 
         if cv_percent_threshold:
             logging.info(f"Intensity CV Threshold: {cv_percent_threshold} will be applied for protein intensities")
+            if cv_percent_threshold_default != cv_percent_threshold:
+                logging.warning(f"WARNING: Custom threshold for CV% threshold has been set. Recommended CV% threshold for most datasets: {cv_percent_threshold_default}")
+
         else:
             logging.info("No Intensity CVs will be calculated, no threshold provided")
 
@@ -191,6 +205,8 @@ def main():
 
         if cv_percent_threshold:
             logging.info(f"Intensity CV Threshold: {cv_percent_threshold} will be applied for peptide intensities")
+            if cv_percent_threshold_default != cv_percent_threshold:
+                logging.warning(f"WARNING: Custom threshold for CV% threshold has been set. Recommended CV% threshold for most datasets: {cv_percent_threshold_default}")
         else:
             logging.info("No Intensity CVs will be calculated, no threshold provided")
 
@@ -244,7 +260,6 @@ def main():
         logging.info("--------------------------------------------- Checking Precursor Intensity File --------------------------------------------- ")
         check_file(precursor_level, "precursor")
 
-
         if precursor_threshold:
             logging.info(f"Precursor Threshold: {precursor_threshold} will be applied")
         else:
@@ -252,6 +267,8 @@ def main():
 
         if cv_percent_threshold:
             logging.info(f"Intensity CV Threshold: {cv_percent_threshold} will be applied for precursor intensities")
+            if cv_percent_threshold_default != cv_percent_threshold:
+                logging.warning(f"WARNING: Custom threshold for CV% threshold has been set. Recommended CV% threshold for most datasets: {cv_percent_threshold_default}")
         else:
             logging.info("No Intensity CVs will be calculated, no threshold provided")
 
@@ -272,6 +289,7 @@ def main():
             logging.info(f"Enzyme not provided, missed cleavage percentage will not be calculated")
 
         if grouping_file:
+            
             if not tic_cv_threshold:
                 logging.error("ERROR: TIC CV threshold is not provided, no precursor TIC comparison between groups can be performed. Please provide TIC CV threshold")
                 print("ERROR: TIC CV threshold is not provided, no precursor TIC comparison between groups can be performed. Please provide TIC CV threshold")
@@ -331,6 +349,7 @@ def main():
         mzml_threshold_dict['MS2 Spectra Threshold'] = ms2_spectra_threshold
         mzml_threshold_dict['Max Basepeak Intensity Threshold'] = max_basepeak_intensity_threshold
         mzml_threshold_dict['TIC CV Threshold'] = tic_cv_threshold
+        mzml_threshold_dict['IQR Sensitivity'] = iqr_sensitivity
 
         mzml_sample_df, mzml_group_df, idfree_report_parameters = calculate_idfree_metrics(out_dir, reportname, mzml_dir, groupwise_comparison, groups, mzml_threshold_dict)
 
@@ -382,9 +401,7 @@ def main():
         status_cols = [col for col in grouped_df.columns.tolist() if col != 'Group']
         grouped_df[['Overall QC Status','QC Fail Score']] = grouped_df[status_cols].apply(get_overall_qc_status, args=[len(status_cols)], axis=1)
 
-
     if isinstance(sample_df, pd.DataFrame):
-
         logging.info(f"Saving Overall QC Report to {out_dir}/{reportname}_QC_Status_Report.xlsx")
         #saving dataframes to excel document
         writer = pd.ExcelWriter(f"{out_dir}/{reportname}_QC_Status_Report.xlsx", engine='xlsxwriter')
@@ -392,7 +409,6 @@ def main():
         if groupwise_comparison:
             grouped_df.to_excel(writer, index=False, sheet_name='Groupwise QC Metrics')
         writer.close()
-
     else:
         logging.info(f"Overall QC Report not generated since thresholds were not provided.")
 
@@ -409,7 +425,7 @@ def main():
 
     all_report_params['groupwise_comparison'] = groupwise_comparison
     all_report_params['mzml_dir'] = mzml_dir
-
+    
     logging.info(f"Saving HTML QC Report to {out_dir}/{reportname}.html")
     if all_report_params:
         env = Environment(loader=FileSystemLoader(str("./templates")))
