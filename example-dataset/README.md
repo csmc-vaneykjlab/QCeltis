@@ -51,15 +51,15 @@ ID-Free + ID-Based + Groupwise Comparison Command:
 python  main.py --outdirectory ./output --reportname ExampleDataset-QCReport --mzml_directory ./mzML_files
                --protein_level ./protein_level.txt --precursor_level ./precursor_level.txt --grouping_file ./grouping_file.txt
                --protein_threshold 200 --precursor_threshold 3000 --enzyme 'trypsin'
-               --miscleavage_threshold 60 --tic_cv_threshold 40 --cv_percent_threshold 40
-               --data_percent_threshold 70 --irtlabel 'iRT'--coverage_threshold 80
+               --miscleavage_threshold 60 --tic_cv_threshold 30 --cv_percent_threshold 40
+               --data_percent_threshold 70
 ```
 
 ID-Free + Groupwise Comparison Command:
 
 ```python
 python  main.py --outdirectory ./output --reportname ExampleDataset-QCReport --mzml_directory ./mzML_files
-               --grouping_file ./grouping_file.txt --tic_cv_threshold 40 --cv_percent_threshold 40
+               --grouping_file ./grouping_file.txt --tic_cv_threshold 30
 ```
 
 ID-Based + Groupwise Comparison Command:
@@ -68,8 +68,8 @@ ID-Based + Groupwise Comparison Command:
 python  main.py --outdirectory ./output --reportname ExampleDataset-QCReport
                --protein_level ./protein_level.txt --precursor_level ./precursor_level.txt --grouping_file ./grouping_file.txt
                --protein_threshold 200 --precursor_threshold 3000 --enzyme 'trypsin'
-               --miscleavage_threshold 60 --tic_cv_threshold 40 --cv_percent_threshold 40
-               --data_percent_threshold 70 --irtlabel 'iRT'--coverage_threshold 80
+               --miscleavage_threshold 60 --tic_cv_threshold 30 --cv_percent_threshold 40
+               --data_percent_threshold 70
 ```
 
 ## Outputs
