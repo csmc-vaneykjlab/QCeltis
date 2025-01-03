@@ -79,24 +79,24 @@ Results included [here](https://github.com/csmc-vaneykjlab/QCeltis/tree/main/exa
 
 For the ID-Free + ID-Based + Groupwise Comparison Command, the following outputs will be generated:
 
-1. ExampleDataset-QCReport.html (both ID-Free and ID-Based tabs will be populated)
-2. ExampleDataset-QCReport_ID-Free_QC_Report.xlsx
-3. ExampleDataset-QCReport_ProteinLevel_QC_Report.xlsx
-4. ExampleDataset-QCReport_PrecursorLevel_QC_Report.xlsx
-5. ExampleDataset-QCReport_QC_Status_Report.xlsx (Combined overall QC PASS/FAIL status is provided from ID-Free + ID-Based metrics)
+1. ExampleDataset-Group.html (both ID-Free and ID-Based tabs will be populated)
+2. ExampleDataset-Group_ID-Free_QC_Report.xlsx
+3. ExampleDataset-Group_ProteinLevel_QC_Report.xlsx
+4. ExampleDataset-Group_PrecursorLevel_QC_Report.xlsx
+5. ExampleDataset-Group_QC_Status_Report.xlsx (Combined overall QC PASS/FAIL status is provided from ID-Free + ID-Based metrics)
 
 For the ID-Free + Groupwise Comparison Command, the following outputs will be generated:
 
-1. ExampleDataset-QCReport.html (only ID-Free tab will be populated)
-2. ExampleDataset-QCReport_ID-Free_QC_Report.xlsx
-5. ExampleDataset-QCReport_QC_Status_Report.xlsx (Overall QC PASS/FAIL status is provided based on ID-Free metrics only)
+1. ExampleDataset-Group.html (only ID-Free tab will be populated)
+2. ExampleDataset-Group_ID-Free_QC_Report.xlsx
+5. ExampleDataset-Group_QC_Status_Report.xlsx (Overall QC PASS/FAIL status is provided based on ID-Free metrics only)
 
 For the ID-Based + Groupwise Comparison Command, the following outputs will be generated:
 
-1. ExampleDataset-QCReport.html (only ID-Based tab will be populated)
-3. ExampleDataset-QCReport_ProteinLevel_QC_Report.xlsx
-4. ExampleDataset-QCReport_PrecursorLevel_QC_Report.xlsx
-5. ExampleDataset-QCReport_QC_Status_Report.xlsx (Overall QC PASS/FAIL status is provided based on ID-Based metrics only)
+1. ExampleDataset-Group.html (only ID-Based tab will be populated)
+3. ExampleDataset-Group_ProteinLevel_QC_Report.xlsx
+4. ExampleDataset-Group_PrecursorLevel_QC_Report.xlsx
+5. ExampleDataset-Group_QC_Status_Report.xlsx (Overall QC PASS/FAIL status is provided based on ID-Based metrics only)
 
 ## Results from QC Analysis
 
@@ -117,28 +117,17 @@ MS1 and MS2 Total Ion Current values are extracted from spectra within the given
 
 <ins>TIC Plot</ins>:
 
-![TIC Plot](https://github.com/csmc-vaneykjlab/QCeltis/assets/87665957/a9d88777-eb00-40c0-b659-b2e0810b3834)
+![TIC Plot](https://github.com/user-attachments/assets/c5b8c3a5-40cf-4c34-a85b-598ec658a54f)
 
 If extreme values are found, they are labelled as outliers.
-
-![MS1 TIC Outliers](https://github.com/vegesnam/QCPackage/assets/87665957/c3904df1-3c67-4589-b49f-068ba174ccda)
-
-![MS2 TIC Outliers](https://github.com/vegesnam/QCPackage/assets/87665957/ceb42e10-d10c-48cc-a8f9-91baf64dc8ed)
-
-Here, 3 outliers were found. The following files have been detected as outliers: 
-* 20211018_Seroconversion_DBS_Plate1_DR4_centroid.mzML
-* 20211018_Seroconversion_DBS_Plate6_DR4_centroid.mzML
-* 20211018_Seroconversion_DBS_Plate8_DR2_centroid.mzML
-
-These 3 outlier samples were rerun. 
 
 <ins>TIC CV% Plot</ins>:
 
 Groupwise comparison using CV% is performed with MS1 and MS2 TIC values:
 
-![MS1 TIC CV%](https://github.com/vegesnam/QCPackage/assets/87665957/6e6ffe91-a1f1-4e99-816c-4494bb342e6c)
+![MS1 TIC CV%](https://github.com/user-attachments/assets/05a1cc5a-cb27-4e39-b663-7bee10c6a23b)
 
-![MS2 TIC CV%](https://github.com/vegesnam/QCPackage/assets/87665957/e6cd281f-79af-4e4a-b69d-878d69772c80)
+![MS2 TIC CV%](https://github.com/user-attachments/assets/c647a5bb-1cb9-48de-8991-4b6ab7d26c22)
 
 The intra-plate CV% is lower than the set threshold, which indicates consistent TIC values within the DRs of each plate. All the plates have passed.  
 
@@ -154,13 +143,9 @@ In this case, the spectral ratio is consistent across the samples, with values t
 
 The base peak intensity is the recorded intensity of the most intense peak from each spectrum in the mzML file. The Max Base Peak Intensity represents the highest recorded base peak intensity in each mzML file.
 
-![Max BP Plot](https://github.com/vegesnam/QCPackage/assets/87665957/c9018489-3f43-4a6e-a113-8dfa45d90293)
+![Max BP Plot](https://github.com/user-attachments/assets/18e0f847-5e52-4e70-b62e-452c2a6185b1)
 
 Max Base Peak Intensity is expected to be consistent across replicate QC samples. Any outliers detected are highlighted in yellow. Outliers detected could point to issues with sample pickup or samples being dried out. 
-
-![Max BP Outlier](https://github.com/vegesnam/QCPackage/assets/87665957/986eb8ec-1df0-42f8-8bba-17f3fdca9733)
-
-Here, 1 outlier was found. The sample "20211018_Seroconversion_DBS_Plate1_DR3_centroid.mzML" has an extremely high max base peak intensity compared to the other samples. 
 
 ### ID-Based plots
 
@@ -237,7 +222,7 @@ Number of peptides with 0 miscleavages are plotted from each sample. Having a hi
 
 ### Excel Reports
 
-1. ExampleDataset-QCReport_ID-Free_QC_Report.xlsx: contains id-free metric summary and groupwise TIC CV% calculations. 
-2. ExampleDataset-QCReport_ProteinLevel_QC_Report.xlsx: contains protein-level id-based metrics summary, such as quant summary and groupwise CV% calculations.
-3. ExampleDataset-QCReport_PrecursorLevel_QC_Report.xlsx: contains precursor-level id-based metrics summary, such as quant summary, CV% calculations, common precursor TIC and miscleavage summary.
-4. ExampleDataset-QCReport_QC_Status_Report.xlsx: contains combined overall QC PASS/FAIL status from id-free and id-based metrics for each sample and group 
+1. ExampleDataset-Group_ID-Free_QC_Report.xlsx: contains id-free metric summary and groupwise TIC CV% calculations. 
+2. ExampleDataset-Group_ProteinLevel_QC_Report.xlsx: contains protein-level id-based metrics summary, such as quant summary and groupwise CV% calculations.
+3. ExampleDataset-Group_PrecursorLevel_QC_Report.xlsx: contains precursor-level id-based metrics summary, such as quant summary, CV% calculations, common precursor TIC and miscleavage summary.
+4. ExampleDataset-Group_QC_Status_Report.xlsx: contains combined overall QC PASS/FAIL status from id-free and id-based metrics for each sample and group 
