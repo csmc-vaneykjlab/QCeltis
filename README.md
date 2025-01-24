@@ -6,7 +6,7 @@ A python package developed for performing quality control analysis on large-scal
 2. [Installation](#installation)
 3. [Usage](#Usage)
 4. [Description of Parameters](#description-of-parameters)
-5. [Input File Description](#input-file-description)
+5. [Input File Description](#input-files-descriptions)
 6. [Outputs and Explanations](#outputs-and-explanations)
 7. [Cite](#Cite)
 8. [Contributions](#contributions)
