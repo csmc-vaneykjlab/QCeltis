@@ -6,7 +6,7 @@ A python package developed for performing quality control analysis on large-scal
 2. [Installation](#installation)
 3. [Usage](#Usage)
 4. [Description of Parameters](#description-of-parameters)
-5. [Input File Description](#input-files-descriptions)
+5. [Input File Description](#input-file-description)
 6. [Outputs and Explanations](#outputs-and-explanations)
 7. [Cite](#Cite)
 8. [Contributions](#contributions)
@@ -138,7 +138,7 @@ qceltis [-h] --outdirectory OUTDIRECTORY --reportname REPORTNAME [--mzml_directo
 | --irtlabel               | -irt       | Label for iRT peptides present in your peptide intensity file | None          |
 | --coverage_threshold     | -v         | Intensity or retention time coverage % threshold in each sample | False         |
 
-## Input Files Descriptions
+## Input File Description
 
 ### Input for Raw Data quality (ID-Free) Assessment: 
 
