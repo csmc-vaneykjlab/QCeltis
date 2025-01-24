@@ -60,7 +60,7 @@ def main():
     parser.add_argument('-c', '--miscleavage_threshold', type=int_range(0, 100), default=False, help='[Optional] 0%% Missed Cleavage Threshold for each sample')
     parser.add_argument('-t', '--tic_cv_threshold', type=int_range(0, 100), default=30, help='[Optional] TIC CV Threshold for groupwise QC status - Percentage between 0 and 100 - will only be used if grouping file is provided')
     parser.add_argument('-s', '--cv_percent_threshold', type=int_range(0, 100), default=30, help='[Optional] Intensity CV Threshold - Percentage between 0 and 100')
-    parser.add_argument('-d', '--data_percent_threshold', type=int_range(0, 100), default=70, help='[Optional] Data Threshold for Intensity CV - will only be used if platewise comparison is selected')
+    parser.add_argument('-d', '--data_percent_threshold', type=int_range(0, 100), default=50, help='[Optional] Data Threshold for Intensity CV - will only be used if platewise comparison is selected')
     parser.add_argument('-irt', '--irtlabel', default=False, type=str, help='[Optional] If iRT peptides (Biognosys iRT Kit) are present in your peptide intensity file, please provide how the iRT proteins are labelled in your dataset')
     parser.add_argument('-v', '--coverage_threshold', type=int_range(0, 100), default=False, help='[Optional] Intensity or Retention Time Coverage %% Threshold in each sample')
 
