@@ -132,9 +132,9 @@ qceltis [-h] --outdirectory OUTDIRECTORY --reportname REPORTNAME [--mzml_directo
 | --precursor_threshold    | -z         | Precursor threshold for each sample              | False         |
 | --enzyme                 | -e         | User input enzyme                                | None          |
 | --miscleavage_threshold  | -c         | Missed cleavage threshold for each sample        | False         |
-| --tic_cv_threshold       | -t         | TIC CV threshold for groupwise QC status         | 40         |
-| --cv_percent_threshold   | -s         | Intensity CV threshold                           | 40         |
-| --data_percent_threshold | -d         | Data threshold for intensity CV                  | 70         |
+| --tic_cv_threshold       | -t         | TIC CV threshold for groupwise QC status         | 30         |
+| --cv_percent_threshold   | -s         | Intensity CV threshold                           | 30         |
+| --data_percent_threshold | -d         | Data threshold for intensity CV                  | 50         |
 | --irtlabel               | -irt       | Label for iRT peptides present in your peptide intensity file | None          |
 | --coverage_threshold     | -v         | Intensity or retention time coverage % threshold in each sample | False         |
 
