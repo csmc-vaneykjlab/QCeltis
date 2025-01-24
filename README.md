@@ -290,11 +290,11 @@ Using the intensity values provided, CV% (Coefficient of Variation %) is calcula
 
 <ins>Intensity CV% Bar Graph:</ins> 
 
-![Protein CV%](https://github.com/vegesnam/QCeltis/assets/87665957/393fe0cc-8e2b-47f1-83c9-c1d058f098f4)
+![Protein CV%](https://github.com/user-attachments/assets/858b2bc2-80af-409e-8343-c498e8cce726)
 
 ![Precursor CV%](https://github.com/vegesnam/QCeltis/assets/87665957/a09a7943-d8b2-462b-91c3-7cad97a157cf)
 
-When a grouping file is provided, CV% is calculated across samples within each provided group and a bar graph is generated. Each bar represents the percentage of proteins, peptide or precursors under the 'CV Percent Threshold' (By default, cv percent threshold is set to 40%, this can be changed by the user). This provides information about the consistency and reproducibility of intensity values within each provided group (batch/plate). Groupwise CV% helps identify batch/plate specific trends and patterns. A 'Data Percent Threshold' (By default, data percent threshold is set to 70%, this can be changed by the user) is applied and any groups not passing this threshold are labelled as "FAIL". 
+When a grouping file is provided, CV% is calculated across samples within each provided group and a bar graph is generated. Each bar represents the percentage of proteins, peptide or precursors under the 'CV Percent Threshold' (By default, cv percent threshold is set to 30%, this can be changed by the user). This provides information about the consistency and reproducibility of intensity values within each provided group (batch/plate). Groupwise CV% helps identify batch/plate specific trends and patterns. A 'Data Percent Threshold' (By default, data percent threshold is set to 50%, this can be changed by the user) is applied and any groups not passing this threshold are labelled as "FAIL". 
 
 Here, protein and precursor CV% across groups are shown. A similar plot will be generated for peptides as well (when peptide-level input is provided). 
 
